@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototipo Navegable AuraQuantic — Caso 1: Tiempos, Novedades y Facturación</title>
+<style>
+  :root {
+    --navy: #00015a;
+    --navy-light: #1a1c78;
+    --mint: #3ff2cf;
+    --mint-dark: #0a7d6b;
+    --mint-soft: #e6fcf7;
+    --bg: #f4f6f8;
+    --surface: #ffffff;
+    --text: #14172b;
+    --muted: #5b6074;
+    --line: #dfe3ea;
+    --ok: #15803d;
+    --ok-bg: #dcfce7;
+    --warn: #b45309;
+    --warn-bg: #fef3c7;
+    --err: #b91c1c;
+    --err-bg: #fee2e2;
+    --shadow: 0 4px 18px rgba(0, 1, 90, 0.08);
+    --font: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* Barra Superior Corporativa (RT-01) */
+  .topbar {
+    background: var(--navy);
+    color: #fff;
+    border-bottom: 4px solid var(--mint);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+  }
+  .topbar-inner {
+    max-width: 1220px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: var(--mint);
+    color: var(--navy);
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    letter-spacing: -0.5px;
+  }
+  .brand-title { font-size: 16px; font-weight: 700; margin: 0; }
+  .brand-sub { font-size: 12px; color: #cbd5e1; margin: 0; }
+
+  .role-nav {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .nav-btn {
+    border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .nav-btn:hover { background: rgba(63,242,207,0.2); border-color: var(--mint); }
+  .nav-btn.active {
+    background: var(--mint);
+    color: var(--navy);
+    border-color: var(--mint);
+  }
+  .mobile-toggle {
+    border: 1px solid var(--mint);
+    background: transparent;
+    color: var(--mint);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .mobile-toggle.active { background: #fff; color: var(--navy); border-color: #fff; }
+
+  /* Contenedor Principal & Modo Movil */
+  .shell {
+    max-width: 1200px;
+    margin: 22px auto 60px;
+    padding: 0 18px;
+    transition: max-width 0.25s ease;
+  }
+  .shell.mobile-mode {
+    max-width: 420px;
+    background: #0f172a;
+    padding: 16px 12px;
+    border-radius: 28px;
+    box-shadow: 0 14px 40px rgba(0,0,0,0.3);
+    border: 6px solid #1e293b;
+  }
+  .shell.mobile-mode .mobile-frame-label { display: block; }
+  .mobile-frame-label {
+    display: none;
+    text-align: center;
+    color: var(--mint);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .shell.mobile-mode .grid-3,
+  .shell.mobile-mode .grid-2,
+  .shell.mobile-mode .kpi-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* Tarjetas y Paneles */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--bg);
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    margin: 0;
+    font-size: 18px;
+    color: var(--navy);
+    font-weight: 700;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .badge-navy { background: var(--navy); color: #fff; }
+  .badge-mint { background: var(--mint-soft); color: var(--mint-dark); border: 1px solid var(--mint); }
+  .badge-ok { background: var(--ok-bg); color: var(--ok); }
+  .badge-warn { background: var(--warn-bg); color: var(--warn); }
+  .badge-err { background: var(--err-bg); color: var(--err); }
+
+  /* Ayuda en Pantalla (RT-07) */
+  .help-box {
+    background: #eef6ff;
+    border-left: 4px solid var(--navy);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    color: #1e293b;
+    margin-bottom: 16px;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .kpi-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .kpi {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .kpi-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .kpi-val { font-size: 21px; font-weight: 800; color: var(--navy); margin-top: 2px; }
+
+  label { display: block; font-size: 12.5px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
+  input[type="text"], input[type="time"], input[type="date"], input[type="number"], select, textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    font: inherit;
+    font-size: 13.5px;
+    background: #fff;
+    color: var(--text);
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--navy);
+    box-shadow: 0 0 0 3px rgba(0, 1, 90, 0.12);
+  }
+  input[disabled], select[disabled] {
+    background: #f1f5f9;
+    color: #64748b;
+    cursor: not-allowed;
+  }
+
+  /* Tablas / Grupos de Campos */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; min-width: 680px; font-size: 13.5px; }
+  th {
+    background: var(--navy);
+    color: #fff;
+    text-align: left;
+    padding: 9px 10px;
+    font-weight: 600;
+    font-size: 12.5px;
+  }
+  td { padding: 8px 10px; border-top: 1px solid var(--line); vertical-align: middle; }
+  tr:nth-child(even) td { background: #fafbfc; }
+
+  /* Botones */
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .btn {
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary { background: var(--navy); color: #fff; }
+  .btn-primary:hover { background: var(--navy-light); }
+  .btn-mint { background: var(--mint); color: var(--navy); }
+  .btn-mint:hover { filter: brightness(0.95); }
+  .btn-outline { background: #fff; color: var(--navy); border-color: var(--navy); }
+  .btn-outline:hover { background: var(--bg); }
+  .btn-danger { background: var(--err-bg); color: var(--err); border-color: #fecaca; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+  .alert {
+    padding: 11px 14px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    margin-top: 12px;
+    font-weight: 600;
+  }
+  .alert-ok { background: var(--ok-bg); color: var(--ok); border: 1px solid #86efac; }
+  .alert-err { background: var(--err-bg); color: var(--err); border: 1px solid #fca5a5; }
+  .alert-warn { background: var(--warn-bg); color: var(--warn); border: 1px solid #fcd34d; }
+
+  /* Visor PDF simulado del Cliente */
+  .pdf-preview {
+    border: 2px solid var(--navy);
+    border-radius: 8px;
+    padding: 20px;
+    background: #fff;
+    box-shadow: inset 0 0 0 4px #f8fafc;
+  }
+  .pdf-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 3px solid var(--mint);
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+  }
+  .sig-stamp {
+    margin-top: 14px;
+    border: 2px dashed var(--ok);
+    background: var(--ok-bg);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    color: #14532d;
+  }
+  .hidden { display: none !important; }
+  .req-star { color: var(--err); font-weight: 800; }
+  .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+  .dot-green { background: #16a34a; }
+  .dot-yellow { background: #d97706; }
+  .dot-red { background: #dc2626; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-logo">AQ</div>
+      <div>
+        <p class="brand-title">AuraQuantic · Caso 1: Tiempos, Novedades y Facturación</p>
+        <p class="brand-sub">Prototipo Navegable Interactivo (Fase 3 Bootcamp · RT-01 a RT-16)</p>
+      </div>
+    </div>
+
+    <nav class="role-nav" aria-label="Selector de rol y pantalla">
+      <button class="nav-btn active" data-view="empleado">1. Empleado (Diario)</button>
+      <button class="nav-btn" data-view="lider">2. Líder (Ampliación/Extras)</button>
+      <button class="nav-btn" data-view="director">3. Director Proyecto</button>
+      <button class="nav-btn" data-view="cliente">4. Portal Cliente (Firma)</button>
+      <button class="nav-btn" data-view="gerencia">5. Tablero y Parámetros</button>
+      <button class="mobile-toggle" id="btnMobileToggle" title="Simular App / Vista Móvil (RT-10)">📱 Vista Móvil</button>
+    </nav>
+  </div>
+</header>
+
+<main class="shell" id="appShell">
+  <div class="mobile-frame-label">Vista Móvil AuraQuantic App (RT-10)</div>
+
+  <!-- =================================================================== -->
+  <!-- VISTA 1: EMPLEADO (FORM_REGISTRO_DIARIO + PORTAL EMPLEADO)          -->
+  <!-- =================================================================== -->
+  <section id="view-empleado" class="view-section">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Registro Diario de Actividades y Novedades</h2>
+          <small style="color: var(--muted);">Formulario: <code>FORM_REGISTRO_DIARIO</code> · Proceso: <code>TIEM_REG_DIARIO</code></small>
+        </div>
+        <div class="btn-row">
+          <span class="badge badge-navy" id="empTramiteBadge">Trámite: TIEM-2026-000128</span>
+          <span class="badge badge-mint" id="empEstadoBadge">Estado: En Diligenciamiento</span>
+        </div>
+      </div>
+
+      <div class="help-box">
+        <strong>ℹ️ Ayuda en pantalla (RT-07):</strong> Registre todas las actividades y novedades de su jornada laboral. Puede guardar su avance con <em>Guardar Borrador</em> sin enviar el trámite, o precargar su día hábil anterior. Al enviar antes de las 5:30 p. m., las horas fuera de horario pasarán a aprobación de su líder.
+      </div>
+
+      <div class="grid-3" style="margin-bottom: 14px;">
+        <div>
+          <label for="selEmpleado">Simular Empleado en Sesión (RF-T-20 / RF-T-07)</label>
+          <select id="selEmpleado"></select>
+        </div>
+        <div>
+          <label for="selDiaSemana">Día de la Jornada (RF-T-05)</label>
+          <select id="selDiaSemana">
+            <option value="Lunes">Lunes (08:00 – 17:30 · 9.5 h)</option>
+            <option value="Martes">Martes (08:00 – 17:30 · 9.5 h)</option>
+            <option value="Miércoles" selected>Miércoles (07:00 – 17:30 · 10.5 h)</option>
+            <option value="Jueves">Jueves (07:00 – 17:30 · 10.5 h)</option>
+            <option value="Viernes">Viernes (07:00 – 17:30 · 10.5 h)</option>
+          </select>
+        </div>
+        <div>
+          <label>Líder Directo / Política Horas Extra</label>
+          <input type="text" id="empInfoCargo" disabled>
+        </div>
+      </div>
+
+      <!-- Portal Empleado: KPIs en tiempo real -->
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="kpi-label">Total Actividades</div>
+          <div class="kpi-val" id="kpiActHoras">0.00 h</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Total Novedades</div>
+          <div class="kpi-val" id="kpiNovHoras">0.00 h</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Diferencia vs Jornada (RF-T-08)</div>
+          <div class="kpi-val" id="kpiDiffJornada">0.00 h</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Saldo Compensación Portal (RF-T-23)</div>
+          <div class="kpi-val" id="kpiSaldoPortal">+2.50 h</div>
+        </div>
+      </div>
+
+      <div class="btn-row" style="justify-content: space-between; margin-bottom: 12px;">
+        <div class="btn-row">
+          <button class="btn btn-outline btn-sm" id="btnPrecargar">📋 Precargar día hábil anterior (RF-T-10)</button>
+          <button class="btn btn-outline btn-sm" id="btnAgregarAct">+ Agregar Actividad</button>
+        </div>
+        <button class="btn btn-mint btn-sm" id="btnGuardarBorrador">💾 Guardar Borrador (RF-T-09)</button>
+      </div>
+
+      <h3 style="margin: 10px 0 8px; font-size: 15px; color: var(--navy);">1. Grupo de Campos: Actividades del Día (<code>GC_ACTIVIDADES</code>)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:110px;">Inicio</th>
+              <th style="width:110px;">Fin</th>
+              <th style="width:230px;">Proyecto Asignado Vigente (RF-T-03)</th>
+              <th>Descripción de la Actividad</th>
+              <th style="width:120px;">¿Fuera Horario?</th>
+              <th style="width:90px;">Duración</th>
+              <th style="width:70px;">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyActividades"></tbody>
+        </table>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin: 18px 0 8px; flex-wrap:wrap; gap:8px;">
+        <h3 style="margin: 0; font-size: 15px; color: var(--navy);">2. Grupo de Campos: Novedades del Día (<code>GC_NOVEDADES</code>)</h3>
+        <button class="btn btn-outline btn-sm" id="btnAgregarNov">+ Agregar Novedad</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:210px;">Tipo de Novedad</th>
+              <th style="width:100px;">Duración (h)</th>
+              <th>Observaciones</th>
+              <th style="width:220px;">Soporte Adjunto (RF-T-13)</th>
+              <th style="width:70px;">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyNovedades"></tbody>
+        </table>
+      </div>
+
+      <div class="btn-row" style="justify-content: flex-end; margin-top: 16px;">
+        <button class="btn btn-outline" id="btnLimpiarDia">🧹 Limpiar Formulario</button>
+        <button class="btn btn-primary" id="btnEnviarRegistro">🚀 Enviar Registro Diario</button>
+      </div>
+      <div id="empFeedback"></div>
+    </div>
+  </section>
+
+  <!-- =================================================================== -->
+  <!-- VISTA 2: LÍDER DE ÁREA (AMPLIACIÓN Y APROBACIÓN HORAS EXTRA)        -->
+  <!-- =================================================================== -->
+  <section id="view-lider" class="view-section hidden">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Bandeja del Líder de Área — Ampliación y Horas Extra</h2>
+          <small style="color: var(--muted);">Formularios: <code>FORM_AMPLIACION_HORARIO</code> y <code>FORM_APROBACION_EXTRAS</code> · Líder: Carlos Mendoza</small>
+        </div>
+        <span class="badge badge-warn">⏰ 2 Tareas Pendientes Hoy (RT-04)</span>
+      </div>
+
+      <div class="help-box">
+        <strong>ℹ️ Ayuda en pantalla (RT-07):</strong> Autorice ampliaciones excepcionales después de las 5:30 p. m. registrando el motivo obligatorio, y revise actividad por actividad las horas fuera de horario de su equipo. Las rechazadas volverán al empleado una sola vez para corrección.
+      </div>
+
+      <div class="grid-2">
+        <!-- Bloque Ampliación -->
+        <div class="card" style="box-shadow:none; margin-bottom:0;">
+          <h3 style="margin:0 0 10px; font-size:15.5px; color:var(--navy);">Solicitud de Ampliación de Horario (RF-T-16 / RF-T-17)</h3>
+          <p style="font-size:13px; color:var(--muted); margin:0 0 10px;">Empleado: <strong>Ana Gómez</strong> · Trámite: <code>TIEM-2026-000129</code> · Cierre vencido: 17:30</p>
+          <div style="margin-bottom:10px;">
+            <label for="motivoAmp">Motivo de la Ampliación <span class="req-star">*</span></label>
+            <textarea id="motivoAmp" rows="2" placeholder="Ej. Despliegue en ventana nocturna con cliente Banco Nacional..."></textarea>
+          </div>
+          <div style="margin-bottom:12px;">
+            <label for="horaAmp">Nueva Hora Límite (máx. 22:00)</label>
+            <input type="time" id="horaAmp" value="20:00">
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary btn-sm" id="btnAutorizarAmp">✔️ Autorizar Ampliación</button>
+            <button class="btn btn-danger btn-sm" id="btnRechazarAmp">❌ Denegar / Cerrar Día</button>
+          </div>
+          <div id="ampFeedback"></div>
+        </div>
+
+        <!-- Resumen de cumplimiento del equipo -->
+        <div class="card" style="box-shadow:none; margin-bottom:0;">
+          <h3 style="margin:0 0 10px; font-size:15.5px; color:var(--navy);">Bandeja de Cumplimiento del Equipo (RT-03 / RT-04)</h3>
+          <div class="table-wrap">
+            <table style="min-width:100%;">
+              <thead>
+                <tr>
+                  <th>Trámite</th>
+                  <th>Empleado</th>
+                  <th>Semáforo</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyBandejaLider">
+                <tr>
+                  <td>TIEM-2026-000128</td>
+                  <td>Juan Pérez</td>
+                  <td><span class="dot dot-green"></span>En plazo</td>
+                  <td>Por aprobar extra</td>
+                </tr>
+                <tr>
+                  <td>TIEM-2026-000129</td>
+                  <td>Ana Gómez</td>
+                  <td><span class="dot dot-yellow"></span>Vencido 17:30</td>
+                  <td id="estadoAnaBandeja">Esperando ampliación</td>
+                </tr>
+                <tr>
+                  <td>TIEM-2026-000130</td>
+                  <td>Diego Castro</td>
+                  <td><span class="dot dot-green"></span>A tiempo</td>
+                  <td>Cerrado (9.5 h)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px; font-size:16px; color:var(--navy);">Aprobación de Horas Extra Actividad por Actividad (RF-T-18 / RF-T-19)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Empleado</th>
+              <th>Proyecto</th>
+              <th>Horario</th>
+              <th>Duración</th>
+              <th>Descripción</th>
+              <th style="width:150px;">Decisión</th>
+              <th style="width:220px;">Comentario del Líder</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyExtrasLider"></tbody>
+        </table>
+      </div>
+      <div class="btn-row" style="justify-content:space-between; margin-top:14px;">
+        <div id="resumenExtrasLider" style="font-size:13.5px; font-weight:700; color:var(--navy);"></div>
+        <button class="btn btn-primary" id="btnGuardarExtras">💾 Confirmar Decisiones de Horas Extra</button>
+      </div>
+      <div id="extrasFeedback"></div>
+    </div>
+  </section>
+
+  <!-- =================================================================== -->
+  <!-- VISTA 3: DIRECTOR DE PROYECTO (CIERRE MENSUAL)                      -->
+  <!-- =================================================================== -->
+  <section id="view-director" class="view-section hidden">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Cierre Mensual de Horas por Proyecto</h2>
+          <small style="color: var(--muted);">Formulario: <code>FORM_CIERRE_PROYECTO</code> · Proceso: <code>TIEM_CIERRE_MENSUAL</code> (Tratamiento Distribuido)</small>
+        </div>
+        <span class="badge badge-navy">Período: Octubre 2026</span>
+      </div>
+
+      <div class="help-box">
+        <strong>ℹ️ Ayuda en pantalla (RT-07):</strong> Revise las horas imputadas a su proyecto. Si excluye una actividad no facturable (ej. capacitación interna), ingrese la justificación obligatoria: la hora no se cobrará al cliente pero <strong>seguirá contando para la nómina del empleado (RN-T-08)</strong>.
+      </div>
+
+      <div class="grid-2" style="margin-bottom:14px;">
+        <div>
+          <label for="selProyectoDirector">Proyecto Facturable en Revisión (RF-T-25)</label>
+          <select id="selProyectoDirector">
+            <option value="PRY-001">PRY-001 · Modernización Core BPM (Banco Nacional S.A.)</option>
+            <option value="PRY-002">PRY-002 · Automatización Mesa Ayuda (Telco Andina S.A.S.)</option>
+          </select>
+        </div>
+        <div class="kpi-row" style="grid-template-columns: repeat(3, 1fr); margin-bottom:0;">
+          <div class="kpi"><div class="kpi-label">Registradas</div><div class="kpi-val" id="dirTotalReg">0 h</div></div>
+          <div class="kpi"><div class="kpi-label">Excluidas</div><div class="kpi-val" id="dirTotalExc">0 h</div></div>
+          <div class="kpi"><div class="kpi-label">Facturable Cliente</div><div class="kpi-val" id="dirTotalFac">0 h</div></div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Empleado</th>
+              <th>Actividad</th>
+              <th style="width:90px;">Horas</th>
+              <th style="width:120px;">¿Facturar?</th>
+              <th style="width:260px;">Justificación Exclusión (RF-T-26)</th>
+              <th style="width:110px;">Nómina (RN-T-08)</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyCierreDirector"></tbody>
+        </table>
+      </div>
+
+      <div class="btn-row" style="justify-content:flex-end; margin-top:14px;">
+        <button class="btn btn-primary" id="btnValidarCierre">📄 Validar y Publicar Reporte PDF al Cliente (RF-T-27)</button>
+      </div>
+      <div id="directorFeedback"></div>
+    </div>
+  </section>
+
+  <!-- =================================================================== -->
+  <!-- VISTA 4: PORTAL EXTERNO CLIENTE (VISOR PDF Y FIRMA DIGITAL)         -->
+  <!-- =================================================================== -->
+  <section id="view-cliente" class="view-section hidden">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Portal de Clientes Externos — Aprobación y Firma Digital</h2>
+          <small style="color: var(--muted);">Cliente Autenticado: <strong>Banco Nacional S.A. (NIT 890.123.456-1)</strong> · Contacto: Roberto Méndez</small>
+        </div>
+        <span class="badge badge-mint">🔒 Aislamiento por NIT (RT-14)</span>
+      </div>
+
+      <div class="help-box">
+        <strong>ℹ️ Ayuda en pantalla (RT-07):</strong> Visualiza únicamente los reportes mensuales de sus proyectos contratados. Firme digitalmente para aprobar la facturación o registre observaciones para devolver al Director. Plazo de aprobación tácita: <strong>recordatorio día 5 / aprobación automática día 10 hábil (RF-T-28)</strong>.
+      </div>
+
+      <div class="grid-2" style="margin-bottom:14px;">
+        <div class="kpi"><div class="kpi-label">Estado Aprobación Cliente</div><div class="kpi-val" id="cliEstadoFirma" style="font-size:17px;">Pendiente de Firma</div></div>
+        <div class="kpi"><div class="kpi-label">Control Tácito (RF-T-28 / RN-T-09)</div><div class="kpi-val" style="font-size:16px;">Día 3 de 10 hábiles (Recordatorio en día 5)</div></div>
+      </div>
+
+      <!-- Visor PDF Simulado (RF-T-27) -->
+      <div class="pdf-preview">
+        <div class="pdf-head">
+          <div>
+            <strong style="color:var(--navy); font-size:16px;">REPORTE MENSUAL DE HORAS DE PROYECTO</strong><br>
+            <span style="font-size:13px; color:var(--muted);">Documento Base Generado Automáticamente · Periodo: Octubre 2026</span>
+          </div>
+          <div style="text-align:right; font-size:12.5px;">
+            <strong>Cliente:</strong> Banco Nacional S.A.<br>
+            <strong>NIT:</strong> 890.123.456-1<br>
+            <strong>Proyecto:</strong> PRY-001 · Modernización Core BPM
+          </div>
+        </div>
+        <div id="pdfDetalleTabla"></div>
+        <div id="cliSelloFirma" class="sig-stamp hidden"></div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <label for="cliObs">Observaciones del Cliente (obligatorio si devuelve el reporte)</label>
+        <textarea id="cliObs" rows="2" placeholder="Ingrese aquí sus observaciones únicamente si solicita corrección al Director..."></textarea>
+      </div>
+      <div class="btn-row" style="justify-content:flex-end; margin-top:12px;">
+        <button class="btn btn-danger" id="btnCliObservar">⚠️ Devolver con Observaciones</button>
+        <button class="btn btn-mint" id="btnCliFirmar">✍️ Firmar Digitalmente (Certificado Pruebas)</button>
+      </div>
+      <div id="clienteFeedback"></div>
+    </div>
+  </section>
+
+  <!-- =================================================================== -->
+  <!-- VISTA 5: GERENCIA Y PARAMETRIZACION (SEMAFORO 80%/100% + RT-15)      -->
+  <!-- =================================================================== -->
+  <section id="view-gerencia" class="view-section hidden">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Tablero de Control, Semáforo Presupuestal y Parametrización</h2>
+          <small style="color: var(--muted);">Cuadro de Mandos + Universal Watcher (RF-T-24 / RT-13 / RT-15)</small>
+        </div>
+        <button class="btn btn-mint btn-sm" id="btnSimularAprobacion">⚡ Simular +15h aprobadas en PRY-001 (Probar Alerta 80%)</button>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi"><div class="kpi-label">Registros a Tiempo (3.6)</div><div class="kpi-val">84 %</div></div>
+        <div class="kpi"><div class="kpi-label">Registros con Ampliación</div><div class="kpi-val">12 %</div></div>
+        <div class="kpi"><div class="kpi-label">No Enviados</div><div class="kpi-val">4 %</div></div>
+        <div class="kpi"><div class="kpi-label">Tiempo Prom. Aprob. Cliente</div><div class="kpi-val">3.2 días</div></div>
+      </div>
+
+      <h3 style="margin: 12px 0 8px; font-size:15.5px; color:var(--navy);">Semáforo de Presupuesto de Proyectos (RF-T-24)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Proyecto</th>
+              <th>Director</th>
+              <th>Presupuesto</th>
+              <th>Consumidas</th>
+              <th>% Consumo</th>
+              <th>Semáforo / Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tbodySemaforo"></tbody>
+        </table>
+      </div>
+      <div id="gerenciaAlertas"></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px; font-size:16px; color:var(--navy);">Pantalla de Parametrización Global sin Modificar Proceso (RT-15 / RN-T-09)</h3>
+      <div class="grid-3">
+        <div>
+          <label for="paramAlerta80">% Alerta Temprana Presupuesto</label>
+          <input type="number" id="paramAlerta80" value="80" min="50" max="99">
+        </div>
+        <div>
+          <label for="paramDiasRec">Días Hábiles Recordatorio Cliente</label>
+          <input type="number" id="paramDiasRec" value="5" min="1" max="15">
+        </div>
+        <div>
+          <label for="paramDiasTacita">Días Hábiles Aprobación Tácita</label>
+          <input type="number" id="paramDiasTacita" value="10" min="2" max="30">
+        </div>
+      </div>
+      <div class="btn-row" style="justify-content:flex-end; margin-top:12px;">
+        <button class="btn btn-primary btn-sm" id="btnGuardarParams">💾 Aplicar Parámetros</button>
+      </div>
+      <div id="paramFeedback"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function() {
+  const STORAGE_KEY = "aq_caso1_prototipo_v1";
+
+  const EMPLOYEES = [
+    { id: "EMP-001", name: "Juan Pérez", cargo: "Consultor Senior", leader: "Carlos Mendoza", generaExtras: true, saldo: 2.5 },
+    { id: "EMP-002", name: "Ana Gómez", cargo: "Consultor Junior", leader: "Carlos Mendoza", generaExtras: true, saldo: 0.0 },
+    { id: "EMP-008", name: "Andrés Silva", cargo: "Director de Proyecto", leader: "Laura Díaz", generaExtras: false, saldo: 0.0 }
+  ];
+
+  const ASSIGNMENTS = [
+    { emp: "EMP-001", code: "PRY-001", name: "PRY-001 · Modernización Core BPM", active: true, expired: false },
+    { emp: "EMP-001", code: "PRY-002", name: "PRY-002 · Automatización Mesa Ayuda", active: true, expired: false },
+    { emp: "EMP-001", code: "PRY-003", name: "PRY-003 · Portal Proveedores (VENCIDA)", active: true, expired: true },
+    { emp: "EMP-002", code: "PRY-001", name: "PRY-001 · Modernización Core BPM", active: true, expired: false },
+    { emp: "EMP-002", code: "PRY-010", name: "PRY-010 · Capacitación Interna I+D", active: true, expired: false },
+    { emp: "EMP-008", code: "PRY-001", name: "PRY-001 · Modernización Core BPM", active: true, expired: false }
+  ];
+
+  const NOVELTY_TYPES = [
+    { id: "NOV-01", name: "Permiso Remunerado", remunerada: true, exigeSoporte: true },
+    { id: "NOV-02", name: "Incapacidad Médica", remunerada: true, exigeSoporte: true },
+    { id: "NOV-03", name: "Ausencia No Justificada", remunerada: false, exigeSoporte: false },
+    { id: "NOV-04", name: "Llegada Tarde", remunerada: false, exigeSoporte: false },
+    { id: "NOV-05", name: "Vacaciones", remunerada: true, exigeSoporte: false }
+  ];
+
+  const JORNADAS = {
+    "Lunes": { open: "08:00", close: "17:30", hours: 9.5 },
+    "Martes": { open: "08:00", close: "17:30", hours: 9.5 },
+    "Miércoles": { open: "07:00", close: "17:30", hours: 10.5 },
+    "Jueves": { open: "07:00", close: "17:30", hours: 10.5 },
+    "Viernes": { open: "07:00", close: "17:30", hours: 10.5 }
+  };
+
+  let state = {
+    selectedEmp: "EMP-001",
+    day: "Miércoles",
+    activities: [
+      { start: "07:00", end: "12:00", project: "PRY-001", desc: "Levantamiento de requerimientos y reglas", extra: false },
+      { start: "13:00", end: "17:30", project: "PRY-002", desc: "Modelado de proceso BPMN y pruebas REST", extra: false }
+    ],
+    novelties: [],
+    leaderExtras: [
+      { id: 1, emp: "Juan Pérez", project: "PRY-001", range: "17:30 - 19:30", hours: 2.0, desc: "Despliegue conector REST", status: "Aprobar", comment: "Autorizado por ventana de paso" },
+      { id: 2, emp: "Juan Pérez", project: "PRY-002", range: "19:30 - 20:30", hours: 1.0, desc: "Documentación adicional", status: "Aprobar", comment: "" },
+      { id: 3, emp: "Ana Gómez", project: "PRY-001", range: "17:30 - 18:30", hours: 1.0, desc: "Reunión sin acta", status: "Rechazar", comment: "Reclasificar dentro de horario" }
+    ],
+    directorRows: [
+      { id: 1, date: "2026-10-05", emp: "Juan Pérez", desc: "Diseño de arquitectura AuraQuantic", hours: 8.0, bill: true, reason: "" },
+      { id: 2, date: "2026-10-12", emp: "Ana Gómez", desc: "Capacitación interna de herramientas", hours: 4.0, bill: false, reason: "Actividad interna no cobrable al cliente" },
+      { id: 3, date: "2026-10-20", emp: "Juan Pérez", desc: "Pruebas integrales y firma digital", hours: 6.0, bill: true, reason: "" }
+    ],
+    projectsBudget: [
+      { code: "PRY-001", name: "Modernización Core BPM", director: "Andrés Silva", budget: 500, used: 390, alert80Sent: false, alert100Sent: false },
+      { code: "PRY-002", name: "Automatización Mesa Ayuda", director: "Andrés Silva", budget: 200, used: 196, alert80Sent: true, alert100Sent: false },
+      { code: "PRY-003", name: "Portal Proveedores Energía", director: "Carlos Mendoza", budget: 350, used: 140, alert80Sent: false, alert100Sent: false },
+      { code: "PRY-004", name: "Flujo Siniestros Auto", director: "María Rojas", budget: 400, used: 412, alert80Sent: true, alert100Sent: true }
+    ],
+    params: { alert80: 80, recDays: 5, tacitDays: 10 },
+    clientSigned: false
+  };
+
+  function toMin(hhmm) {
+    if (!hhmm || !hhmm.includes(":")) return null;
+    const parts = hhmm.split(":").map(Number);
+    return parts[0] * 60 + parts[1];
+  }
+
+  function calcDuration(start, end) {
+    const s = toMin(start);
+    const e = toMin(end);
+    if (s === null || e === null || e <= s) return 0;
+    return (e - s) / 60;
+  }
+
+  function getCurrentEmp() {
+    return EMPLOYEES.find(e => e.id === state.selectedEmp) || EMPLOYEES[0];
+  }
+
+  function getValidProjects(empId) {
+    return ASSIGNMENTS.filter(a => a.emp === empId && a.active && !a.expired);
+  }
+
+  function loadDraft() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && Array.isArray(parsed.activities)) {
+          state.activities = parsed.activities;
+          state.novelties = parsed.novelties || [];
+          state.selectedEmp = parsed.selectedEmp || state.selectedEmp;
+          state.day = parsed.day || state.day;
+        }
+      }
+    } catch (e) { /* sin acceso a localStorage */ }
+  }
+
+  function renderEmpleadoSelector() {
+    const sel = document.getElementById("selEmpleado");
+    sel.innerHTML = EMPLOYEES.map(e =>
+      `<option value="${e.id}" ${e.id === state.selectedEmp ? "selected" : ""}>${e.name} — ${e.cargo} (Extras: ${e.generaExtras ? "SÍ" : "NO"})</option>`
+    ).join("");
+    document.getElementById("selDiaSemana").value = state.day;
+    const emp = getCurrentEmp();
+    document.getElementById("empInfoCargo").value = `Líder: ${emp.leader} | Genera Extras: ${emp.generaExtras ? "SÍ" : "NO (RF-T-20)"}`;
+    document.getElementById("kpiSaldoPortal").textContent = `${emp.saldo >= 0 ? "+" : ""}${emp.saldo.toFixed(2)} h`;
+  }
+
+  function updateKPIs() {
+    const actH = state.activities.reduce((acc, a) => acc + calcDuration(a.start, a.end), 0);
+    const novH = state.novelties.reduce((acc, n) => acc + (parseFloat(n.hours) || 0), 0);
+    const jorH = JORNADAS[state.day].hours;
+    const diff = (actH + novH) - jorH;
+    document.getElementById("kpiActHoras").textContent = `${actH.toFixed(2)} h`;
+    document.getElementById("kpiNovHoras").textContent = `${novH.toFixed(2)} h`;
+    const diffEl = document.getElementById("kpiDiffJornada");
+    diffEl.textContent = `${diff >= 0 ? "+" : ""}${diff.toFixed(2)} h`;
+    diffEl.style.color = diff < 0 ? "var(--err)" : (diff > 0 ? "var(--mint-dark)" : "var(--navy)");
+  }
+
+  function renderActivities() {
+    const emp = getCurrentEmp();
+    const projs = getValidProjects(emp.id);
+    const tbody = document.getElementById("tbodyActividades");
+    tbody.innerHTML = state.activities.map((a, idx) => {
+      const dur = calcDuration(a.start, a.end);
+      const projOptions = projs.map(p =>
+        `<option value="${p.code}" ${p.code === a.project ? "selected" : ""}>${p.name}</option>`
+      ).join("");
+      const extraDisabled = emp.generaExtras ? "" : "disabled title='Cargo no genera horas extra (RF-T-20)'";
+      const extraChecked = emp.generaExtras && a.extra ? "checked" : "";
+      return `
+        <tr data-act-idx="${idx}">
+          <td><input type="time" class="act-start" value="${a.start}"></td>
+          <td><input type="time" class="act-end" value="${a.end}"></td>
+          <td><select class="act-proj">${projOptions}</select></td>
+          <td><input type="text" class="act-desc" value="${a.desc || ""}" placeholder="Descripción de tarea..."></td>
+          <td style="text-align:center;">
+            <input type="checkbox" class="act-extra" ${extraChecked} ${extraDisabled}>
+          </td>
+          <td><strong>${dur.toFixed(2)} h</strong></td>
+          <td><button class="btn btn-danger btn-sm act-del" type="button">✖</button></td>
+        </tr>
+      `;
+    }).join("");
+
+    tbody.querySelectorAll("tr").forEach(tr => {
+      const idx = Number(tr.dataset.actIdx);
+      tr.querySelector(".act-start").addEventListener("change", e => { state.activities[idx].start = e.target.value; renderActivities(); });
+      tr.querySelector(".act-end").addEventListener("change", e => { state.activities[idx].end = e.target.value; renderActivities(); });
+      tr.querySelector(".act-proj").addEventListener("change", e => { state.activities[idx].project = e.target.value; });
+      tr.querySelector(".act-desc").addEventListener("input", e => { state.activities[idx].desc = e.target.value; });
+      tr.querySelector(".act-extra").addEventListener("change", e => { state.activities[idx].extra = e.target.checked; });
+      tr.querySelector(".act-del").addEventListener("click", () => { state.activities.splice(idx, 1); renderActivities(); });
+    });
+    updateKPIs();
+  }
+
+  function renderNovelties() {
+    const tbody = document.getElementById("tbodyNovedades");
+    if (state.novelties.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--muted);">Sin novedades registradas hoy. Use "+ Agregar Novedad" si tuvo permiso, incapacidad o ausencia.</td></tr>`;
+      updateKPIs();
+      return;
+    }
+    tbody.innerHTML = state.novelties.map((n, idx) => {
+      const typeObj = NOVELTY_TYPES.find(t => t.id === n.type) || NOVELTY_TYPES[0];
+      const opts = NOVELTY_TYPES.map(t => `<option value="${t.id}" ${t.id === n.type ? "selected" : ""}>${t.name}${t.exigeSoporte ? " (Exige Soporte)" : ""}</option>`).join("");
+      const reqBadge = typeObj.exigeSoporte ? `<span class="req-star">* Obligatorio</span>` : `<span style="color:var(--muted); font-size:12px;">Opcional</span>`;
+      return `
+        <tr data-nov-idx="${idx}">
+          <td><select class="nov-type">${opts}</select></td>
+          <td><input type="number" class="nov-hours" min="0.5" max="12" step="0.5" value="${n.hours}"></td>
+          <td><input type="text" class="nov-obs" value="${n.obs || ""}" placeholder="Detalle o número de incapacidad..."></td>
+          <td>
+            ${reqBadge}
+            <input type="file" class="nov-file" style="margin-top:3px; font-size:11.5px;">
+            ${n.fileName ? `<div style="font-size:11px; color:var(--ok);">📎 ${n.fileName}</div>` : ""}
+          </td>
+          <td><button class="btn btn-danger btn-sm nov-del" type="button">✖</button></td>
+        </tr>
+      `;
+    }).join("");
+
+    tbody.querySelectorAll("tr").forEach(tr => {
+      const idx = Number(tr.dataset.novIdx);
+      tr.querySelector(".nov-type").addEventListener("change", e => { state.novelties[idx].type = e.target.value; renderNovelties(); });
+      tr.querySelector(".nov-hours").addEventListener("input", e => { state.novelties[idx].hours = parseFloat(e.target.value) || 0; updateKPIs(); });
+      tr.querySelector(".nov-obs").addEventListener("input", e => { state.novelties[idx].obs = e.target.value; });
+      tr.querySelector(".nov-file").addEventListener("change", e => {
+        state.novelties[idx].fileName = e.target.files && e.target.files[0] ? e.target.files[0].name : "";
+        renderNovelties();
+      });
+      tr.querySelector(".nov-del").addEventListener("click", () => { state.novelties.splice(idx, 1); renderNovelties(); });
+    });
+    updateKPIs();
+  }
+
+  function validateDailySubmission() {
+    const errors = [];
+    const emp = getCurrentEmp();
+    const jor = JORNADAS[state.day];
+    const jOpen = toMin(jor.open);
+    const jClose = toMin(jor.close);
+
+    if (state.activities.length === 0 && state.novelties.length === 0) {
+      errors.push("Debe registrar al menos una actividad o novedad antes de enviar.");
+    }
+
+    const intervals = [];
+    state.activities.forEach((a, i) => {
+      const s = toMin(a.start);
+      const e = toMin(a.end);
+      if (s === null || e === null || e <= s) {
+        errors.push(`RN-T-02 (Actividad #${i + 1}): La hora de fin debe ser posterior a la hora de inicio.`);
+        return;
+      }
+      if ((s < jOpen || e > jClose) && !(emp.generaExtras && a.extra)) {
+        errors.push(`RN-T-03 / RF-T-20 (Actividad #${i + 1}): Registra horas fuera de jornada (${jor.open}–${jor.close}) sin marca "Fuera de Horario" habilitada.`);
+      }
+      if (!a.desc || !a.desc.trim()) {
+        errors.push(`RF-T-07 (Actividad #${i + 1}): Falta ingresar la descripción.`);
+      }
+      intervals.push({ idx: i + 1, s, e });
+    });
+
+    // RN-T-05: No traslape
+    for (let i = 0; i < intervals.length; i++) {
+      for (let j = i + 1; j < intervals.length; j++) {
+        if (intervals[i].s < intervals[j].e && intervals[j].s < intervals[i].e) {
+          errors.push(`RN-T-05: Las actividades #${intervals[i].idx} y #${intervals[j].idx} se traslapan en el tiempo.`);
+        }
+      }
+    }
+
+    // RN-T-06: Maximo 16 horas
+    const totalAct = state.activities.reduce((acc, a) => acc + calcDuration(a.start, a.end), 0);
+    const totalNov = state.novelties.reduce((acc, n) => acc + (parseFloat(n.hours) || 0), 0);
+    if (totalAct + totalNov > 16) {
+      errors.push(`RN-T-06: El total registrado (${(totalAct + totalNov).toFixed(2)} h) supera el límite máximo permitido de 16 horas diarias.`);
+    }
+
+    // RF-T-13: Soporte obligatorio
+    state.novelties.forEach((n, i) => {
+      const t = NOVELTY_TYPES.find(x => x.id === n.type);
+      if (t && t.exigeSoporte && !n.fileName) {
+        errors.push(`RF-T-13 (Novedad #${i + 1} - ${t.name}): Exige adjuntar soporte obligatorio para poder enviar.`);
+      }
+    });
+
+    return errors;
+  }
+
+  function renderLiderExtras() {
+    const tbody = document.getElementById("tbodyExtrasLider");
+    tbody.innerHTML = state.leaderExtras.map((item, idx) => `
+      <tr data-ext-idx="${idx}">
+        <td>${item.emp}</td>
+        <td><strong>${item.project}</strong></td>
+        <td>${item.range}</td>
+        <td>${item.hours.toFixed(1)} h</td>
+        <td>${item.desc}</td>
+        <td>
+          <select class="ext-dec">
+            <option value="Aprobar" ${item.status === "Aprobar" ? "selected" : ""}>✔️ Aprobar</option>
+            <option value="Rechazar" ${item.status === "Rechazar" ? "selected" : ""}>↩️ Rechazar</option>
+          </select>
+        </td>
+        <td><input type="text" class="ext-comm" value="${item.comment}" placeholder="Comentario (obligatorio al rechazar)"></td>
+      </tr>
+    `).join("");
+
+    tbody.querySelectorAll("tr").forEach(tr => {
+      const idx = Number(tr.dataset.extIdx);
+      tr.querySelector(".ext-dec").addEventListener("change", e => { state.leaderExtras[idx].status = e.target.value; updateLiderSummary(); });
+      tr.querySelector(".ext-comm").addEventListener("input", e => { state.leaderExtras[idx].comment = e.target.value; });
+    });
+    updateLiderSummary();
+  }
+
+  function updateLiderSummary() {
+    const apr = state.leaderExtras.filter(x => x.status === "Aprobar").reduce((a, b) => a + b.hours, 0);
+    const rej = state.leaderExtras.filter(x => x.status === "Rechazar").reduce((a, b) => a + b.hours, 0);
+    document.getElementById("resumenExtrasLider").textContent = `Resumen: ${apr.toFixed(1)} h aprobadas para horas extra | ${rej.toFixed(1)} h devueltas al empleado (RF-T-19)`;
+  }
+
+  function renderDirectorCierre() {
+    const tbody = document.getElementById("tbodyCierreDirector");
+    tbody.innerHTML = state.directorRows.map((row, idx) => `
+      <tr data-dir-idx="${idx}">
+        <td>${row.date}</td>
+        <td>${row.emp}</td>
+        <td>${row.desc}</td>
+        <td><strong>${row.hours.toFixed(1)} h</strong></td>
+        <td>
+          <select class="dir-bill">
+            <option value="SI" ${row.bill ? "selected" : ""}>✔️ Facturar</option>
+            <option value="NO" ${!row.bill ? "selected" : ""}>🚫 Excluir</option>
+          </select>
+        </td>
+        <td><input type="text" class="dir-reason" value="${row.reason}" ${row.bill ? "disabled placeholder='No requiere'" : "placeholder='Justificación obligatoria *'"}></td>
+        <td><span class="badge badge-ok">Cuenta 100%</span></td>
+      </tr>
+    `).join("");
+
+    tbody.querySelectorAll("tr").forEach(tr => {
+      const idx = Number(tr.dataset.dirIdx);
+      tr.querySelector(".dir-bill").addEventListener("change", e => {
+        state.directorRows[idx].bill = e.target.value === "SI";
+        renderDirectorCierre();
+      });
+      tr.querySelector(".dir-reason").addEventListener("input", e => { state.directorRows[idx].reason = e.target.value; });
+    });
+
+    const totalReg = state.directorRows.reduce((a, b) => a + b.hours, 0);
+    const totalFac = state.directorRows.filter(r => r.bill).reduce((a, b) => a + b.hours, 0);
+    const totalExc = totalReg - totalFac;
+    document.getElementById("dirTotalReg").textContent = `${totalReg.toFixed(1)} h`;
+    document.getElementById("dirTotalExc").textContent = `${totalExc.toFixed(1)} h`;
+    document.getElementById("dirTotalFac").textContent = `${totalFac.toFixed(1)} h`;
+    renderClientePdf();
+  }
+
+  function renderClientePdf() {
+    const billable = state.directorRows.filter(r => r.bill);
+    const total = billable.reduce((a, b) => a + b.hours, 0);
+    const rowsHtml = billable.map(r => `
+      <tr>
+        <td>${r.date}</td>
+        <td>${r.emp}</td>
+        <td>${r.desc}</td>
+        <td style="text-align:right;"><strong>${r.hours.toFixed(1)} h</strong></td>
+      </tr>
+    `).join("");
+    document.getElementById("pdfDetalleTabla").innerHTML = `
+      <div class="table-wrap">
+        <table style="min-width:100%;">
+          <thead><tr><th>Fecha</th><th>Consultor</th><th>Actividad Validada</th><th style="text-align:right;">Horas Facturables</th></tr></thead>
+          <tbody>${rowsHtml}</tbody>
+          <tfoot>
+            <tr><td colspan="3" style="text-align:right; font-weight:700;">TOTAL HORAS CERTIFICADAS PARA FACTURACIÓN:</td><td style="text-align:right; font-weight:800; color:var(--navy);">${total.toFixed(1)} h</td></tr>
+          </tfoot>
+        </table>
+      </div>
+    `;
+  }
+
+  function renderSemaforo() {
+    const threshold = state.params.alert80;
+    const tbody = document.getElementById("tbodySemaforo");
+    tbody.innerHTML = state.projectsBudget.map(p => {
+      const pct = (p.used / p.budget) * 100;
+      let badge = `<span class="badge badge-ok"><span class="dot dot-green"></span>Verde (&lt;${threshold}%)</span>`;
+      if (pct > 100) {
+        badge = `<span class="badge badge-err"><span class="dot dot-red"></span>Rojo · En Sobreconsumo</span>`;
+      } else if (pct >= threshold) {
+        badge = `<span class="badge badge-warn"><span class="dot dot-yellow"></span>Amarillo (${threshold}–100%)</span>`;
+      }
+      return `
+        <tr>
+          <td><strong>${p.code}</strong></td>
+          <td>${p.name}</td>
+          <td>${p.director}</td>
+          <td>${p.budget} h</td>
+          <td>${p.used} h</td>
+          <td><strong>${pct.toFixed(1)} %</strong></td>
+          <td>${badge}</td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  // Navegación entre roles y modo móvil
+  document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const target = btn.dataset.view;
+      document.querySelectorAll(".view-section").forEach(sec => sec.classList.add("hidden"));
+      document.getElementById(`view-${target}`).classList.remove("hidden");
+    });
+  });
+
+  document.getElementById("btnMobileToggle").addEventListener("click", function() {
+    this.classList.toggle("active");
+    document.getElementById("appShell").classList.toggle("mobile-mode");
+  });
+
+  // Eventos Vista Empleado
+  document.getElementById("selEmpleado").addEventListener("change", e => {
+    state.selectedEmp = e.target.value;
+    const valid = getValidProjects(state.selectedEmp);
+    state.activities.forEach(a => {
+      if (!valid.some(v => v.code === a.project)) a.project = valid[0] ? valid[0].code : "";
+      if (!getCurrentEmp().generaExtras) a.extra = false;
+    });
+    renderEmpleadoSelector();
+    renderActivities();
+  });
+
+  document.getElementById("selDiaSemana").addEventListener("change", e => {
+    state.day = e.target.value;
+    updateKPIs();
+  });
+
+  document.getElementById("btnAgregarAct").addEventListener("click", () => {
+    const valid = getValidProjects(state.selectedEmp);
+    state.activities.push({ start: "17:30", end: "18:30", project: valid[0] ? valid[0].code : "", desc: "", extra: getCurrentEmp().generaExtras });
+    renderActivities();
+  });
+
+  document.getElementById("btnAgregarNov").addEventListener("click", () => {
+    state.novelties.push({ type: "NOV-02", hours: 2.0, obs: "", fileName: "" });
+    renderNovelties();
+  });
+
+  document.getElementById("btnPrecargar").addEventListener("click", () => {
+    const valid = getValidProjects(state.selectedEmp);
+    const p1 = valid[0] ? valid[0].code : "PRY-001";
+    state.activities = [
+      { start: "07:00", end: "12:30", project: p1, desc: "[Precargado] Continuidad desarrollo fase 4", extra: false },
+      { start: "13:30", end: "17:30", project: p1, desc: "[Precargado] Atención soporte y pruebas", extra: false }
+    ];
+    renderActivities();
+    document.getElementById("empFeedback").innerHTML = `<div class="alert alert-ok">📋 Actividades del día hábil anterior precargadas (RF-T-10). Ajuste horarios o descripciones antes de enviar.</div>`;
+  });
+
+  document.getElementById("btnGuardarBorrador").addEventListener("click", () => {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+    document.getElementById("empEstadoBadge").textContent = "Estado: Borrador Guardado";
+    document.getElementById("empFeedback").innerHTML = `<div class="alert alert-ok">💾 Avance guardado como borrador sin cerrar el trámite (RF-T-09).</div>`;
+  });
+
+  document.getElementById("btnLimpiarDia").addEventListener("click", () => {
+    state.activities = [];
+    state.novelties = [];
+    renderActivities();
+    renderNovelties();
+    document.getElementById("empFeedback").innerHTML = "";
+  });
+
+  document.getElementById("btnEnviarRegistro").addEventListener("click", () => {
+    const errs = validateDailySubmission();
+    const fb = document.getElementById("empFeedback");
+    if (errs.length > 0) {
+      fb.innerHTML = `<div class="alert alert-err"><strong>No se puede enviar (Reglas de Negocio):</strong><ul>${errs.map(e => `<li>${e}</li>`).join("")}</ul></div>`;
+      return;
+    }
+    const hasExtras = state.activities.some(a => a.extra);
+    document.getElementById("empEstadoBadge").textContent = hasExtras ? "Estado: En Aprobación Horas Extra" : "Estado: Cerrado A Tiempo";
+    fb.innerHTML = `<div class="alert alert-ok">✅ Registro enviado correctamente. ${hasExtras ? "Se enviaron las actividades fuera de horario a aprobación de " + getCurrentEmp().leader + " (RF-T-18)." : "Trámite cerrado y sumado al consolidado diario (RF-T-21)."}</div>`;
+  });
+
+  // Eventos Vista Líder
+  document.getElementById("btnAutorizarAmp").addEventListener("click", () => {
+    const motivo = document.getElementById("motivoAmp").value.trim();
+    const hora = document.getElementById("horaAmp").value;
+    const fb = document.getElementById("ampFeedback");
+    if (!motivo) {
+      fb.innerHTML = `<div class="alert alert-err">RF-T-17: Debe ingresar un motivo obligatorio para autorizar la ampliación.</div>`;
+      return;
+    }
+    if (!hora || toMin(hora) > toMin("22:00")) {
+      fb.innerHTML = `<div class="alert alert-err">La nueva hora límite no puede superar las 22:00.</div>`;
+      return;
+    }
+    document.getElementById("estadoAnaBandeja").textContent = `Ampliado hasta ${hora}`;
+    fb.innerHTML = `<div class="alert alert-ok">✔️ Ampliación autorizada hasta las ${hora}. Notificación enviada a Ana Gómez y trazabilidad registrada (RF-T-16 / RF-T-17).</div>`;
+  });
+
+  document.getElementById("btnRechazarAmp").addEventListener("click", () => {
+    document.getElementById("estadoAnaBandeja").textContent = "Cerrado sin envío";
+    document.getElementById("ampFeedback").innerHTML = `<div class="alert alert-warn">Solicitud denegada. El registro queda marcado como "No enviado" en el indicador de cumplimiento.</div>`;
+  });
+
+  document.getElementById("btnGuardarExtras").addEventListener("click", () => {
+    const missingComment = state.leaderExtras.some(x => x.status === "Rechazar" && !x.comment.trim());
+    const fb = document.getElementById("extrasFeedback");
+    if (missingComment) {
+      fb.innerHTML = `<div class="alert alert-err">RF-T-18: Toda actividad rechazada requiere un comentario obligatorio para el empleado.</div>`;
+      return;
+    }
+    fb.innerHTML = `<div class="alert alert-ok">✅ Decisiones procesadas: actividades aprobadas sumadas al cálculo de horas extra y saldo compensatorio; rechazadas devueltas al empleado (RF-T-19).</div>`;
+  });
+
+  // Eventos Vista Director
+  document.getElementById("btnValidarCierre").addEventListener("click", () => {
+    const invalid = state.directorRows.some(r => !r.bill && !r.reason.trim());
+    const fb = document.getElementById("directorFeedback");
+    if (invalid) {
+      fb.innerHTML = `<div class="alert alert-err">RF-T-26: Debe ingresar justificación para cada actividad excluida de facturación.</div>`;
+      return;
+    }
+    renderClientePdf();
+    fb.innerHTML = `<div class="alert alert-ok">📄 Cierre validado. Reporte PDF generado con Documento Base y publicado en el Portal del Cliente Banco Nacional S.A. (RF-T-27).</div>`;
+  });
+
+  // Eventos Vista Cliente
+  document.getElementById("btnCliFirmar").addEventListener("click", () => {
+    state.clientSigned = true;
+    const now = new Date().toLocaleString("es-CO");
+    document.getElementById("cliEstadoFirma").textContent = "Firmado Digitalmente ✔️";
+    document.getElementById("cliEstadoFirma").style.color = "var(--ok)";
+    const sello = document.getElementById("cliSelloFirma");
+    sello.classList.remove("hidden");
+    sello.innerHTML = `<strong>✍️ FIRMADO DIGITALMENTE (RF-T-28)</strong><br>Firmante: Roberto Méndez (Banco Nacional S.A. - NIT 890.123.456-1) | Certificado: <code>Certificado_Pruebas_Bootcamp_2026</code> | Fecha: ${now} | Hash SHA-256: <code>9f84b2c1...7a3e</code>`;
+    document.getElementById("clienteFeedback").innerHTML = `<div class="alert alert-ok">✅ Reporte firmado digitalmente. Si todos los proyectos del mes concluyeron, AuraQuantic dispara el resumen consolidado a Finanzas (RF-T-29).</div>`;
+  });
+
+  document.getElementById("btnCliObservar").addEventListener("click", () => {
+    const obs = document.getElementById("cliObs").value.trim();
+    const fb = document.getElementById("clienteFeedback");
+    if (!obs) {
+      fb.innerHTML = `<div class="alert alert-err">Debe ingresar sus observaciones para devolver el reporte al Director del Proyecto.</div>`;
+      return;
+    }
+    document.getElementById("cliEstadoFirma").textContent = "Devuelto con Observaciones ⚠️";
+    document.getElementById("cliEstadoFirma").style.color = "var(--warn)";
+    document.getElementById("cliSelloFirma").classList.add("hidden");
+    fb.innerHTML = `<div class="alert alert-warn">⚠️ Reporte devuelto al Director de Proyecto con la observación registrada (RF-T-28).</div>`;
+  });
+
+  // Eventos Vista Gerencia
+  document.getElementById("btnSimularAprobacion").addEventListener("click", () => {
+    const p = state.projectsBudget[0];
+    p.used += 15;
+    const pct = (p.used / p.budget) * 100;
+    const alerts = [];
+    if (pct >= state.params.alert80 && !p.alert80Sent) {
+      p.alert80Sent = true;
+      alerts.push(`🔔 <strong>Alerta Única ${state.params.alert80}% (RF-T-24):</strong> ${p.code} alcanzó ${pct.toFixed(1)}% (${p.used}/${p.budget} h). Notificado al Director ${p.director}.`);
+    }
+    if (pct >= 100 && !p.alert100Sent) {
+      p.alert100Sent = true;
+      alerts.push(`🚨 <strong>Alerta 100% SOBRECONSUMO (RF-T-24):</strong> ${p.code} superó presupuesto (${pct.toFixed(1)}%). Notificado a Director y Gerente de Operaciones.`);
+    }
+    renderSemaforo();
+    document.getElementById("gerenciaAlertas").innerHTML = alerts.length
+      ? `<div class="alert alert-warn">${alerts.join("<br>")}</div>`
+      : `<div class="alert alert-ok">Se sumaron +15h a ${p.code} (${pct.toFixed(1)}%). La alerta previa ya había sido enviada una única vez.</div>`;
+  });
+
+  document.getElementById("btnGuardarParams").addEventListener("click", () => {
+    state.params.alert80 = Number(document.getElementById("paramAlerta80").value) || 80;
+    state.params.recDays = Number(document.getElementById("paramDiasRec").value) || 5;
+    state.params.tacitDays = Number(document.getElementById("paramDiasTacita").value) || 10;
+    renderSemaforo();
+    document.getElementById("paramFeedback").innerHTML = `<div class="alert alert-ok">⚙️ Parámetros actualizados en tiempo real sin modificar el proceso (RT-15 / RN-T-09): Alerta al ${state.params.alert80}%, Recordatorio ${state.params.recDays} días, Tácita ${state.params.tacitDays} días.</div>`;
+  });
+
+  // Inicialización
+  loadDraft();
+  renderEmpleadoSelector();
+  renderActivities();
+  renderNovelties();
+  renderLiderExtras();
+  renderDirectorCierre();
+  renderSemaforo();
+})();
+</script>
+</body>
+</html>
