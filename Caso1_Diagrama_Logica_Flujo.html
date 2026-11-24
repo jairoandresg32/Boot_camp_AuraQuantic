@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagrama de Lógica de Flujo — Caso 1 Bootcamp AuraQuantic</title>
+<style>
+  :root {
+    --navy: #00015a;
+    --navy-mid: #161a7a;
+    --mint: #3ff2cf;
+    --mint-dark: #0a7d6b;
+    --mint-soft: #e6fcf7;
+    --bg: #f4f6f8;
+    --surface: #ffffff;
+    --text: #14172b;
+    --muted: #5b6074;
+    --line: #dfe3ea;
+    --ok: #15803d;
+    --ok-bg: #dcfce7;
+    --warn: #b45309;
+    --warn-bg: #fef3c7;
+    --err: #b91c1c;
+    --err-bg: #fee2e2;
+    --shadow: 0 6px 22px rgba(0, 1, 90, 0.08);
+    --font: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.45;
+  }
+
+  /* Cabecera y Controles */
+  .topbar {
+    background: var(--navy);
+    color: #fff;
+    border-bottom: 4px solid var(--mint);
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.22);
+  }
+  .topbar-inner {
+    max-width: 1420px;
+    margin: 0 auto;
+    padding: 10px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: center; gap: 11px; }
+  .brand-logo {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--mint); color: var(--navy);
+    font-weight: 800; display: grid; place-items: center; font-size: 15px;
+  }
+  .brand h1 { margin: 0; font-size: 15.5px; font-weight: 700; }
+  .brand p { margin: 0; font-size: 11.5px; color: #cbd5e1; }
+
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .tab-btn, .tool-btn {
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    padding: 6px 11px;
+    border-radius: 7px;
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .tab-btn:hover, .tool-btn:hover { background: rgba(63,242,207,0.2); border-color: var(--mint); }
+  .tab-btn.active { background: var(--mint); color: var(--navy); border-color: var(--mint); font-weight: 700; }
+
+  .tools { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .zoom-pill {
+    font-size: 12px; font-weight: 700; color: var(--mint);
+    padding: 0 6px; min-width: 44px; text-align: center;
+  }
+
+  /* Leyenda de Simbologia Clasica */
+  .legend-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 8px 18px;
+  }
+  .legend-inner {
+    max-width: 1420px;
+    margin: 0 auto;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 12.5px;
+  }
+  .leg-item { display: inline-flex; align-items: center; gap: 7px; font-weight: 600; color: var(--text); }
+
+  /* Workspace */
+  .workspace {
+    max-width: 1420px;
+    margin: 16px auto 48px;
+    padding: 0 18px;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 16px;
+    align-items: start;
+  }
+  .workspace.panel-hidden { grid-template-columns: 1fr; }
+
+  .canvas-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .flow-block { border-bottom: 2px solid var(--line); }
+  .flow-block:last-child { border-bottom: 0; }
+  .flow-head {
+    background: #f8fafc;
+    border-bottom: 1px solid var(--line);
+    padding: 11px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .flow-head h2 { margin: 0; font-size: 15.5px; color: var(--navy); font-weight: 800; }
+  .flow-head span { font-size: 12px; color: var(--muted); }
+
+  .svg-scroll {
+    overflow: auto;
+    padding: 14px;
+    background: radial-gradient(#e2e8f0 1px, transparent 1px);
+    background-size: 20px 20px;
+    text-align: center;
+  }
+  .svg-stage {
+    display: inline-block;
+    transform-origin: top center;
+    transition: transform 0.15s ease;
+  }
+
+  /* Interactividad de nodos SVG */
+  .fc-node { cursor: pointer; transition: filter 0.15s ease; }
+  .fc-node:hover { filter: drop-shadow(0 4px 10px rgba(0, 1, 90, 0.25)); }
+  .fc-node.selected .node-shape { stroke: #d97706 !important; stroke-width: 3.5px !important; }
+
+  /* Panel Derecho de Detalle */
+  .detail-panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 78px;
+    overflow: hidden;
+  }
+  .detail-head {
+    background: var(--navy);
+    color: #fff;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .detail-head h3 { margin: 0; font-size: 15px; }
+  .detail-body { padding: 15px 16px; font-size: 13px; }
+  .d-field { margin-bottom: 11px; }
+  .d-lbl {
+    font-size: 10.5px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--muted); margin-bottom: 3px;
+  }
+  .d-val { color: var(--text); }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 999px;
+    font-size: 11px; font-weight: 700; background: var(--mint-soft);
+    color: var(--mint-dark); border: 1px solid var(--mint);
+  }
+  .tag-wrap { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+  .req-tag {
+    font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 5px;
+    background: #eef2ff; color: var(--navy); border: 1px solid #cbd5e1;
+  }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 1024px) {
+    .workspace { grid-template-columns: 1fr; }
+    .detail-panel { position: static; }
+  }
+
+  @media print {
+    .topbar, .legend-bar, .detail-panel { display: none !important; }
+    .workspace { display: block; margin: 0; padding: 0; }
+    .canvas-card { border: 0; box-shadow: none; }
+    .svg-scroll { background: #fff; padding: 0; overflow: visible; }
+    .svg-stage { transform: none !important; width: 100%; }
+    .flow-block { page-break-after: always; border: 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-logo">AQ</div>
+      <div>
+        <h1>Mapa de Lógica de Programación — Caso 1 AuraQuantic</h1>
+        <p>Diagramas de Flujo Clásicos (Óvalos · Rectángulos · Rombos de Decisión · Documentos)</p>
+      </div>
+    </div>
+
+    <nav class="tabs" id="tabNav" aria-label="Selector de flujo">
+      <button class="tab-btn active" data-tab="f1">1. Registro Diario (TIEM_REG_DIARIO)</button>
+      <button class="tab-btn" data-tab="f2">2. Novedades Correo (TIEM_NOV_CORREO)</button>
+      <button class="tab-btn" data-tab="f3">3. Cierre Mensual (TIEM_CIERRE_MENSUAL)</button>
+      <button class="tab-btn" data-tab="all">Vista Completa (3 Flujos)</button>
+    </nav>
+
+    <div class="tools">
+      <button class="tool-btn" id="btnZoomOut" title="Reducir Zoom">−</button>
+      <span class="zoom-pill" id="zoomLabel">100%</span>
+      <button class="tool-btn" id="btnZoomIn" title="Aumentar Zoom">+</button>
+      <button class="tool-btn active" id="btnTogglePanel" title="Mostrar/Ocultar Detalle Técnico">ℹ️ Detalle</button>
+      <button class="tool-btn" id="btnDownloadSvg" title="Exportar diagrama actual como archivo SVG">⬇ Descargar SVG</button>
+      <button class="tool-btn" id="btnPrint" title="Imprimir o Guardar como PDF">🖨️ Imprimir / PDF</button>
+    </div>
+  </div>
+</header>
+
+<div class="legend-bar">
+  <div class="legend-inner">
+    <strong style="color:var(--navy);">Simbología del Diagrama:</strong>
+    <span class="leg-item">
+      <svg width="34" height="20" viewBox="0 0 34 20"><rect x="2" y="2" width="30" height="16" rx="8" fill="#00015a"/></svg>
+      Óvalo: Inicio / Fin
+    </span>
+    <span class="leg-item">
+      <svg width="34" height="20" viewBox="0 0 34 20"><rect x="2" y="2" width="30" height="16" rx="3" fill="#ffffff" stroke="#00015a" stroke-width="2"/></svg>
+      Rectángulo: Proceso / Tarea
+    </span>
+    <span class="leg-item">
+      <svg width="34" height="22" viewBox="0 0 34 22"><polygon points="17,1 33,11 17,21 1,11" fill="#fef3c7" stroke="#b45309" stroke-width="2"/></svg>
+      Rombo: Decisión Lógica (SÍ / NO)
+    </span>
+    <span class="leg-item">
+      <svg width="34" height="20" viewBox="0 0 34 20"><polygon points="6,2 32,2 28,18 2,18" fill="#e6fcf7" stroke="#0a7d6b" stroke-width="2"/></svg>
+      Paralelogramo: API REST / Correo / PDF-Excel
+    </span>
+    <span style="margin-left:auto; color:var(--muted); font-size:12px;">💡 Haz clic en cualquier figura para ver su explicación técnica.</span>
+  </div>
+</div>
+
+<main class="workspace" id="workspace">
+  <section class="canvas-card" id="diagramsHost"></section>
+
+  <aside class="detail-panel" id="detailPanel">
+    <div class="detail-head">
+      <h3>Detalle del Nodo</h3>
+      <button class="tool-btn" id="btnClosePanel" style="padding:3px 8px; font-size:11px;">Ocultar</button>
+    </div>
+    <div class="detail-body">
+      <div class="d-field">
+        <span class="badge" id="detType">Seleccione un nodo</span>
+      </div>
+      <div class="d-field">
+        <div class="d-lbl">Nodo Seleccionado</div>
+        <div class="d-val" style="font-weight:700; color:var(--navy);" id="detTitle">—</div>
+      </div>
+      <div class="d-field">
+        <div class="d-lbl">Qué Hace en la Lógica</div>
+        <div class="d-val" id="detDesc">Haz clic en cualquier óvalo, rectángulo, rombo o paralelogramo del diagrama para ver su explicación funcional, actor y objeto AuraQuantic.</div>
+      </div>
+      <div class="d-field">
+        <div class="d-lbl">Actor / Responsable</div>
+        <div class="d-val" id="detActor">—</div>
+      </div>
+      <div class="d-field">
+        <div class="d-lbl">Objeto en AuraQuantic</div>
+        <div class="d-val" id="detObject">—</div>
+      </div>
+      <div class="d-field">
+        <div class="d-lbl">Requerimientos</div>
+        <div class="tag-wrap" id="detReqs"></div>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<script>
+(function() {
+  const FLOWS = {
+    f1: {
+      id: "f1",
+      title: "Flujo 1: Registro Diario, Ampliación, Horas Extra y Alertas (TIEM_REG_DIARIO)",
+      subtitle: "Orquestación diaria por empleado activo desde apertura hasta cálculo de saldo y semáforo presupuestal",
+      width: 1160,
+      height: 1600,
+      nodes: [
+        { id: "d1_start", kind: "oval", cx: 460, cy: 48, w: 250, h: 48, lines: ["INICIO: 07:00 / 08:00 a. m.", "Evento Temporizado Diario"],
+          actor: "AuraQuantic Engine", obj: "Evento de inicio temporizado por lotes (2.05 / 3.07)", reqs: ["RF-T-05"],
+          desc: "Se dispara automáticamente a las 8:00 a. m. (lunes y martes) y a las 7:00 a. m. (miércoles a viernes)." },
+        { id: "d1_habil", kind: "diamond", cx: 460, cy: 148, w: 240, h: 96, lines: ["¿Es día hábil?", "(Sin festivos CO)"],
+          actor: "Sistema / Calendario", obj: "Calendario Laboral + Conector REST Nager.Date", reqs: ["RF-T-06", "RT-05"],
+          desc: "Consulta el calendario laboral nutrido anualmente por la API de festivos de Colombia; descarta sábados, domingos y festivos." },
+        { id: "d1_nohabil", kind: "oval", cx: 850, cy: 148, w: 230, h: 52, lines: ["FIN: 0 tareas creadas", "(Finde o Festivo)"],
+          actor: "Sistema", obj: "Evento Fin sin instanciación", reqs: ["RF-T-06"],
+          desc: "En fines de semana o festivos nacionales de Colombia no se crea ninguna tarea de registro." },
+        { id: "d1_crear", kind: "rect", cx: 460, cy: 262, w: 270, h: 58, lines: ["Crear tarea por empleado", "Consecutivo TIEM-2026-XXXXXX"],
+          actor: "AuraQuantic Engine", obj: "Término Contador + Bandeja Mis Tareas", reqs: ["RF-T-05", "RT-02", "RT-03"],
+          desc: "Genera una instancia independiente por cada empleado activo con identificador único legible." },
+        { id: "d1_reg", kind: "rect", cx: 460, cy: 366, w: 280, h: 62, lines: ["Empleado registra actividades", "y novedades (Borrador/Precarga)"],
+          actor: "Empleado", obj: "FORM_REGISTRO_DIARIO + GC_ACTIVIDADES + Limitado", reqs: ["RF-T-03", "RF-T-07", "RF-T-08", "RF-T-09", "RF-T-10", "RF-T-12"],
+          desc: "Diligencia actividades solo en proyectos asignados vigentes, calcula duraciones en vivo, permite guardar borrador o precargar el día anterior." },
+        { id: "d1_430", kind: "diamond", cx: 460, cy: 476, w: 230, h: 92, lines: ["¿4:30 p. m.", "sin enviar?"],
+          actor: "AuraQuantic Engine", obj: "Evento Intermedio No Interruptor (2.05)", reqs: ["RF-T-14"],
+          desc: "Evalúa a las 4:30 p. m. si el empleado aún no ha enviado su registro diario." },
+        { id: "d1_rec", kind: "doc", cx: 145, cy: 476, w: 230, h: 58, lines: ["Recordatorio por Correo", "+ Notificación App"],
+          actor: "Sistema → Empleado", obj: "TS Notificador Email y App móvil (3.01)", reqs: ["RF-T-14", "RT-11"],
+          desc: "Envía correo con enlace directo a la tarea y alerta Push en la App de AuraQuantic." },
+        { id: "d1_530", kind: "diamond", cx: 460, cy: 606, w: 240, h: 94, lines: ["¿Envió antes de", "5:30 p. m.?"],
+          actor: "AuraQuantic Engine", obj: "Evento Frontera Interruptor 17:30 (2.05)", reqs: ["RF-T-05", "RF-T-16"],
+          desc: "Controla la hora límite estándar de cierre (5:30 p. m.). Si no envió, dispara el flujo de ampliación." },
+        { id: "d1_amp_eval", kind: "rect", cx: 850, cy: 606, w: 240, h: 58, lines: ["Líder o Gerente evalúa", "solicitud de ampliación"],
+          actor: "Líder de Área / Gerente Op.", obj: "FORM_AMPLIACION_HORARIO + Participantes (2.07)", reqs: ["RF-T-16", "RN-T-04"],
+          desc: "Solo el Líder directo o el Gerente de Operaciones puede autorizar una nueva hora límite." },
+        { id: "d1_amp_dec", kind: "diamond", cx: 850, cy: 726, w: 240, h: 96, lines: ["¿Autoriza con", "motivo ≤22:00?"],
+          actor: "Líder de Área / Gerente Op.", obj: "Compuerta Exclusiva + Motivo Obligatorio", reqs: ["RF-T-16", "RF-T-17"],
+          desc: "Exige motivo obligatorio (queda en historial) y fija nueva hora límite máxima hasta las 10:00 p. m." },
+        { id: "d1_amp_ok", kind: "rect", cx: 1045, cy: 486, w: 190, h: 56, lines: ["Habilita nueva hora", "y notifica empleado"],
+          actor: "Sistema → Empleado", obj: "TS Notificador + Marca Con Ampliación", reqs: ["RF-T-16", "RF-T-17"],
+          desc: "Reactiva el formulario del empleado con la nueva hora límite y marca el indicador como registro con ampliación." },
+        { id: "d1_forzoso", kind: "rect", cx: 850, cy: 848, w: 240, h: 56, lines: ["Cierre forzoso +", "Alerta Talento Humano"],
+          actor: "Sistema → TH / Líder", obj: "TS Notificador + Marca No Enviado", reqs: ["RF-T-17", "3.10"],
+          desc: "Si se niega ampliación o vence el límite final, cierra la tarea como 'No enviado' y escala a Talento Humano." },
+        { id: "d1_fin_amp", kind: "oval", cx: 850, cy: 942, w: 210, h: 48, lines: ["FIN: No enviado"],
+          actor: "Sistema", obj: "Evento Fin Incumplimiento", reqs: ["3.6"],
+          desc: "Finaliza el trámite diario contabilizado en el porcentaje de registros no enviados." },
+        { id: "d1_rules", kind: "diamond", cx: 460, cy: 738, w: 270, h: 104, lines: ["¿Cumple reglas?", "(No traslape, ≤16h, Soporte)"],
+          actor: "Motor de Reglas UI", obj: "Reglas de Negocio + Disparo Obligatorio (2.04 / 3.03)", reqs: ["RF-T-13", "RN-T-01", "RN-T-02", "RN-T-03", "RN-T-05", "RN-T-06"],
+          desc: "Valida proyecto vigente, Fin > Inicio, cero traslapes horarios, total ≤16h/día y soporte adjunto obligatorio si la novedad lo exige." },
+        { id: "d1_blk", kind: "rect", cx: 145, cy: 738, w: 216, h: 58, lines: ["Bloquear envío", "y mostrar error en UI"],
+          actor: "Sistema → Empleado", obj: "Validación de Formulario", reqs: ["RF-T-13", "RN-T-05", "RN-T-06"],
+          desc: "Impide avanzar el flujo y muestra al usuario qué regla de negocio debe corregir." },
+        { id: "d1_ext_chk", kind: "diamond", cx: 460, cy: 874, w: 260, h: 98, lines: ["¿Fuera horario y", "cargo genera extras?"],
+          actor: "Motor BPMN", obj: "Compuerta Exclusiva + Atributo Cargo (2.07)", reqs: ["RF-T-11", "RF-T-18", "RF-T-20", "RN-T-07"],
+          desc: "Verifica si hay filas marcadas 'Fuera de horario' y si el cargo del empleado tiene permitido generar horas extra." },
+        { id: "d1_lid_apr", kind: "rect", cx: 460, cy: 986, w: 270, h: 58, lines: ["Líder aprueba / rechaza", "actividad por actividad"],
+          actor: "Líder de Área (Dinámico)", obj: "FORM_APROBACION_EXTRAS + Suplencias (2.06 / 2.07)", reqs: ["RF-T-18", "RT-06"],
+          desc: "Enruta dinámicamente al Líder del empleado. Revisa cada actividad fuera de horario con decisión y comentario." },
+        { id: "d1_all_apr", kind: "diamond", cx: 460, cy: 1094, w: 240, h: 92, lines: ["¿Todas las extras", "fueron aprobadas?"],
+          actor: "Motor BPMN", obj: "Compuerta Exclusiva + TS Limpiador", reqs: ["RF-T-19"],
+          desc: "Evalúa si todas las actividades fueron aprobadas o si alguna fue rechazada." },
+        { id: "d1_dev", kind: "rect", cx: 170, cy: 1094, w: 220, h: 58, lines: ["Devuelve rechazadas al", "empleado (1 sola vez)"],
+          actor: "Líder → Empleado", obj: "TS Desviador + TS Limpiador (3.01 / 3.06)", reqs: ["RF-T-19"],
+          desc: "Solo las actividades aprobadas pasan a extras; las rechazadas regresan al empleado para corregir o reclasificar dentro de horario una única vez." },
+        { id: "d1_calc", kind: "doc", cx: 460, cy: 1208, w: 290, h: 62, lines: ["Calcular extras, saldo y", "generar Excel 6:00 p. m."],
+          actor: "AuraQuantic Engine → Operaciones", obj: "TS Ingresos + Exportador Excel Consolidado (3.02 / 3.04)", reqs: ["RF-T-21", "RF-T-22", "RF-T-23"],
+          desc: "Calcula horas extra aprobadas, ausentismos y saldo de compensación del portal; emite consolidado diario en Excel." },
+        { id: "d1_upd", kind: "rect", cx: 460, cy: 1306, w: 270, h: 56, lines: ["Actualizar horas consumidas", "en Familia Proyectos"],
+          actor: "AuraQuantic Engine", obj: "TS Modifica Elemento de Familia (3.03)", reqs: ["RF-T-24"],
+          desc: "Suma las horas aprobadas al campo Horas_Consumidas de cada proyecto." },
+        { id: "d1_80", kind: "diamond", cx: 460, cy: 1418, w: 260, h: 96, lines: ["¿Consumo ≥80 %", "o ≥100 %?"],
+          actor: "Universal Watcher", obj: "Regla Parametrizable + Universal Watcher (4.02)", reqs: ["RF-T-24", "RN-T-09"],
+          desc: "Compara las horas consumidas contra el presupuesto del proyecto usando el umbral parametrizado." },
+        { id: "d1_al80", kind: "doc", cx: 850, cy: 1390, w: 240, h: 54, lines: ["Alerta única 80 %", "al Director de Proyecto"],
+          actor: "Sistema → Director", obj: "TS Notificador + Flag Alerta80Enviada", reqs: ["RF-T-24"],
+          desc: "Envía notificación una sola vez cuando el proyecto llega al 80 % de consumo presupuestal." },
+        { id: "d1_al100", kind: "doc", cx: 850, cy: 1462, w: 250, h: 56, lines: ["Alerta Director + Gerente", "Estado: En Sobreconsumo"],
+          actor: "Sistema → Director y Gerente", obj: "TS Notificador + Cambio Estado Proyecto", reqs: ["RF-T-24"],
+          desc: "Al llegar al 100 %, alerta a ambos responsables y marca el proyecto en sobreconsumo (rojo)." },
+        { id: "d1_fin", kind: "oval", cx: 460, cy: 1548, w: 240, h: 48, lines: ["FIN: Día procesado"],
+          actor: "Sistema", obj: "Evento Fin Proceso Diario", reqs: ["RF-T-21", "RF-T-24"],
+          desc: "Cierre completo de la jornada diaria en el motor de AuraQuantic." }
+      ],
+      edges: [
+        { pts: [[460,72],[460,100]] },
+        { pts: [[580,148],[735,148]], label: "NO", lpos: [652,148], ltype: "no" },
+        { pts: [[460,196],[460,233]], label: "SÍ", lpos: [460,214], ltype: "yes" },
+        { pts: [[460,291],[460,335]] },
+        { pts: [[460,397],[460,430]] },
+        { pts: [[345,476],[260,476]], label: "SÍ", lpos: [302,476], ltype: "yes" },
+        { pts: [[145,447],[145,378],[320,378]] },
+        { pts: [[460,522],[460,559]], label: "NO", lpos: [460,540], ltype: "no" },
+        { pts: [[580,606],[730,606]], label: "NO", lpos: [652,606], ltype: "no" },
+        { pts: [[850,635],[850,678]] },
+        { pts: [[850,774],[850,820]], label: "NO", lpos: [850,796], ltype: "no" },
+        { pts: [[850,876],[850,918]] },
+        { pts: [[970,726],[1045,726],[1045,514]], label: "SÍ", lpos: [1015,726], ltype: "yes" },
+        { pts: [[1045,458],[1045,366],[600,366]] },
+        { pts: [[460,653],[460,686]], label: "SÍ", lpos: [460,669], ltype: "yes" },
+        { pts: [[325,738],[253,738]], label: "NO", lpos: [290,738], ltype: "no" },
+        { pts: [[37,738],[18,738],[18,354],[320,354]] },
+        { pts: [[460,790],[460,825]], label: "SÍ", lpos: [460,807], ltype: "yes" },
+        { pts: [[460,923],[460,957]], label: "SÍ", lpos: [460,940], ltype: "yes" },
+        { pts: [[330,874],[32,874],[32,1218],[315,1218]], label: "NO", lpos: [185,874], ltype: "no" },
+        { pts: [[460,1015],[460,1048]] },
+        { pts: [[340,1094],[280,1094]], label: "NO", lpos: [310,1094], ltype: "no" },
+        { pts: [[170,1123],[170,1196],[315,1196]] },
+        { pts: [[460,1140],[460,1177]], label: "SÍ", lpos: [460,1158], ltype: "yes" },
+        { pts: [[460,1239],[460,1278]] },
+        { pts: [[460,1334],[460,1370]] },
+        { pts: [[590,1404],[660,1404],[660,1390],[730,1390]], label: "≥80%", lpos: [660,1390], ltype: "warn" },
+        { pts: [[590,1434],[660,1434],[660,1462],[725,1462]], label: "≥100%", lpos: [660,1462], ltype: "no" },
+        { pts: [[460,1466],[460,1524]], label: "<80%", lpos: [460,1495], ltype: "yes" },
+        { pts: [[970,1390],[1050,1390],[1050,1548],[580,1548]] },
+        { pts: [[975,1462],[1050,1462],[1050,1548],[580,1548]] }
+      ]
+    },
+
+    f2: {
+      id: "f2",
+      title: "Flujo 2: Recepción de Novedades e Incapacidades por Correo (TIEM_NOV_CORREO)",
+      subtitle: "Canal alterno automático vía buzón IMAP para empleados incapacitados sin acceso al sistema",
+      width: 1000,
+      height: 860,
+      nodes: [
+        { id: "d2_start", kind: "oval", cx: 350, cy: 48, w: 260, h: 48, lines: ["INICIO: Correo entrante", "en buzón de novedades"],
+          actor: "Empleado Incapacitado", obj: "Evento Inicio Mensaje + Conector Correo Entrante", reqs: ["RF-T-15"],
+          desc: "El proceso inicia automáticamente cuando entra un correo al buzón corporativo de novedades." },
+        { id: "d2_leer", kind: "rect", cx: 350, cy: 140, w: 250, h: 56, lines: ["Leer correo, remitente", "y archivos adjuntos"],
+          actor: "AuraQuantic Engine", obj: "Mapeo Conector Correo Entrante", reqs: ["RF-T-15"],
+          desc: "Extrae la dirección del remitente, el asunto, el cuerpo del mensaje y los adjuntos recibidos." },
+        { id: "d2_emp", kind: "diamond", cx: 350, cy: 250, w: 250, h: 96, lines: ["¿Remitente es", "empleado activo?"],
+          actor: "AuraQuantic Engine", obj: "Consulta Maestro Empleados", reqs: ["RF-T-15"],
+          desc: "Cruza el correo remitente contra el directorio activo de empleados de AuraQuantic." },
+        { id: "d2_rech", kind: "doc", cx: 740, cy: 250, w: 250, h: 58, lines: ["Responder automáticamente:", "Correo no procesado"],
+          actor: "Sistema → Remitente Externo", obj: "TS Notificador Respuesta Automática (3.01)", reqs: ["RF-T-15"],
+          desc: "Si el remitente no pertenece a la empresa, responde automáticamente indicando que no fue procesado." },
+        { id: "d2_fin_no", kind: "oval", cx: 740, cy: 352, w: 210, h: 48, lines: ["FIN: Rechazado"],
+          actor: "Sistema", obj: "Evento Fin Rechazo", reqs: ["RF-T-15"],
+          desc: "Finaliza el trámite protegiendo el buzón ante remitentes desconocidos." },
+        { id: "d2_sop", kind: "diamond", cx: 350, cy: 398, w: 240, h: 94, lines: ["¿Trae soporte", "adjunto?"],
+          actor: "AuraQuantic Engine", obj: "Validación de Adjuntos en Panel", reqs: ["RF-T-13", "RF-T-15"],
+          desc: "Verifica que el empleado haya incluido el certificado médico o soporte exigido." },
+        { id: "d2_pedir", kind: "doc", cx: 740, cy: 426, w: 250, h: 58, lines: ["Solicitar reenvío con", "soporte adjunto"],
+          actor: "Sistema → Empleado", obj: "TS Notificador (3.01)", reqs: ["RF-T-13"],
+          desc: "Notifica al empleado que debe adjuntar el soporte médico para tramitar la incapacidad." },
+        { id: "d2_fin_nosop", kind: "oval", cx: 740, cy: 526, w: 210, h: 48, lines: ["FIN: Pendiente soporte"],
+          actor: "Sistema", obj: "Evento Fin Incompleto", reqs: ["RF-T-13"],
+          desc: "Cierra el intento incompleto sin radicar novedad sin respaldo." },
+        { id: "d2_arch", kind: "rect", cx: 350, cy: 526, w: 260, h: 58, lines: ["Archivar soporte en expediente", "(Tipo de novedad / Mes)"],
+          actor: "AuraQuantic Engine", obj: "Biblioteca Bib_SoportesNovedades (3.04)", reqs: ["RF-T-13", "RF-T-15", "RT-09"],
+          desc: "Guarda el documento en el expediente del empleado clasificado por tipo de novedad y mes." },
+        { id: "d2_th", kind: "rect", cx: 350, cy: 624, w: 260, h: 58, lines: ["Crear tarea de validación", "para Talento Humano"],
+          actor: "Talento Humano", obj: "Tarea Personal Talento Humano (2.06)", reqs: ["RF-T-15"],
+          desc: "Asigna la novedad creada con su soporte adjunto a la bandeja de Talento Humano." },
+        { id: "d2_aus", kind: "rect", cx: 350, cy: 722, w: 260, h: 58, lines: ["Registrar ausentismo en", "jornadas correspondientes"],
+          actor: "Talento Humano / Sistema", obj: "TS Ingresos y Dispersión Multidía (3.02 / 3.10)", reqs: ["RF-T-22", "3.10"],
+          desc: "Aplica los días cubiertos por la incapacidad/novedad en los días hábiles correspondientes." },
+        { id: "d2_fin", kind: "oval", cx: 350, cy: 804, w: 230, h: 48, lines: ["FIN: Novedad legalizada"],
+          actor: "Sistema", obj: "Evento Fin Exitoso", reqs: ["RF-T-15"],
+          desc: "Novedad validada y lista para consolidación mensual de nómina." }
+      ],
+      edges: [
+        { pts: [[350,72],[350,112]] },
+        { pts: [[350,168],[350,202]] },
+        { pts: [[475,250],[615,250]], label: "NO", lpos: [542,250], ltype: "no" },
+        { pts: [[740,279],[740,328]] },
+        { pts: [[350,298],[350,351]], label: "SÍ", lpos: [350,324], ltype: "yes" },
+        { pts: [[470,398],[545,398],[545,426],[615,426]], label: "NO", lpos: [545,412], ltype: "no" },
+        { pts: [[740,455],[740,502]] },
+        { pts: [[350,445],[350,497]], label: "SÍ", lpos: [350,471], ltype: "yes" },
+        { pts: [[350,555],[350,595]] },
+        { pts: [[350,653],[350,693]] },
+        { pts: [[350,751],[350,780]] }
+      ]
+    },
+
+    f3: {
+      id: "f3",
+      title: "Flujo 3: Cierre Mensual, Firma Digital, Finanzas y Nómina (TIEM_CIERRE_MENSUAL)",
+      subtitle: "Tratamiento distribuido por proyecto facturable, aprobación tácita 5/10 días, confluencia y nómina REST",
+      width: 1160,
+      height: 1460,
+      nodes: [
+        { id: "d3_start", kind: "oval", cx: 460, cy: 48, w: 250, h: 48, lines: ["INICIO: 1er día hábil", "del mes"],
+          actor: "AuraQuantic Engine", obj: "Evento de Inicio Temporizado Mensual (2.05)", reqs: ["RF-T-25"],
+          desc: "Arranca automáticamente el primer día hábil de cada mes procesando el mes inmediatamente anterior." },
+        { id: "d3_cons", kind: "rect", cx: 460, cy: 136, w: 270, h: 56, lines: ["Consultar proyectos", "facturables con horas"],
+          actor: "AuraQuantic Engine", obj: "Consulta sobre FAM_PROYECTOS", reqs: ["RF-T-25"],
+          desc: "Filtra los proyectos marcados como Facturable = Sí que registraron horas aprobadas en el mes." },
+        { id: "d3_split", kind: "rect", cx: 460, cy: 230, w: 280, h: 58, lines: ["Abrir 1 subproceso por proyecto", "(Tratamiento Distribuido)"],
+          actor: "AuraQuantic Engine", obj: "Tratamiento Distribuido Causal (3.07)", reqs: ["RF-T-25"],
+          desc: "Si hubo 3 proyectos facturables, abre 3 trámites de aprobación totalmente independientes." },
+        { id: "d3_dir", kind: "rect", cx: 460, cy: 328, w: 290, h: 62, lines: ["Director revisa y excluye no", "facturables con motivo (RN-T-08)"],
+          actor: "Director de Proyecto", obj: "FORM_CIERRE_PROYECTO + Asignación Dinámica", reqs: ["RF-T-26", "RN-T-08"],
+          desc: "Valida detalle por empleado; puede excluir actividades no cobrables con justificación, sin descontarlas de nómina." },
+        { id: "d3_pdf", kind: "doc", cx: 460, cy: 428, w: 280, h: 60, lines: ["Generar Reporte PDF y", "publicar en Portal Cliente"],
+          actor: "Sistema → Cliente Externo", obj: "Documento Base PDF + Portal Clientes (2.08 / 4.03)", reqs: ["RF-T-27", "RT-01", "RT-14"],
+          desc: "Combina plantilla corporativa con los totales validados y publica el PDF en el portal aislado del cliente." },
+        { id: "d3_5d", kind: "diamond", cx: 460, cy: 540, w: 250, h: 96, lines: ["¿Cliente responde", "en ≤5 días hábiles?"],
+          actor: "AuraQuantic Engine", obj: "Evento Intermedio Temporizado (2.05 / RN-T-09)", reqs: ["RF-T-28", "RN-T-09"],
+          desc: "Controla el primer umbral parametrizable de 5 días hábiles de espera del cliente." },
+        { id: "d3_rec5", kind: "doc", cx: 850, cy: 540, w: 230, h: 56, lines: ["Enviar recordatorio único", "Día 5 hábil"],
+          actor: "Sistema → Cliente", obj: "TS Notificador (3.01)", reqs: ["RF-T-28"],
+          desc: "Envía un único correo recordatorio al contacto aprobador del cliente." },
+        { id: "d3_10d", kind: "diamond", cx: 850, cy: 656, w: 250, h: 96, lines: ["¿Responde antes", "del Día 10 hábil?"],
+          actor: "AuraQuantic Engine", obj: "Evento Intermedio Límite 10 Días", reqs: ["RF-T-28", "RN-T-09"],
+          desc: "Espera hasta el décimo día hábil para recibir respuesta del cliente." },
+        { id: "d3_tac", kind: "rect", cx: 850, cy: 786, w: 240, h: 58, lines: ["Aprobación Tácita +", "Constancia en expediente"],
+          actor: "AuraQuantic Engine", obj: "Documento Constancia + Biblioteca", reqs: ["RF-T-28", "RT-09"],
+          desc: "Al cumplirse el día 10 sin respuesta, da por aprobado el proyecto automáticamente y guarda constancia." },
+        { id: "d3_firma", kind: "diamond", cx: 460, cy: 740, w: 260, h: 96, lines: ["¿Firma digital o", "envía observaciones?"],
+          actor: "Contacto del Cliente", obj: "FORM_CLIENTE_FIRMA + Firma Digital (2.08)", reqs: ["RF-T-28"],
+          desc: "Si firma digitalmente aprueba el proyecto; si registra observaciones, lo devuelve al Director." },
+        { id: "d3_conf", kind: "diamond", cx: 460, cy: 896, w: 260, h: 96, lines: ["Confluencia: ¿Todos", "los proyectos listos?"],
+          actor: "AuraQuantic Engine", obj: "Compuerta Confluencial (3.07)", reqs: ["RF-T-29"],
+          desc: "Espera a que la totalidad de instancias de proyectos del mes terminen su aprobación." },
+        { id: "d3_wait", kind: "rect", cx: 155, cy: 896, w: 220, h: 56, lines: ["Esperar cierre de", "proyectos restantes"],
+          actor: "AuraQuantic Engine", obj: "Sincronización Confluencial", reqs: ["RF-T-29"],
+          desc: "Mantiene la consolidación en espera hasta que el último proyecto quede aprobado." },
+        { id: "d3_finz", kind: "doc", cx: 210, cy: 1046, w: 250, h: 60, lines: ["Enviar correo consolidado", "a Finanzas (RF-T-29)"],
+          actor: "Sistema → Finanzas", obj: "TS Notificador + Resumen Mensual", reqs: ["RF-T-29"],
+          desc: "Envía un solo correo a Finanzas adjuntando el resumen consolidado de facturación de todo el mes." },
+        { id: "d3_fin_a", kind: "oval", cx: 210, cy: 1148, w: 200, h: 48, lines: ["FIN: Facturación"],
+          actor: "Finanzas", obj: "Evento Fin Rama Facturación", reqs: ["RF-T-29"],
+          desc: "Cierre del circuito de facturación a clientes." },
+        { id: "d3_nom", kind: "doc", cx: 620, cy: 1046, w: 270, h: 60, lines: ["Certificado PDF + POST", "REST Nómina (RF-T-30)"],
+          actor: "Sistema → TH y Nómina", obj: "Documento Base Certificado + Conector REST Nómina", reqs: ["RF-T-30"],
+          desc: "Genera el certificado mensual por empleado, lo envía a Talento Humano y lo transmite vía REST al sistema de nómina." },
+        { id: "d3_ok", kind: "diamond", cx: 620, cy: 1176, w: 250, h: 96, lines: ["¿Nómina responde", "200 OK?"],
+          actor: "Sistema Nómina REST", obj: "Validación Código HTTP", reqs: ["RF-T-30", "RF-T-31"],
+          desc: "Verifica que el sistema de nómina haya recibido correctamente las novedades y devuelva número de recibo." },
+        { id: "d3_th_ok", kind: "rect", cx: 620, cy: 1304, w: 240, h: 54, lines: ["Talento Humano confirma", "cierre mensual"],
+          actor: "Talento Humano", obj: "Tarea Personal Confirmación TH", reqs: ["RF-T-30"],
+          desc: "Talento Humano confirma o realiza ajuste final sobre el cierre transmitido." },
+        { id: "d3_fin_b", kind: "oval", cx: 620, cy: 1398, w: 210, h: 48, lines: ["FIN: Nómina OK"],
+          actor: "Talento Humano", obj: "Evento Fin Nómina", reqs: ["RF-T-30"],
+          desc: "Cierre completo del proceso mensual." },
+        { id: "d3_ret", kind: "diamond", cx: 970, cy: 1176, w: 230, h: 92, lines: ["¿Reintentos", "< 3? (Reto)"],
+          actor: "AuraQuantic Engine", obj: "Bucle de Reintentos REST (RF-T-31)", reqs: ["RF-T-31"],
+          desc: "Reintenta automáticamente hasta 3 veces si el servicio de nómina rechaza o no responde." },
+        { id: "d3_err_th", kind: "rect", cx: 970, cy: 1304, w: 230, h: 58, lines: ["Crear tarea de error", "para Talento Humano"],
+          actor: "Sistema → Talento Humano", obj: "Tarea Excepción con Mensaje Error", reqs: ["RF-T-31"],
+          desc: "Tras 3 fallos, crea una tarea para Talento Humano adjuntando el error HTTP devuelto por Nómina." },
+        { id: "d3_fin_err", kind: "oval", cx: 970, cy: 1398, w: 210, h: 48, lines: ["FIN: Gestión manual TH"],
+          actor: "Talento Humano", obj: "Evento Fin Contingencia", reqs: ["RF-T-31"],
+          desc: "Finaliza con gestión controlada por Talento Humano." }
+      ],
+      edges: [
+        { pts: [[460,72],[460,108]] },
+        { pts: [[460,164],[460,201]] },
+        { pts: [[460,259],[460,297]] },
+        { pts: [[460,359],[460,398]] },
+        { pts: [[460,458],[460,492]] },
+        { pts: [[585,540],[735,540]], label: "NO", lpos: [655,540], ltype: "no" },
+        { pts: [[850,568],[850,608]] },
+        { pts: [[850,704],[850,757]], label: "NO", lpos: [850,730], ltype: "no" },
+        { pts: [[725,656],[640,656],[640,740],[590,740]], label: "SÍ", lpos: [640,695], ltype: "yes" },
+        { pts: [[460,588],[460,692]], label: "SÍ", lpos: [460,640], ltype: "yes" },
+        { pts: [[330,740],[135,740],[135,328],[315,328]], label: "OBSERV.", lpos: [220,740], ltype: "warn" },
+        { pts: [[460,788],[460,848]], label: "FIRMA", lpos: [460,818], ltype: "yes" },
+        { pts: [[850,815],[850,896],[590,896]] },
+        { pts: [[330,896],[265,896]], label: "NO", lpos: [298,896], ltype: "no" },
+        { pts: [[155,868],[155,836],[460,836]] },
+        { pts: [[460,944],[460,982],[210,982],[210,1016]], label: "SÍ (Finanzas)", lpos: [320,982], ltype: "yes" },
+        { pts: [[460,944],[460,982],[620,982],[620,1016]], label: "Paralelo", lpos: [550,982], ltype: "yes" },
+        { pts: [[210,1076],[210,1124]] },
+        { pts: [[620,1076],[620,1128]] },
+        { pts: [[620,1224],[620,1277]], label: "SÍ", lpos: [620,1250], ltype: "yes" },
+        { pts: [[620,1331],[620,1374]] },
+        { pts: [[745,1176],[855,1176]], label: "NO", lpos: [800,1176], ltype: "no" },
+        { pts: [[970,1130],[970,1046],[755,1046]], label: "SÍ", lpos: [970,1084], ltype: "yes" },
+        { pts: [[970,1222],[970,1275]], label: "NO", lpos: [970,1248], ltype: "no" },
+        { pts: [[970,1333],[970,1374]] }
+      ]
+    }
+  };
+
+  let activeTab = "f1";
+  let zoom = 1.0;
+  let selectedId = "d1_start";
+  const nodeIndex = {};
+
+  function esc(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function buildSvgMarkup(flow) {
+    const markerDef = `
+      <defs>
+        <marker id="arr-${flow.id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+          <path d="M 0 1 L 10 5 L 0 9 z" fill="#00015a"/>
+        </marker>
+      </defs>
+    `;
+
+    const edgesHtml = flow.edges.map(e => {
+      const ptsAttr = e.pts.map(p => p.join(",")).join(" ");
+      let lblHtml = "";
+      if (e.label && e.lpos) {
+        const bg = e.ltype === "yes" ? "#dcfce7" : (e.ltype === "no" ? "#fee2e2" : "#fef3c7");
+        const fg = e.ltype === "yes" ? "#15803d" : (e.ltype === "no" ? "#b91c1c" : "#b45309");
+        const pw = Math.max(32, e.label.length * 7.5 + 12);
+        lblHtml = `
+          <rect x="${e.lpos[0] - pw/2}" y="${e.lpos[1] - 10}" width="${pw}" height="20" rx="5" fill="${bg}" stroke="${fg}" stroke-width="1"/>
+          <text x="${e.lpos[0]}" y="${e.lpos[1] + 4}" text-anchor="middle" font-family="Segoe UI" font-size="10.5" font-weight="700" fill="${fg}">${esc(e.label)}</text>
+        `;
+      }
+      return `<polyline points="${ptsAttr}" fill="none" stroke="#00015a" stroke-width="2" stroke-linejoin="round" marker-end="url(#arr-${flow.id})"/>${lblHtml}`;
+    }).join("");
+
+    const nodesHtml = flow.nodes.map(n => {
+      nodeIndex[n.id] = n;
+      const x = n.cx - n.w / 2;
+      const y = n.cy - n.h / 2;
+      let shape = "";
+      let textColor = "#14172b";
+
+      if (n.kind === "oval") {
+        shape = `<rect class="node-shape" x="${x}" y="${y}" width="${n.w}" height="${n.h}" rx="${n.h / 2}" fill="#00015a" stroke="#3ff2cf" stroke-width="2"/>`;
+        textColor = "#ffffff";
+      } else if (n.kind === "rect") {
+        shape = `<rect class="node-shape" x="${x}" y="${y}" width="${n.w}" height="${n.h}" rx="7" fill="#ffffff" stroke="#00015a" stroke-width="2"/>`;
+      } else if (n.kind === "diamond") {
+        const pts = `${n.cx},${y} ${n.cx + n.w/2},${n.cy} ${n.cx},${y + n.h} ${n.cx - n.w/2},${n.cy}`;
+        shape = `<polygon class="node-shape" points="${pts}" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>`;
+        textColor = "#78350f";
+      } else if (n.kind === "doc") {
+        const skew = 14;
+        const pts = `${x + skew},${y} ${x + n.w},${y} ${x + n.w - skew},${y + n.h} ${x},${y + n.h}`;
+        shape = `<polygon class="node-shape" points="${pts}" fill="#e6fcf7" stroke="#0a7d6b" stroke-width="2"/>`;
+        textColor = "#00015a";
+      }
+
+      const lineCount = n.lines.length;
+      const lineHeight = 14;
+      const startY = n.cy - ((lineCount - 1) * lineHeight) / 2 + 4;
+      const texts = n.lines.map((ln, idx) =>
+        `<text x="${n.cx}" y="${startY + idx * lineHeight}" text-anchor="middle" font-family="Segoe UI" font-size="11" font-weight="700" fill="${textColor}">${esc(ln)}</text>`
+      ).join("");
+
+      const selClass = n.id === selectedId ? "selected" : "";
+      return `<g class="fc-node ${selClass}" data-node-id="${n.id}">${shape}${texts}</g>`;
+    }).join("");
+
+    return `
+      <svg id="svg-${flow.id}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${flow.width} ${flow.height}" width="${Math.round(flow.width * 0.88)}" height="auto" role="img" aria-label="${esc(flow.title)}">
+        ${markerDef}
+        ${edgesHtml}
+        ${nodesHtml}
+      </svg>
+    `;
+  }
+
+  function renderDiagrams() {
+    const host = document.getElementById("diagramsHost");
+    const keys = activeTab === "all" ? ["f1", "f2", "f3"] : [activeTab];
+    host.innerHTML = keys.map(k => {
+      const f = FLOWS[k];
+      return `
+        <div class="flow-block">
+          <div class="flow-head">
+            <div>
+              <h2>${esc(f.title)}</h2>
+              <span>${esc(f.subtitle)}</span>
+            </div>
+            <span class="badge">${f.nodes.length} bloques lógicos</span>
+          </div>
+          <div class="svg-scroll">
+            <div class="svg-stage" style="transform: scale(${zoom});">
+              ${buildSvgMarkup(f)}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    host.querySelectorAll(".fc-node").forEach(g => {
+      g.addEventListener("click", () => {
+        selectedId = g.dataset.nodeId;
+        host.querySelectorAll(".fc-node").forEach(el => el.classList.toggle("selected", el.dataset.nodeId === selectedId));
+        updateDetailPanel(selectedId);
+      });
+    });
+
+    if (!nodeIndex[selectedId]) {
+      selectedId = FLOWS[keys[0]].nodes[0].id;
+    }
+    updateDetailPanel(selectedId);
+  }
+
+  function updateDetailPanel(id) {
+    const n = nodeIndex[id];
+    if (!n) return;
+    const kindLabels = {
+      oval: "Óvalo · Inicio / Fin",
+      rect: "Rectángulo · Proceso / Tarea",
+      diamond: "Rombo · Decisión Lógica",
+      doc: "Paralelogramo · Integración / Salida"
+    };
+    document.getElementById("detType").textContent = kindLabels[n.kind] || n.kind;
+    document.getElementById("detTitle").textContent = n.lines.join(" ");
+    document.getElementById("detDesc").textContent = n.desc;
+    document.getElementById("detActor").textContent = n.actor;
+    document.getElementById("detObject").textContent = n.obj;
+    document.getElementById("detReqs").innerHTML = n.reqs.map(r => `<span class="req-tag">${esc(r)}</span>`).join("");
+  }
+
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeTab = btn.dataset.tab;
+      const firstKey = activeTab === "all" ? "f1" : activeTab;
+      selectedId = FLOWS[firstKey].nodes[0].id;
+      renderDiagrams();
+    });
+  });
+
+  function applyZoom(newZoom) {
+    zoom = Math.max(0.6, Math.min(1.5, Math.round(newZoom * 10) / 10));
+    document.getElementById("zoomLabel").textContent = `${Math.round(zoom * 100)}%`;
+    document.querySelectorAll(".svg-stage").forEach(st => {
+      st.style.transform = `scale(${zoom})`;
+    });
+  }
+
+  document.getElementById("btnZoomIn").addEventListener("click", () => applyZoom(zoom + 0.1));
+  document.getElementById("btnZoomOut").addEventListener("click", () => applyZoom(zoom - 0.1));
+
+  function togglePanel(show) {
+    const ws = document.getElementById("workspace");
+    const panel = document.getElementById("detailPanel");
+    const btn = document.getElementById("btnTogglePanel");
+    const shouldShow = typeof show === "boolean" ? show : panel.classList.contains("hidden");
+    panel.classList.toggle("hidden", !shouldShow);
+    ws.classList.toggle("panel-hidden", !shouldShow);
+    btn.classList.toggle("active", shouldShow);
+  }
+
+  document.getElementById("btnTogglePanel").addEventListener("click", () => togglePanel());
+  document.getElementById("btnClosePanel").addEventListener("click", () => togglePanel(false));
+
+  document.getElementById("btnPrint").addEventListener("click", () => window.print());
+
+  document.getElementById("btnDownloadSvg").addEventListener("click", () => {
+    const targetKey = activeTab === "all" ? "f1" : activeTab;
+    const svgEl = document.getElementById(`svg-${targetKey}`);
+    if (!svgEl) return;
+    const serializer = new XMLSerializer();
+    const source = '<?xml version="1.0" encoding="UTF-8"?>\n' + serializer.serializeToString(svgEl);
+    const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Caso1_Flujo_${targetKey}.svg`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  renderDiagrams();
+})();
+</script>
+</body>
+</html>

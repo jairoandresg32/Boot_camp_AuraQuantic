@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recorrido del Proceso End-to-End — Caso 1 Bootcamp AuraQuantic</title>
+<style>
+  :root {
+    --navy: #00015a;
+    --navy-mid: #161a7a;
+    --mint: #3ff2cf;
+    --mint-dark: #0a7d6b;
+    --mint-soft: #e6fcf7;
+    --bg: #f4f6f8;
+    --surface: #ffffff;
+    --text: #14172b;
+    --muted: #5b6074;
+    --line: #dfe3ea;
+    --ok: #15803d;
+    --ok-bg: #dcfce7;
+    --warn: #b45309;
+    --warn-bg: #fef3c7;
+    --err: #b91c1c;
+    --err-bg: #fee2e2;
+    --shadow: 0 6px 24px rgba(0, 1, 90, 0.08);
+    --font: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.48;
+  }
+
+  /* Barra Superior */
+  .topbar {
+    background: var(--navy);
+    color: #fff;
+    border-bottom: 4px solid var(--mint);
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .topbar-inner {
+    max-width: 1340px;
+    margin: 0 auto;
+    padding: 11px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: var(--mint);
+    color: var(--navy);
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+  }
+  .brand h1 { margin: 0; font-size: 16px; font-weight: 700; }
+  .brand p { margin: 0; font-size: 12px; color: #cbd5e1; }
+
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .tbtn {
+    border: 1px solid rgba(255,255,255,0.28);
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .tbtn:hover { background: rgba(63,242,207,0.18); border-color: var(--mint); }
+  .tbtn.active { background: var(--mint); color: var(--navy); border-color: var(--mint); }
+  .tbtn-nav { background: #fff; color: var(--navy); border-color: #fff; }
+  .tbtn-nav:hover { background: var(--mint-soft); }
+  .tbtn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  /* Contenedor Principal */
+  .container {
+    max-width: 1340px;
+    margin: 18px auto 48px;
+    padding: 0 20px;
+  }
+
+  /* Carril Stepper de 8 Estaciones */
+  .stepper {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .step-pill {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 9px 10px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+    font: inherit;
+    color: var(--text);
+  }
+  .step-pill:hover { border-color: var(--navy); transform: translateY(-1px); }
+  .step-pill.active {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+    box-shadow: 0 6px 16px rgba(0, 1, 90, 0.22);
+  }
+  .step-pill.done {
+    border-color: var(--mint-dark);
+    background: var(--mint-soft);
+  }
+  .step-num {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--bg);
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .step-pill.active .step-num { background: var(--mint); color: var(--navy); }
+  .step-pill.done .step-num { background: var(--mint-dark); color: #fff; }
+  .step-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .step-time {
+    display: block;
+    font-size: 10.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .step-pill.active .step-time { color: #cbd5e1; }
+
+  /* Layout principal: Mockup izquierda + Panel Explicativo derecha */
+  .stage-grid {
+    display: grid;
+    grid-template-columns: 1.38fr 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .card-head {
+    background: #f8fafc;
+    border-bottom: 1px solid var(--line);
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .card-title {
+    margin: 0;
+    font-size: 17px;
+    color: var(--navy);
+    font-weight: 800;
+  }
+  .card-sub { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+  .card-body { padding: 18px; }
+
+  /* Selector Camino Feliz vs Camino Alterno */
+  .path-switch {
+    display: inline-flex;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 3px;
+    gap: 4px;
+  }
+  .path-btn {
+    border: 0;
+    background: transparent;
+    padding: 6px 11px;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .path-btn.active-happy { background: var(--ok-bg); color: var(--ok); }
+  .path-btn.active-alt { background: var(--warn-bg); color: var(--warn); }
+
+  /* Componentes visuales internos de los Mockups */
+  .mock-window {
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .mock-wbar {
+    background: var(--navy);
+    color: #fff;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .mock-wbody { padding: 14px; font-size: 13px; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+  }
+  .b-navy { background: var(--navy); color: #fff; }
+  .b-mint { background: var(--mint-soft); color: var(--mint-dark); border: 1px solid var(--mint); }
+  .b-ok { background: var(--ok-bg); color: var(--ok); }
+  .b-warn { background: var(--warn-bg); color: var(--warn); }
+  .b-err { background: var(--err-bg); color: var(--err); }
+
+  .mini-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .mini-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+  .box {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: #fafbfc;
+  }
+  .box-navy { border-left: 4px solid var(--navy); }
+  .box-mint { border-left: 4px solid var(--mint-dark); background: var(--mint-soft); }
+  .box-warn { border-left: 4px solid var(--warn); background: var(--warn-bg); }
+  .box-err { border-left: 4px solid var(--err); background: var(--err-bg); }
+  .box-ok { border-left: 4px solid var(--ok); background: var(--ok-bg); }
+
+  .mock-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 8px; }
+  .mock-table th {
+    background: var(--navy);
+    color: #fff;
+    padding: 7px 8px;
+    text-align: left;
+    font-weight: 600;
+  }
+  .mock-table td { padding: 7px 8px; border-top: 1px solid var(--line); }
+
+  .code-pill {
+    font-family: Consolas, monospace;
+    font-size: 11.5px;
+    background: #eef2ff;
+    color: var(--navy);
+    padding: 2px 6px;
+    border-radius: 5px;
+    border: 1px solid #c7d2fe;
+  }
+
+  .timeline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .tl-node {
+    flex: 1;
+    text-align: center;
+    padding: 10px 8px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-size: 12px;
+  }
+  .tl-arrow { font-weight: 900; color: var(--navy); font-size: 18px; }
+
+  /* Panel derecho explicativo */
+  .info-block { margin-bottom: 13px; }
+  .info-label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .info-val { font-size: 13.5px; color: var(--text); }
+  .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .req-tag {
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: #eef2ff;
+    color: var(--navy);
+    border: 1px solid #cbd5e1;
+  }
+
+  .speaker-box {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-left: 5px solid #d97706;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+    color: #451a03;
+    margin-top: 12px;
+  }
+
+  .footer-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+
+  /* Vista Mapa Global */
+  .global-map-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .svg-wrap { width: 100%; overflow-x: auto; }
+  .jump-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .jump-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #fafbfc;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    transition: all 0.15s ease;
+  }
+  .jump-card:hover { border-color: var(--navy); background: var(--mint-soft); }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 1024px) {
+    .stepper { grid-template-columns: repeat(4, 1fr); }
+    .stage-grid { grid-template-columns: 1fr; }
+    .jump-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .stepper { grid-template-columns: repeat(2, 1fr); }
+    .mini-grid-2, .mini-grid-3, .jump-grid { grid-template-columns: 1fr; }
+    .timeline { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-logo">AQ</div>
+      <div>
+        <h1>Recorrido End-to-End del Proceso — Caso 1 AuraQuantic</h1>
+        <p>Registro de Tiempos, Novedades y Facturación de Horas · Mockup de Presentación (Teclas ← / →)</p>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <button class="tbtn" id="btnGlobalMap">🗺️ Mapa Global (3 Procesos)</button>
+      <button class="tbtn active" id="btnToggleNotes">🎙️ Notas de Presentador</button>
+      <button class="tbtn" id="btnAutoPlay">▶ Reproducir</button>
+      <button class="tbtn tbtn-nav" id="btnPrevTop">← Anterior</button>
+      <button class="tbtn tbtn-nav" id="btnNextTop">Siguiente →</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <!-- Carril de 8 Estaciones -->
+  <nav class="stepper" id="stepperNav" aria-label="Estaciones del recorrido del proceso"></nav>
+
+  <!-- Vista Paso a Paso -->
+  <section id="walkthroughView" class="stage-grid">
+    <!-- Columna Izquierda: Mockup Visual del Paso -->
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h2 class="card-title" id="stepTitle">Paso</h2>
+          <div class="card-sub" id="stepSubtitle">Subtítulo</div>
+        </div>
+        <div class="path-switch" id="pathSwitch">
+          <button class="path-btn active-happy" id="btnHappy">✔️ Camino Feliz</button>
+          <button class="path-btn" id="btnAlt">⚡ Camino Alterno / Excepción</button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div id="mockupStage"></div>
+
+        <div class="footer-nav">
+          <button class="tbtn" style="background:var(--bg); color:var(--navy); border-color:var(--line);" id="btnPrevBottom">← Paso Anterior</button>
+          <span id="stepCounter" style="font-size:13px; font-weight:700; color:var(--muted);">Estación 1 de 8</span>
+          <button class="tbtn" style="background:var(--navy); color:#fff;" id="btnNextBottom">Siguiente Paso →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna Derecha: Qué hace este punto -->
+    <aside class="card">
+      <div class="card-head" style="background: var(--navy); color:#fff;">
+        <div>
+          <h2 class="card-title" style="color:#fff;">¿Qué hace este punto?</h2>
+          <div class="card-sub" style="color:var(--mint);">Explicación funcional y arquitectura AuraQuantic</div>
+        </div>
+        <span class="badge b-mint" id="modeBadge">Camino Feliz</span>
+      </div>
+      <div class="card-body">
+        <div class="info-block">
+          <div class="info-label">Actor(es) y Responsable</div>
+          <div class="info-val" id="infoActors"></div>
+        </div>
+        <div class="info-block">
+          <div class="info-label">Clase de Proceso / Capa</div>
+          <div class="info-val" id="infoProcess"></div>
+        </div>
+        <div class="info-block">
+          <div class="info-label">Qué ocurre en el negocio</div>
+          <div class="info-val" id="infoBusiness"></div>
+        </div>
+        <div class="info-block">
+          <div class="info-label">Objetos AuraQuantic utilizados</div>
+          <div class="info-val" id="infoObjects"></div>
+        </div>
+        <div class="info-block">
+          <div class="info-label">Requerimientos cubiertos</div>
+          <div class="tag-list" id="infoReqs"></div>
+        </div>
+        <div class="speaker-box" id="speakerBox">
+          <strong style="display:block; margin-bottom:4px;">🎙️ Qué decir al presentar este paso:</strong>
+          <span id="infoScript"></span>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- Vista Mapa Global (3 Procesos + Conectores + Capa Datos) -->
+  <section id="globalMapView" class="global-map-card hidden">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+      <div>
+        <h2 style="margin:0; color:var(--navy); font-size:19px;">Arquitectura Global: 3 Clases de Proceso + Capa de Datos + Conectores</h2>
+        <p style="margin:3px 0 0; color:var(--muted); font-size:13px;">Haz clic en cualquier bloque inferior para saltar directo a esa estación del recorrido.</p>
+      </div>
+      <button class="tbtn" style="background:var(--navy); color:#fff;" id="btnBackToWalk">↩ Volver al Recorrido Paso a Paso</button>
+    </div>
+
+    <div class="svg-wrap">
+      <svg viewBox="0 0 1180 430" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mapa global de los 3 procesos AuraQuantic del Caso 1">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#00015a"/>
+          </marker>
+          <marker id="arrowMint" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#0a7d6b"/>
+          </marker>
+        </defs>
+
+        <!-- Fondo -->
+        <rect x="0" y="0" width="1180" height="430" rx="12" fill="#f8fafc" stroke="#dfe3ea"/>
+
+        <!-- Banda Conectores Externos (Arriba) -->
+        <rect x="24" y="18" width="1132" height="78" rx="10" fill="#eef2ff" stroke="#c7d2fe"/>
+        <text x="40" y="40" font-family="Segoe UI" font-size="12" font-weight="700" fill="#00015a">CONECTORES EXTERNOS E INTEGRACIONES (ANEXO B)</text>
+        <rect x="40" y="50" width="250" height="34" rx="6" fill="#fff" stroke="#00015a"/>
+        <text x="165" y="71" text-anchor="middle" font-family="Segoe UI" font-size="11.5" font-weight="700" fill="#00015a">REST Festivos CO (Nager.Date)</text>
+
+        <rect x="315" y="50" width="265" height="34" rx="6" fill="#fff" stroke="#00015a"/>
+        <text x="447" y="71" text-anchor="middle" font-family="Segoe UI" font-size="11.5" font-weight="700" fill="#00015a">REST Gestión Proyectos (Mock)</text>
+
+        <rect x="605" y="50" width="265" height="34" rx="6" fill="#fff" stroke="#0a7d6b"/>
+        <text x="737" y="71" text-anchor="middle" font-family="Segoe UI" font-size="11.5" font-weight="700" fill="#0a7d6b">Correo Entrante IMAP (Buzón)</text>
+
+        <rect x="895" y="50" width="245" height="34" rx="6" fill="#fff" stroke="#00015a"/>
+        <text x="1017" y="71" text-anchor="middle" font-family="Segoe UI" font-size="11.5" font-weight="700" fill="#00015a">REST Nómina (Mock + 3x Reto)</text>
+
+        <!-- Proceso 1: TIEM_REG_DIARIO -->
+        <rect x="24" y="122" width="490" height="175" rx="10" fill="#ffffff" stroke="#00015a" stroke-width="2"/>
+        <rect x="24" y="122" width="490" height="30" rx="10" fill="#00015a"/>
+        <text x="40" y="142" font-family="Segoe UI" font-size="12.5" font-weight="700" fill="#ffffff">1. TIEM_REG_DIARIO (Operación Diaria por Lotes)</text>
+        <rect x="40" y="166" width="102" height="52" rx="6" fill="#e6fcf7" stroke="#0a7d6b"/>
+        <text x="91" y="188" text-anchor="middle" font-family="Segoe UI" font-size="11" font-weight="700" fill="#00015a">Apertura</text>
+        <text x="91" y="204" text-anchor="middle" font-family="Segoe UI" font-size="10" fill="#475569">7/8 a.m. hábil</text>
+
+        <rect x="160" y="166" width="105" height="52" rx="6" fill="#f4f6f8" stroke="#00015a"/>
+        <text x="212" y="188" text-anchor="middle" font-family="Segoe UI" font-size="11" font-weight="700" fill="#00015a">Registro + 4:30</text>
+        <text x="212" y="204" text-anchor="middle" font-family="Segoe UI" font-size="10" fill="#475569">5:30 Ampliación</text>
+
+        <rect x="283" y="166" width="102" height="52" rx="6" fill="#fef3c7" stroke="#b45309"/>
+        <text x="334" y="188" text-anchor="middle" font-family="Segoe UI" font-size="11" font-weight="700" fill="#92400e">Aprob. Extras</text>
+        <text x="334" y="204" text-anchor="middle" font-family="Segoe UI" font-size="10" fill="#92400e">Líder fila x fila</text>
+
+        <rect x="402" y="166" width="96" height="52" rx="6" fill="#dcfce7" stroke="#15803d"/>
+        <text x="450" y="188" text-anchor="middle" font-family="Segoe UI" font-size="11" font-weight="700" fill="#15803d">Excel + 80%</text>
+        <text x="450" y="204" text-anchor="middle" font-family="Segoe UI" font-size="10" fill="#15803d">Saldo + Watcher</text>
+
+        <line x1="142" y1="192" x2="158" y2="192" stroke="#00015a" stroke-width="1.8" marker-end="url(#arrow)"/>
+        <line x1="265" y1="192" x2="281" y2="192" stroke="#00015a" stroke-width="1.8" marker-end="url(#arrow)"/>
+        <line x1="385" y1="192" x2="400" y2="192" stroke="#00015a" stroke-width="1.8" marker-end="url(#arrow)"/>
+        <text x="40" y="246" font-family="Segoe UI" font-size="11" fill="#475569">• Precarga día anterior, borrador y bloqueo de traslapes / >16h / cargo sin extra</text>
+        <text x="40" y="264" font-family="Segoe UI" font-size="11" fill="#475569">• Alerta única 80% al Director y 100% Sobreconsumo a Director + Operaciones</text>
+
+        <!-- Proceso 2: TIEM_NOV_CORREO -->
+        <rect x="534" y="122" width="236" height="175" rx="10" fill="#ffffff" stroke="#0a7d6b" stroke-width="2"/>
+        <rect x="534" y="122" width="236" height="30" rx="10" fill="#0a7d6b"/>
+        <text x="548" y="142" font-family="Segoe UI" font-size="12" font-weight="700" fill="#ffffff">2. TIEM_NOV_CORREO</text>
+        <rect x="550" y="166" width="204" height="44" rx="6" fill="#e6fcf7" stroke="#0a7d6b"/>
+        <text x="652" y="185" text-anchor="middle" font-family="Segoe UI" font-size="11" font-weight="700" fill="#00015a">Correo Entrante + Soporte</text>
+        <text x="652" y="200" text-anchor="middle" font-family="Segoe UI" font-size="10" fill="#475569">Valida remitente en Empleados</text>
+        <rect x="550" y="222" width="96" height="54" rx="6" fill="#dcfce7" stroke="#15803d"/>
+        <text x="598" y="245" text-anchor="middle" font-family="Segoe UI" font-size="10.5" font-weight="700" fill="#15803d">Si Existe</text>
+        <text x="598" y="260" text-anchor="middle" font-family="Segoe UI" font-size="10" fill="#15803d">Pasa a TH</text>
+        <rect x="658" y="222" width="96" height="54" rx="6" fill="#fee2e2" stroke="#b91c1c"/>
+        <text x="706" y="245" text-anchor="middle" font-family="Segoe UI" font-size="10.5" font-weight="700" fill="#b91c1c">Si No Existe</text>
+        <text x="706" y="260" text-anchor="middle" font-family="Segoe UI" font-size="10" fill="#b91c1c">Rechazo Auto</text>
+
+        <!-- Proceso 3: TIEM_CIERRE_MENSUAL -->
+        <rect x="790" y="122" width="366" height="175" rx="10" fill="#ffffff" stroke="#161a7a" stroke-width="2"/>
+        <rect x="790" y="122" width="366" height="30" rx="10" fill="#161a7a"/>
+        <text x="806" y="142" font-family="Segoe UI" font-size="12" font-weight="700" fill="#3ff2cf">3. TIEM_CIERRE_MENSUAL (Distribuido)</text>
+        <rect x="804" y="166" width="106" height="52" rx="6" fill="#eef2ff" stroke="#161a7a"/>
+        <text x="857" y="187" text-anchor="middle" font-family="Segoe UI" font-size="10.5" font-weight="700" fill="#00015a">1 Trámite x</text>
+        <text x="857" y="203" text-anchor="middle" font-family="Segoe UI" font-size="10" fill="#475569">Proyecto + Dir.</text>
+
+        <rect x="926" y="166" width="106" height="52" rx="6" fill="#e6fcf7" stroke="#0a7d6b"/>
+        <text x="979" y="187" text-anchor="middle" font-family="Segoe UI" font-size="10.5" font-weight="700" fill="#00015a">PDF + Firma</text>
+        <text x="979" y="203" text-anchor="middle" font-family="Segoe UI" font-size="10" fill="#475569">5d / 10d Tácita</text>
+
+        <rect x="1048" y="166" width="94" height="52" rx="6" fill="#dcfce7" stroke="#15803d"/>
+        <text x="1095" y="187" text-anchor="middle" font-family="Segoe UI" font-size="10.5" font-weight="700" fill="#15803d">Confluencia</text>
+        <text x="1095" y="203" text-anchor="middle" font-family="Segoe UI" font-size="10" fill="#15803d">Finanzas + REST</text>
+
+        <line x1="910" y1="192" x2="924" y2="192" stroke="#00015a" stroke-width="1.8" marker-end="url(#arrow)"/>
+        <line x1="1032" y1="192" x2="1046" y2="192" stroke="#00015a" stroke-width="1.8" marker-end="url(#arrow)"/>
+        <text x="806" y="246" font-family="Segoe UI" font-size="11" fill="#475569">• Exclusiones de factura siguen contando para nómina (RN-T-08)</text>
+        <text x="806" y="264" font-family="Segoe UI" font-size="11" fill="#475569">• Finanzas recibe consolidado solo cuando cierran todos los proyectos</text>
+
+        <!-- Flechas Conectores -> Procesos -->
+        <line x1="165" y1="84" x2="165" y2="120" stroke="#00015a" stroke-width="1.6" marker-end="url(#arrow)"/>
+        <line x1="447" y1="84" x2="447" y2="120" stroke="#00015a" stroke-width="1.6" marker-end="url(#arrow)"/>
+        <line x1="652" y1="84" x2="652" y2="120" stroke="#0a7d6b" stroke-width="1.6" marker-end="url(#arrowMint)"/>
+        <line x1="1095" y1="120" x2="1095" y2="86" stroke="#00015a" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+        <!-- Capa de Datos (Abajo) -->
+        <rect x="24" y="320" width="1132" height="90" rx="10" fill="#00015a"/>
+        <text x="40" y="344" font-family="Segoe UI" font-size="12.5" font-weight="700" fill="#3ff2cf">CAPA DE DATOS Y SEGURIDAD COMPARTIDA EN AURAQUANTIC (OLEADA 1)</text>
+        <text x="40" y="368" font-family="Segoe UI" font-size="11.5" fill="#ffffff">• Empleados (Líder, GeneraExtras, ValorHora solo TH, Saldo)   • Cuentas/Contactos (Portal Cliente NIT)   • 5 Familias Propias (Jornadas, TiposNovedad, Parámetros, Proyectos, Asignaciones)</text>
+        <text x="40" y="390" font-family="Segoe UI" font-size="11.5" fill="#cbd5e1">• Mapa de Relación (Empleado 1:N Asignación N:1 Proyecto)   • 2 Bibliotecas Documentales (Soportes Novedades + Reportes Firmados)   • Portales + Cuadro de Mandos</text>
+      </svg>
+    </div>
+
+    <div class="jump-grid" id="jumpGrid"></div>
+  </section>
+</main>
+
+<script>
+(function() {
+  const STEPS = [
+    {
+      num: 1,
+      short: "Parametrización",
+      time: "Anual / Nocturno",
+      title: "Paso 1: Datos Maestros, Parámetros y Sincronización Nocturna",
+      subtitle: "Base parametrizable + Conectores REST de Festivos Colombia y Proyectos",
+      actors: "Administrador del Sistema · AuraQuantic Engine (Conectores REST)",
+      process: "Capa de Datos (Oleada 1) + Tareas programadas de sincronización",
+      business: "Antes de operar el día, AuraQuantic mantiene actualizados los días festivos de Colombia (1 vez al año), las jornadas, tipos de novedad, asignaciones vigentes y proyectos sincronizados cada noche.",
+      objects: "5 Familias Propias (Jornadas, TiposNovedad, Parámetros, Proyectos, Asignaciones), Mapa de Relación 1:N / N:1, Conector REST Festivos (Nager.Date) y Conector REST Mock Proyectos.",
+      reqs: ["RF-T-01", "RF-T-02", "RF-T-03", "RF-T-04", "RF-T-06", "RT-15", "RN-T-09"],
+      script: "Todo arranca sin quemar datos en el diagrama: las reglas de negocio viven en Familias Propias y cada noche un conector REST trae proyectos nuevos mientras otro carga los festivos oficiales de Colombia al calendario laboral.",
+      happyHtml: `
+        <div class="mini-grid-2">
+          <div class="mock-window">
+            <div class="mock-wbar"><span>🔌 REST Festivos CO (Nager.Date)</span><span class="badge b-mint">RF-T-06</span></div>
+            <div class="mock-wbody">
+              <div><span class="code-pill">GET date.nager.at/api/v3/PublicHolidays/2026/CO</span></div>
+              <p style="margin:8px 0 4px;">Sincroniza los festivos nacionales al <strong>Calendario Laboral</strong> de AuraQuantic:</p>
+              <div class="box box-mint">📅 2026-01-01 Año Nuevo · 2026-08-07 Batalla de Boyacá · 2026-12-08 Inmaculada → Marcados <strong>No Laborables</strong>.</div>
+            </div>
+          </div>
+          <div class="mock-window">
+            <div class="mock-wbar"><span>🌙 REST Proyectos Nocturno (Mock)</span><span class="badge b-mint">RF-T-02</span></div>
+            <div class="mock-wbody">
+              <div><span class="code-pill">GET {mock}/proyectos?fecha_desde=ayer</span></div>
+              <p style="margin:8px 0 4px;">Crea o actualiza registros en <span class="code-pill">FAM_PROYECTOS</span> automáticamente:</p>
+              <div class="box box-ok">✔️ <strong>PRY-001 Modernización Core</strong> (Presup: 500h, Facturable: Sí, Dir: Andrés Silva).</div>
+            </div>
+          </div>
+        </div>
+        <div class="box box-navy" style="margin-top:12px;">
+          <strong>🔗 Mapa de Relación + Parámetros Sin Modificar Proceso (RT-15):</strong><br>
+          <code>Empleado (1:N) ── Asignación (Fecha Desde/Hasta) ── (N:1) Proyecto</code> · Parámetros: Alerta <strong>80 %</strong> | Recordatorio <strong>5 días</strong> | Tácita <strong>10 días</strong>.
+        </div>
+      `,
+      altTitle: "Excepción: Proyecto llega sin Director asignado (RF-T-02)",
+      altModeLabel: "Excepción RF-T-02",
+      altBusiness: "Si la API de gestión de proyectos devuelve un proyecto nuevo sin Director asignado, el sistema no falla: lo crea en estado pendiente y genera notificación al Administrador para completarlo.",
+      altHtml: `
+        <div class="mock-window">
+          <div class="mock-wbar" style="background:var(--warn);"><span>⚠️ Excepción en Sincronización Nocturna (RF-T-02)</span><span>Requiere Admin</span></div>
+          <div class="mock-wbody">
+            <div class="box box-warn">
+              <strong>Proyecto recibido sin Director:</strong> <code>PRY-011 Integración ERP Fase 2</code><br>
+              • Estado asignado: <span class="badge b-warn">Pendiente por Completar Director</span><br>
+              • Tarea de Sistema Notificador envía alerta al Administrador para asignar Director antes de habilitar asignaciones.
+            </div>
+          </div>
+        </div>
+      `
+    },
+    {
+      num: 2,
+      short: "Apertura Día",
+      time: "07:00 / 08:00 a. m.",
+      title: "Paso 2: Apertura Automática de Tareas Diarias",
+      subtitle: "Evento de inicio temporizado por lotes respetando calendario laboral",
+      actors: "AuraQuantic Engine → Empleados Activos",
+      process: "TIEM_REG_DIARIO (Evento de Inicio Temporizado por Lotes)",
+      business: "A las 8:00 a. m. (lunes y martes) o 7:00 a. m. (miércoles a viernes), el sistema instancia automáticamente una tarea de registro para cada empleado activo con número único legible.",
+      objects: "Evento de Inicio Temporizado por Lotes (3.07), Calendario Laboral (2.05), Término Contador TIEM-@YYYY@-@######@ (RT-02), Tema e Identificación en Bandeja Mis Tareas (RT-03, RT-04).",
+      reqs: ["RF-T-05", "RF-T-06", "RT-02", "RT-03", "RT-04", "RT-05"],
+      script: "A las 7 u 8 de la mañana según el día, el empleado no tiene que buscar qué llenar: AuraQuantic abre su tarea en Mis Tareas con número de trámite único y fecha límite 5:30 p. m.",
+      happyHtml: `
+        <div class="mock-window">
+          <div class="mock-wbar"><span>📥 Bandeja "Mis Tareas" — Juan Pérez (Consultor Senior)</span><span class="badge b-mint">RT-03 / RT-04</span></div>
+          <div class="mock-wbody">
+            <div class="mini-grid-3" style="margin-bottom:10px;">
+              <div class="box"><strong>Jornada Hoy (Mié):</strong><br>07:00 a 17:30 (10.5 h)</div>
+              <div class="box"><strong>Consecutivo (RT-02):</strong><br><span class="code-pill">TIEM-2026-000128</span></div>
+              <div class="box"><strong>Vencimiento:</strong><br>Hoy 5:30 p. m. 🟢</div>
+            </div>
+            <table class="mock-table">
+              <thead><tr><th>Trámite</th><th>Asunto</th><th>Solicitante / Área</th><th>Vencimiento</th><th>Semáforo</th><th>Estado</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><strong>TIEM-2026-000128</strong></td>
+                  <td>Registro Diario 23/11/2026</td>
+                  <td>Juan Pérez · Cloud</td>
+                  <td>Hoy 17:30</td>
+                  <td>🟢 En plazo</td>
+                  <td><span class="badge b-navy">Pendiente</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `,
+      altTitle: "Regla de Calendario: Sábado, Domingo o Festivo Colombia (RF-T-06)",
+      altModeLabel: "Calendario No Hábil",
+      altBusiness: "Al consultar el Calendario Laboral nutrido por Nager.Date, si el día es fin de semana o festivo nacional en Colombia, el evento de inicio por lotes no instancia ninguna tarea.",
+      altHtml: `
+        <div class="mock-window">
+          <div class="mock-wbar" style="background:var(--mint-dark);"><span>📆 Evaluación de Calendario Laboral (RF-T-06 / RT-05)</span><span>0 Tareas Creadas</span></div>
+          <div class="mock-wbody">
+            <div class="box box-ok">
+              <strong>Día evaluado:</strong> Sábado / Domingo / Festivo Colombia.<br>
+              • Regla aplicada: El calendario laboral excluye fines de semana y festivos sincronizados.<br>
+              • Resultado: <strong>0 instancias creadas</strong> en <code>TIEM_REG_DIARIO</code> (sin falsos incumplimientos ni alertas).
+            </div>
+          </div>
+        </div>
+      `
+    },
+    {
+      num: 3,
+      short: "Registro / Mail",
+      time: "Durante el día",
+      title: "Paso 3: Registro de Actividades y Novedades",
+      subtitle: "Formulario reactivo con cálculo en tiempo real, filtros de vigencia y validaciones",
+      actors: "Empleado (o Talento Humano si llega incapacidad por correo)",
+      process: "TIEM_REG_DIARIO (Tarea Personal) · Alterno: TIEM_NOV_CORREO",
+      business: "El empleado registra actividades (solo sobre proyectos asignados vigentes) y novedades. El formulario calcula duraciones y diferencias al instante, permite guardar borrador o precargar el día anterior, y valida reglas críticas antes de enviar.",
+      objects: "FORM_REGISTRO_DIARIO, Grupos de Campos GC_ACTIVIDADES y GC_NOVEDADES (2.04), Término Limitado por Familia-Relación (2.04), Disparo de Adjunto Obligatorio, Botones Borrador/Precarga (2.08 / 3.02).",
+      reqs: ["RF-T-03", "RF-T-07", "RF-T-08", "RF-T-09", "RF-T-10", "RF-T-12", "RF-T-13", "RF-T-15", "RF-T-20", "RN-T-01", "RN-T-02", "RN-T-05", "RN-T-06"],
+      script: "Este formulario concentra el corazón operativo: solo muestra proyectos con asignación vigente, calcula totales al instante, deja guardar borrador o precargar el día anterior y bloquea traslapes, topes de 16 horas o incapacidades sin soporte adjunto.",
+      happyHtml: `
+        <div class="mock-window">
+          <div class="mock-wbar"><span>📝 FORM_REGISTRO_DIARIO · Juan Pérez</span><span class="badge b-mint">💾 Borrador | 📋 Precargar Ayer</span></div>
+          <div class="mock-wbody">
+            <div class="mini-grid-3" style="margin-bottom:8px;">
+              <div class="box"><strong>Actividades:</strong> 12.5 h</div>
+              <div class="box"><strong>Jornada Mié:</strong> 10.5 h</div>
+              <div class="box box-mint"><strong>Diferencia:</strong> +2.0 h (Extra)</div>
+            </div>
+            <table class="mock-table">
+              <thead><tr><th>Horario</th><th>Proyecto (Limitado)</th><th>Descripción</th><th>Fuera Hor.</th><th>Duración</th></tr></thead>
+              <tbody>
+                <tr><td>07:00–12:00</td><td><strong>PRY-001</strong> (Vigente ✔️)</td><td>Diseño arquitectura</td><td>No</td><td>5.0 h</td></tr>
+                <tr><td>13:00–17:30</td><td><strong>PRY-002</strong> (Vigente ✔️)</td><td>Pruebas conector</td><td>No</td><td>4.5 h</td></tr>
+                <tr><td>17:30–19:30</td><td><strong>PRY-001</strong> (Vigente ✔️)</td><td>Despliegue nocturno</td><td><strong>Sí ☑️</strong></td><td>2.0 h</td></tr>
+              </tbody>
+            </table>
+            <div class="box box-navy" style="margin-top:10px; font-size:12px;">
+              <strong>Validaciones activas:</strong> 🚫 Oculta <code>PRY-003</code> (asignación vencida) · 🚫 Bloquea traslapes (RN-T-05) · 🚫 Tope 16h (RN-T-06) · 📎 Soporte obligatorio si novedad = Incapacidad (RF-T-13) · 🔒 Directivos sin check de extras (RF-T-20).
+            </div>
+          </div>
+        </div>
+      `,
+      altTitle: "Camino Alterno: Incapacidad enviada por Correo Electrónico (RF-T-15)",
+      altModeLabel: "TIEM_NOV_CORREO",
+      altBusiness: "Si el empleado está incapacitado y no puede ingresar al portal, envía un correo con el soporte al buzón de novedades. El conector valida su email, archiva el soporte en su expediente y crea tarea para Talento Humano; si es remitente desconocido, rechaza por correo.",
+      altHtml: `
+        <div class="mock-window">
+          <div class="mock-wbar" style="background:var(--mint-dark);"><span>📧 Conector Correo Entrante → TIEM_NOV_CORREO (RF-T-15)</span><span>Automático</span></div>
+          <div class="mock-wbody">
+            <div class="mini-grid-2">
+              <div class="box box-ok">
+                <strong>Caso A — Remitente es Empleado Activo:</strong><br>
+                De: <code>ana.gomez@consultoria.test</code><br>
+                Adjunto: <code>incapacidad_eps.pdf</code><br>
+                ➜ Crea novedad, clasifica PDF en <code>Bib_SoportesNovedades</code> y asigna validación a <strong>Talento Humano</strong>.
+              </div>
+              <div class="box box-err">
+                <strong>Caso B — Remitente Desconocido:</strong><br>
+                De: <code>externo@gmail.com</code><br>
+                ➜ Sistema responde automáticamente: <em>"Su correo no fue procesado porque no corresponde a un empleado activo."</em>
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    },
+    {
+      num: 4,
+      short: "4:30 / 5:30 p. m.",
+      time: "16:30 – 17:30",
+      title: "Paso 4: Recordatorio 4:30 p. m. y Cierre 5:30 p. m.",
+      subtitle: "Eventos intermedios temporizados y gestión de ampliación de horario",
+      actors: "AuraQuantic Engine → Empleado / Líder de Área / Gerente Operaciones",
+      process: "TIEM_REG_DIARIO (Eventos de Frontera y Compuerta de Ampliación)",
+      business: "A las 4:30 p. m. recuerda por correo y App a quienes no han enviado. A las 5:30 p. m. cierra el plazo regular; si alguien no envió, el flujo pasa al Líder o Gerente para autorizar una ampliación con motivo.",
+      objects: "Evento Intermedio No Interruptor 16:30 (2.05), TS Notificador Email + App (3.01), Evento Frontera Interruptor 17:30, Tarea Personal Líder FORM_AMPLIACION_HORARIO (RN-T-04).",
+      reqs: ["RF-T-14", "RF-T-16", "RF-T-17", "RN-T-04", "RT-10", "RT-11"],
+      script: "AuraQuantic gestiona el cumplimiento de forma proactiva: a las 4:30 avisa por correo y celular a los rezagados; a las 5:30 cierra la ventana normal y solo un Líder o el Gerente puede habilitar prórroga dejando motivo en el historial.",
+      happyHtml: `
+        <div class="timeline">
+          <div class="tl-node" style="border-color:var(--mint-dark); background:var(--mint-soft);">
+            <strong>16:30 p. m. (Evento Intermedio)</strong><br>
+            Sin envío aún ➜ <strong>TS Notificador</strong> envía correo con enlace directo + alerta Push en <strong>App AuraQuantic</strong> (RF-T-14).
+          </div>
+          <div class="tl-arrow">➜</div>
+          <div class="tl-node" style="border-color:var(--ok); background:var(--ok-bg);">
+            <strong>17:10 p. m. (Antes del Cierre)</strong><br>
+            Empleado envía su registro completo.<br>
+            Marcado en indicador como: <span class="badge b-ok">Enviado a Tiempo</span>
+          </div>
+        </div>
+        <div class="box box-navy" style="font-size:12.5px;">
+          <strong>📲 Notificación Clara (RT-11):</strong> Asunto <code>[AuraQuantic] Trámite TIEM-2026-000128 - Recuerde enviar su registro diario antes de las 5:30 p. m.</code> + enlace directo a la tarea.
+        </div>
+      `,
+      altTitle: "Camino Alterno: Venció 5:30 p. m. → Ampliación de Horario (RF-T-16 / RF-T-17)",
+      altModeLabel: "Ampliación de Horario",
+      altBusiness: "Al llegar las 5:30 p. m. sin envío, la tarea se cierra y deriva al Líder de Área (o Gerente de Operaciones). Si autoriza con motivo obligatorio y nueva hora límite (ej. 20:00), el empleado recibe notificación y su registro queda marcado 'Con ampliación'.",
+      altHtml: `
+        <div class="mock-window">
+          <div class="mock-wbar" style="background:var(--warn);"><span>⏰ Venció 17:30 → FORM_AMPLIACION_HORARIO (Líder / Gerente)</span><span>RN-T-04</span></div>
+          <div class="mock-wbody">
+            <div class="mini-grid-2">
+              <div class="box">
+                <strong>Empleado:</strong> Ana Gómez (<code>TIEM-2026-000129</code>)<br>
+                <strong>Motivo obligatorio (RF-T-17):</strong> <em>"Atención de despliegue con Banco Nacional hasta las 18:15."</em><br>
+                <strong>Nueva Hora Límite:</strong> <span class="code-pill">20:00</span>
+              </div>
+              <div class="box box-warn">
+                <strong>Resultado al aprobar:</strong><br>
+                • Notifica a Ana Gómez (RF-T-16).<br>
+                • Guarda motivo en historial.<br>
+                • Indicador 3.6 lo distingue como <strong>Con Ampliación</strong>.
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    },
+    {
+      num: 5,
+      short: "Horas Extra",
+      time: "Post-envío",
+      title: "Paso 5: Aprobación de Horas Extra (Actividad por Actividad)",
+      subtitle: "Asignación dinámica al Líder Directo y desvío selectivo de rechazos",
+      actors: "Líder de Área (Asignación Dinámica) · Empleado (si hay rechazo)",
+      process: "TIEM_REG_DIARIO (Compuerta Horas Extra + Tarea Integrada + Desviador)",
+      business: "Si el empleado tiene cargo que genera horas extra y marcó actividades fuera de horario, la tarea llega dinámicamente a su Líder, quien aprueba o rechaza línea por línea con comentario.",
+      objects: "Compuerta Exclusiva (2.06), Asignación Dinámica Líder Directo (2.07), Tarea Integrada / Contenedor (2.06 / 3.05), TS Limpiador y Desviador (3.01 / 3.06).",
+      reqs: ["RF-T-11", "RF-T-18", "RF-T-19", "RF-T-20", "RN-T-03", "RN-T-07", "RT-06"],
+      script: "Si hay actividades fuera de horario, el sistema ubica dinámicamente al Líder directo del empleado. El Líder aprueba o rechaza actividad por actividad: solo lo aprobado suma horas extra y si falta el líder, entra su suplente.",
+      happyHtml: `
+        <div class="mock-window">
+          <div class="mock-wbar"><span>✅ FORM_APROBACION_EXTRAS — Líder: Carlos Mendoza</span><span class="badge b-mint">RF-T-18 / RT-06</span></div>
+          <div class="mock-wbody">
+            <table class="mock-table">
+              <thead><tr><th>Empleado</th><th>Proyecto</th><th>Rango</th><th>Duración</th><th>Decisión Líder</th><th>Comentario</th></tr></thead>
+              <tbody>
+                <tr><td>Juan Pérez</td><td>PRY-001</td><td>17:30–19:30</td><td>2.0 h</td><td><span class="badge b-ok">✔️ Aprobada</span></td><td>Despliegue autorizado</td></tr>
+                <tr><td>Juan Pérez</td><td>PRY-002</td><td>19:30–20:30</td><td>1.0 h</td><td><span class="badge b-ok">✔️ Aprobada</span></td><td>Documentación cierre</td></tr>
+              </tbody>
+            </table>
+            <div class="box box-ok" style="margin-top:10px;">
+              <strong>Resultado (RN-T-07):</strong> Cargo genera extras = <strong>SÍ</strong> + Líder aprobó = <strong>SÍ</strong> ➜ <strong>3.0 h</strong> pasan a cálculo de horas extra y consumo de proyecto.
+            </div>
+          </div>
+        </div>
+      `,
+      altTitle: "Camino Alterno: Líder rechaza 1 de 3 actividades fuera de horario (RF-T-19)",
+      altModeLabel: "Rechazo Selectivo (1 vez)",
+      altBusiness: "Si el Líder aprueba 2 actividades y rechaza 1 con comentario, únicamente las 2 aprobadas computan como horas extra; la actividad rechazada se desvía de vuelta al empleado para corregirla o reclasificarla dentro de horario una sola vez.",
+      altHtml: `
+        <div class="mock-window">
+          <div class="mock-wbar" style="background:var(--warn);"><span>↩️ Desvío de Actividad Rechazada (RF-T-19 / TS Desviador + Limpiador)</span><span>Única Corrección</span></div>
+          <div class="mock-wbody">
+            <div class="mini-grid-2">
+              <div class="box box-ok">
+                <strong>2 Actividades Aprobadas:</strong><br>
+                Suman <strong>+3.0 h extra</strong> y actualizan consumo del proyecto.
+              </div>
+              <div class="box box-warn">
+                <strong>1 Actividad Rechazada:</strong><br>
+                <em>17:30–18:30 Reunión sin acta</em>.<br>
+                Regresa al empleado (<strong>1 sola vez</strong>) para corregir horario o reclasificar dentro de jornada.
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    },
+    {
+      num: 6,
+      short: "Cierre Diario",
+      time: "18:00 p. m.",
+      title: "Paso 6: Consolidado Excel, Saldos y Semáforo Presupuestal",
+      subtitle: "Cálculos automáticos, actualización de proyectos y alertas Universal Watcher",
+      actors: "AuraQuantic Engine → Gerente Operaciones / Director Proyecto / Empleado",
+      process: "TIEM_REG_DIARIO (Tareas de Sistema) + Universal Watcher (4.02)",
+      business: "Al cierre diario, el sistema genera el Excel consolidado para Operaciones, actualiza horas extra, ausentismos y saldo de compensación del empleado, y suma las horas aprobadas al presupuesto del proyecto disparando alertas únicas al 80 % y 100 %.",
+      objects: "TS Exportadora Excel (3.04), TS Ingresos y Modifica Elemento Familia (3.02 / 3.03), Widget Portal Empleado (4.03), Universal Watcher + TS Notificador 80 %/100 % (4.02 / RF-T-24).",
+      reqs: ["RF-T-21", "RF-T-22", "RF-T-23", "RF-T-24", "RN-T-09"],
+      script: "Al cierre del día todo se concilia sin hojas manuales: sale el Excel para Operaciones, el empleado ve su saldo de compensación actualizado en su portal y el Universal Watcher alerta una sola vez si un proyecto toca el 80 % o llega al 100 % de sobreconsumo.",
+      happyHtml: `
+        <div class="mini-grid-2">
+          <div class="mock-window">
+            <div class="mock-wbar"><span>📊 Cálculos y Saldos (RF-T-21 a 23)</span><span>Diario 18:00</span></div>
+            <div class="mock-wbody">
+              <div class="box box-navy" style="margin-bottom:8px;">
+                <strong>📄 Consolidado_Diario_20261123.xlsx</strong><br>
+                Generado y enviado por correo al <strong>Gerente de Operaciones</strong> + guardado en biblioteca.
+              </div>
+              <div class="box box-mint">
+                <strong>Portal Empleado — Saldo Compensación:</strong><br>
+                Extras aprobadas (+2.0 h) − Ausentismos (0.0 h) = <strong>Saldo acumulado: +4.5 h</strong>
+              </div>
+            </div>
+          </div>
+          <div class="mock-window">
+            <div class="mock-wbar"><span>🚦 Universal Watcher Presupuesto</span><span class="badge b-mint">RF-T-24</span></div>
+            <div class="mock-wbody">
+              <div class="box box-warn" style="margin-bottom:8px;">
+                🟡 <strong>PRY-001 (81.0 % — 405/500 h):</strong><br>
+                Superó umbral <strong>80 %</strong> ➜ Alerta única enviada al Director <em>Andrés Silva</em>.
+              </div>
+              <div class="box box-err">
+                🔴 <strong>PRY-002 (100.5 % — 201/200 h):</strong><br>
+                Marcado <strong>"En Sobreconsumo"</strong> ➜ Alerta a Director + Gerente de Operaciones.
+              </div>
+            </div>
+          </div>
+        </div>
+      `,
+      altTitle: "Control de Duplicidad de Alertas y Descuento de Ausentismo",
+      altModeLabel: "Regla Alerta Única",
+      altBusiness: "Si un proyecto ya cruzó el 80 % y recibió su alerta (flag Alerta80Enviada = Sí), futuras aprobaciones entre 80 % y 99 % no vuelven a enviar correo repetido al Director hasta tocar el 100 %.",
+      altHtml: `
+        <div class="mock-window">
+          <div class="mock-wbar" style="background:var(--navy-mid);"><span>🛡️ Control de Alerta Única y Cruce de Compensación</span><span>Criterio 3.11</span></div>
+          <div class="mock-wbody">
+            <div class="box box-ok" style="margin-bottom:8px;">
+              ✔️ <strong>Bandera <code>Alerta80Enviada = SÍ</code>:</strong> Garantiza que el Director reciba la alerta del 80 % <strong>una sola vez</strong> aunque se sigan aprobando horas diarias.
+            </div>
+            <div class="box box-navy">
+              <strong>Ejemplo saldo negativo (Ausentismo no remunerado):</strong><br>
+              Si el empleado tuvo 2.0 h de ausencia no justificada y 1.0 h extra aprobada ➜ Saldo del día = <strong>−1.0 h a compensar</strong>.
+            </div>
+          </div>
+        </div>
+      `
+    },
+    {
+      num: 7,
+      short: "Cierre Mensual",
+      time: "1er Día Hábil",
+      title: "Paso 7: Cierre Mensual Distribuido y Firma Digital del Cliente",
+      subtitle: "Instancias independientes por proyecto, exclusiones, PDF y portal externo",
+      actors: "Director de Proyecto · Contacto del Cliente (Externo)",
+      process: "TIEM_CIERRE_MENSUAL (Tratamiento Distribuido Causal)",
+      business: "El primer día hábil del mes se abre un trámite independiente por cada proyecto facturable con horas. El Director revisa y puede excluir horas no facturables con justificación; luego se publica el Reporte PDF en el Portal de Clientes para firma digital.",
+      objects: "Tratamiento Distribuido Causal (3.07), FORM_CIERRE_PROYECTO, Documento Base Word→PDF (2.08 / 3.04), Portal Clientes Externos aislado por NIT (4.03 / RT-14), Firma Digital (2.08), Temporizadores 5d/10d.",
+      reqs: ["RF-T-25", "RF-T-26", "RF-T-27", "RF-T-28", "RN-T-08", "RT-01", "RT-14"],
+      script: "El primer día hábil del mes entra el segundo proceso mediante un Tratamiento Distribuido: si hubo tres proyectos facturables, nacen tres trámites independientes. Cada Director revisa, sus exclusiones no afectan la nómina, y el cliente firma su PDF en un portal aislado por NIT.",
+      happyHtml: `
+        <div class="timeline">
+          <div class="tl-node">
+            <strong>1. Split Distribuido</strong><br>
+            3 proyectos facturables ➜ <strong>3 trámites independientes</strong> (RF-T-25)
+          </div>
+          <div class="tl-arrow">➜</div>
+          <div class="tl-node">
+            <strong>2. Director Valida</strong><br>
+            Excluye 4h internas con motivo (<strong>sí van a nómina</strong>, RN-T-08)
+          </div>
+          <div class="tl-arrow">➜</div>
+          <div class="tl-node" style="border-color:var(--mint-dark); background:var(--mint-soft);">
+            <strong>3. Reporte PDF</strong><br>
+            Documento Base con logo, NIT y totales en Portal Clientes
+          </div>
+          <div class="tl-arrow">➜</div>
+          <div class="tl-node" style="border-color:var(--ok); background:var(--ok-bg);">
+            <strong>4. Firma Digital ✍️</strong><br>
+            Roberto Méndez (Banco Nacional) firma con certificado pruebas
+          </div>
+        </div>
+        <div class="box box-navy" style="font-size:12px;">
+          <strong>🔒 Confidencialidad (RT-14):</strong> El cliente <em>Banco Nacional S.A.</em> solo visualiza y firma sus propios proyectos (<code>Cuenta_Cliente == Cliente_Sesión</code>).
+        </div>
+      `,
+      altTitle: "Camino Alterno: Observaciones del Cliente o Aprobación Tácita (5 / 10 días)",
+      altModeLabel: "Observaciones / Tácita",
+      altBusiness: "Si el cliente registra observaciones, el trámite retorna al Director para ajustar y regenerar el PDF. Si no responde en 5 días hábiles, recibe un recordatorio; al 10.º día hábil se aprueba tácitamente dejando constancia en el expediente.",
+      altHtml: `
+        <div class="mini-grid-2">
+          <div class="mock-window">
+            <div class="mock-wbar" style="background:var(--warn);"><span>💬 Devolución por Observaciones</span><span>Vuelve a Director</span></div>
+            <div class="mock-wbody">
+              <div class="box box-warn">
+                Cliente registra: <em>"Falta descontar 2h del 18/10."</em><br>
+                ➜ Compuerta devuelve instancia al <strong>Director</strong>, quien ajusta y emite nueva versión del PDF.
+              </div>
+            </div>
+          </div>
+          <div class="mock-window">
+            <div class="mock-wbar" style="background:var(--navy-mid);"><span>⏳ Temporizador 5 y 10 Días Hábiles</span><span>RF-T-28 / RN-T-09</span></div>
+            <div class="mock-wbody">
+              <div class="box box-navy">
+                • <strong>Día 5 hábil:</strong> Recordatorio único por correo al cliente.<br>
+                • <strong>Día 10 hábil:</strong> Sistema marca <strong>Aprobación Tácita</strong> y guarda acta de constancia en biblioteca.
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+    },
+    {
+      num: 8,
+      short: "Confluencia",
+      time: "Cierre Mes",
+      title: "Paso 8: Confluencia a Finanzas, Nómina REST e Indicadores",
+      subtitle: "Consolidación final tras aprobar todos los proyectos + transmisión a Nómina",
+      actors: "AuraQuantic Engine → Finanzas · Talento Humano · Gerencia",
+      process: "TIEM_CIERRE_MENSUAL (Compuerta Confluencial + Conector REST Nómina)",
+      business: "Solo cuando el 100 % de los proyectos del mes quedan aprobados, la confluencia dispara un único correo consolidado a Finanzas. En paralelo, genera el Certificado mensual por empleado y lo transmite al servicio REST de Nómina.",
+      objects: "Compuerta Confluencial (3.07), TS Notificador Finanzas (3.01), Documento Base Certificado Nómina (2.08), Conector REST Nómina Mock + Reto Reintentos 3x (RF-T-31), Cuadro de Mandos (4.02).",
+      reqs: ["RF-T-29", "RF-T-30", "RF-T-31", "RT-08", "RT-13"],
+      script: "Aquí cerramos el ciclo financiero y de nómina: la confluencia garantiza que Finanzas reciba un solo resumen cuando los tres proyectos estén firmados, y en paralelo cada empleado tiene su certificado enviado automáticamente al servicio REST de Nómina.",
+      happyHtml: `
+        <div class="mini-grid-2">
+          <div class="mock-window">
+            <div class="mock-wbar"><span>💰 Confluencia → Finanzas (RF-T-29)</span><span class="badge b-mint">3/3 Aprobados</span></div>
+            <div class="mock-wbody">
+              <div class="box box-ok">
+                ✔️ Proyecto 1 Firmado · ✔️ Proyecto 2 Tácita · ✔️ Proyecto 3 Firmado.<br>
+                <strong>Compuerta Confluencial liberada:</strong> Envía <strong>1 único correo</strong> a Finanzas con el resumen consolidado de facturación del mes.
+              </div>
+            </div>
+          </div>
+          <div class="mock-window">
+            <div class="mock-wbar"><span>🧾 Certificado + REST Nómina (RF-T-30)</span><span class="badge b-mint">200 OK</span></div>
+            <div class="mock-wbody">
+              <div><span class="code-pill">POST {mock}/nomina/novedades</span></div>
+              <div class="box box-navy" style="margin-top:8px;">
+                • Genera <strong>Certificado Mensual PDF</strong> por empleado.<br>
+                • Transmite extras y novedades a Nómina (Recibo #<code>NOM-99412</code>).<br>
+                • Talento Humano confirma cierre + Cuadro de Mandos actualizado (RT-13).
+              </div>
+            </div>
+          </div>
+        </div>
+      `,
+      altTitle: "Camino Alterno [Reto]: Nómina rechaza o no responde (RF-T-31)",
+      altModeLabel: "Reto 3 Reintentos",
+      altBusiness: "Si el servicio REST de Nómina devuelve error o timeout, AuraQuantic ejecuta automáticamente 3 reintentos y, si persiste el fallo, crea una tarea de contingencia para Talento Humano mostrando el detalle del error recibido.",
+      altHtml: `
+        <div class="mock-window">
+          <div class="mock-wbar" style="background:var(--err);"><span>🚨 Contingencia REST Nómina — RF-T-31 [Reto]</span><span>3 Reintentos</span></div>
+          <div class="mock-wbody">
+            <div class="timeline">
+              <div class="tl-node box-err"><strong>Intento 1–3</strong><br>503 Service Unavailable</div>
+              <div class="tl-arrow">➜</div>
+              <div class="tl-node box-warn"><strong>Compuerta Error</strong><br>Captura mensaje HTTP y payload</div>
+              <div class="tl-arrow">➜</div>
+              <div class="tl-node box-navy"><strong>Tarea Talento Humano</strong><br>Corrige dato o reenvía manualmente</div>
+            </div>
+          </div>
+        </div>
+      `
+    }
+  ];
+
+  let currentStep = 0;
+  let currentMode = "happy"; // 'happy' | 'alt'
+  let showNotes = true;
+  let showMap = false;
+  let autoTimer = null;
+
+  function renderStepper() {
+    const nav = document.getElementById("stepperNav");
+    nav.innerHTML = STEPS.map((s, idx) => {
+      const cls = idx === currentStep ? "active" : (idx < currentStep ? "done" : "");
+      return `
+        <button class="step-pill ${cls}" data-step="${idx}">
+          <span class="step-num">Paso ${s.num}</span>
+          <span class="step-label">${s.short}</span>
+          <span class="step-time">${s.time}</span>
+        </button>
+      `;
+    }).join("");
+    nav.querySelectorAll(".step-pill").forEach(btn => {
+      btn.addEventListener("click", () => {
+        stopAuto();
+        currentStep = Number(btn.dataset.step);
+        currentMode = "happy";
+        if (showMap) toggleMap(false);
+        renderStep();
+      });
+    });
+  }
+
+  function renderJumpGrid() {
+    const grid = document.getElementById("jumpGrid");
+    grid.innerHTML = STEPS.map((s, idx) => `
+      <button class="jump-card" data-jump="${idx}">
+        <span class="badge b-navy">Paso ${s.num} · ${s.time}</span>
+        <div style="font-weight:700; color:var(--navy); margin-top:6px; font-size:13px;">${s.short}</div>
+        <div style="font-size:11.5px; color:var(--muted); margin-top:2px;">${s.subtitle}</div>
+      </button>
+    `).join("");
+    grid.querySelectorAll(".jump-card").forEach(btn => {
+      btn.addEventListener("click", () => {
+        currentStep = Number(btn.dataset.jump);
+        currentMode = "happy";
+        toggleMap(false);
+        renderStep();
+      });
+    });
+  }
+
+  function renderStep() {
+    const s = STEPS[currentStep];
+    renderStepper();
+
+    document.getElementById("stepTitle").textContent = currentMode === "alt" && s.altTitle ? s.altTitle : s.title;
+    document.getElementById("stepSubtitle").textContent = s.subtitle;
+    document.getElementById("stepCounter").textContent = `Estación ${s.num} de ${STEPS.length}`;
+
+    const happyBtn = document.getElementById("btnHappy");
+    const altBtn = document.getElementById("btnAlt");
+    happyBtn.className = "path-btn" + (currentMode === "happy" ? " active-happy" : "");
+    altBtn.className = "path-btn" + (currentMode === "alt" ? " active-alt" : "");
+
+    document.getElementById("mockupStage").innerHTML = currentMode === "alt" ? s.altHtml : s.happyHtml;
+
+    const badge = document.getElementById("modeBadge");
+    badge.textContent = currentMode === "alt" ? (s.altModeLabel || "Camino Alterno") : "Camino Feliz";
+    badge.className = "badge " + (currentMode === "alt" ? "b-warn" : "b-mint");
+
+    document.getElementById("infoActors").textContent = s.actors;
+    document.getElementById("infoProcess").textContent = s.process;
+    document.getElementById("infoBusiness").textContent = currentMode === "alt" ? s.altBusiness : s.business;
+    document.getElementById("infoObjects").textContent = s.objects;
+    document.getElementById("infoReqs").innerHTML = s.reqs.map(r => `<span class="req-tag">${r}</span>`).join("");
+    document.getElementById("infoScript").textContent = s.script;
+
+    const spBox = document.getElementById("speakerBox");
+    spBox.classList.toggle("hidden", !showNotes);
+
+    const prevDisabled = currentStep === 0;
+    const nextDisabled = currentStep === STEPS.length - 1;
+    document.getElementById("btnPrevTop").disabled = prevDisabled;
+    document.getElementById("btnPrevBottom").disabled = prevDisabled;
+    document.getElementById("btnNextTop").disabled = nextDisabled;
+    document.getElementById("btnNextBottom").disabled = nextDisabled;
+  }
+
+  function toggleMap(forceState) {
+    showMap = typeof forceState === "boolean" ? forceState : !showMap;
+    document.getElementById("walkthroughView").classList.toggle("hidden", showMap);
+    document.getElementById("globalMapView").classList.toggle("hidden", !showMap);
+    document.getElementById("btnGlobalMap").classList.toggle("active", showMap);
+  }
+
+  function stopAuto() {
+    if (autoTimer) {
+      clearInterval(autoTimer);
+      autoTimer = null;
+      const btn = document.getElementById("btnAutoPlay");
+      btn.textContent = "▶ Reproducir";
+      btn.classList.remove("active");
+    }
+  }
+
+  function goPrev() {
+    stopAuto();
+    if (currentStep > 0) {
+      currentStep--;
+      currentMode = "happy";
+      if (showMap) toggleMap(false);
+      renderStep();
+    }
+  }
+
+  function goNext() {
+    stopAuto();
+    if (currentStep < STEPS.length - 1) {
+      currentStep++;
+      currentMode = "happy";
+      if (showMap) toggleMap(false);
+      renderStep();
+    }
+  }
+
+  document.getElementById("btnHappy").addEventListener("click", () => { currentMode = "happy"; renderStep(); });
+  document.getElementById("btnAlt").addEventListener("click", () => { currentMode = "alt"; renderStep(); });
+  document.getElementById("btnPrevTop").addEventListener("click", goPrev);
+  document.getElementById("btnPrevBottom").addEventListener("click", goPrev);
+  document.getElementById("btnNextTop").addEventListener("click", goNext);
+  document.getElementById("btnNextBottom").addEventListener("click", goNext);
+
+  document.getElementById("btnGlobalMap").addEventListener("click", () => { stopAuto(); toggleMap(); });
+  document.getElementById("btnBackToWalk").addEventListener("click", () => toggleMap(false));
+
+  document.getElementById("btnToggleNotes").addEventListener("click", function() {
+    showNotes = !showNotes;
+    this.classList.toggle("active", showNotes);
+    renderStep();
+  });
+
+  document.getElementById("btnAutoPlay").addEventListener("click", function() {
+    if (autoTimer) {
+      stopAuto();
+      return;
+    }
+    if (showMap) toggleMap(false);
+    this.textContent = "⏸ Pausar";
+    this.classList.add("active");
+    autoTimer = setInterval(() => {
+      if (currentStep < STEPS.length - 1) {
+        currentStep++;
+        currentMode = "happy";
+        renderStep();
+      } else {
+        stopAuto();
+      }
+    }, 5000);
+  });
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight") goNext();
+    else if (e.key === "ArrowLeft") goPrev();
+    else if (/^[1-8]$/.test(e.key)) {
+      stopAuto();
+      currentStep = Number(e.key) - 1;
+      currentMode = "happy";
+      if (showMap) toggleMap(false);
+      renderStep();
+    }
+  });
+
+  renderJumpGrid();
+  renderStep();
+})();
+</script>
+</body>
+</html>
