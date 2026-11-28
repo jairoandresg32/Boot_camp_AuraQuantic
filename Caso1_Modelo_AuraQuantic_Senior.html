@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modelador Senior AuraQuantic — Caso 1 (TP / TS / DX / DO / DA / CA / SP)</title>
+<title>Modelador Senior AuraQuantic v2.0 (Escalable + Familias) — Caso 1</title>
 <style>
   :root {
     --navy: #00015a;
@@ -11,6 +11,8 @@
     --mint: #3ff2cf;
     --mint-dark: #0a7d6b;
     --mint-soft: #e6fcf7;
+    --violet: #5b21b6;
+    --violet-soft: #f5f3ff;
     --bg: #eff2f6;
     --surface: #ffffff;
     --text: #14172b;
@@ -33,7 +35,6 @@
     line-height: 1.45;
   }
 
-  /* Barra Superior */
   .topbar {
     background: var(--navy);
     color: #fff;
@@ -44,13 +45,13 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0.22);
   }
   .topbar-inner {
-    max-width: 1480px;
+    max-width: 1520px;
     margin: 0 auto;
     padding: 10px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
   }
   .brand { display: flex; align-items: center; gap: 11px; }
@@ -59,7 +60,7 @@
     background: var(--mint); color: var(--navy);
     font-weight: 800; display: grid; place-items: center; font-size: 15px;
   }
-  .brand h1 { margin: 0; font-size: 15.5px; font-weight: 700; }
+  .brand h1 { margin: 0; font-size: 15px; font-weight: 700; }
   .brand p { margin: 0; font-size: 11.5px; color: #cbd5e1; }
 
   .tabs, .tools { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
@@ -67,42 +68,40 @@
     border: 1px solid rgba(255,255,255,0.25);
     background: rgba(255,255,255,0.08);
     color: #fff;
-    padding: 6px 11px;
+    padding: 6px 10px;
     border-radius: 7px;
     font: inherit;
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.15s ease;
   }
   .tab-btn:hover, .tool-btn:hover { background: rgba(63,242,207,0.2); border-color: var(--mint); }
   .tab-btn.active { background: var(--mint); color: var(--navy); border-color: var(--mint); font-weight: 700; }
-  .zoom-pill { font-size: 12px; font-weight: 700; color: var(--mint); min-width: 44px; text-align: center; }
+  .zoom-pill { font-size: 12px; font-weight: 700; color: var(--mint); min-width: 42px; text-align: center; }
 
-  /* Leyenda Oficial AuraQuantic */
   .legend-bar {
     background: var(--surface);
     border-bottom: 1px solid var(--line);
     padding: 8px 18px;
   }
   .legend-inner {
-    max-width: 1480px;
+    max-width: 1520px;
     margin: 0 auto;
     display: flex;
-    gap: 16px;
+    gap: 14px;
     align-items: center;
     flex-wrap: wrap;
     font-size: 12px;
   }
   .leg-item { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
 
-  /* Layout Workspace + Pestaña Junior extensible */
   .workspace {
-    max-width: 1480px;
+    max-width: 1520px;
     margin: 14px auto 48px;
     padding: 0 18px;
     display: grid;
-    grid-template-columns: 1fr 410px;
+    grid-template-columns: 1fr 415px;
     gap: 16px;
     align-items: start;
     transition: grid-template-columns 0.2s ease;
@@ -132,7 +131,6 @@
   .model-head h2 { margin: 0; font-size: 15.5px; color: var(--navy); font-weight: 800; }
   .model-head span { font-size: 12px; color: var(--muted); }
 
-  /* Fondo gris estilo modelador AuraQuantic */
   .svg-scroll {
     overflow: auto;
     padding: 16px;
@@ -145,17 +143,15 @@
     transition: transform 0.15s ease;
   }
 
-  /* Interactividad Nodos y Boton [+] */
   .aq-node { cursor: pointer; }
   .aq-node:hover .aq-shape { filter: drop-shadow(0 4px 10px rgba(0, 1, 90, 0.3)); }
   .aq-node.selected .aq-shape { stroke: #d97706 !important; stroke-width: 3px !important; }
-  .plus-btn circle { transition: transform 0.12s ease, fill 0.12s ease; }
+  .plus-btn circle { transition: fill 0.12s ease; }
   .aq-node:hover .plus-btn circle { fill: #00015a; }
   .aq-node:hover .plus-btn text { fill: #3ff2cf; }
   .aq-node.selected .plus-btn circle { fill: #d97706; stroke: #fff; }
   .aq-node.selected .plus-btn text { fill: #fff; }
 
-  /* Panel Derecho: Especificación para Junior */
   .junior-drawer {
     background: var(--surface);
     border: 1px solid var(--line);
@@ -242,6 +238,7 @@
     background: #fafbfc;
   }
   .spec-box.mint { background: var(--mint-soft); border-left: 4px solid var(--mint-dark); }
+  .spec-box.violet { background: var(--violet-soft); border-left: 4px solid var(--violet); }
   .spec-box.warn { background: var(--warn-bg); border-left: 4px solid #d97706; color: #451a03; }
   .spec-lbl {
     font-size: 10.5px;
@@ -258,10 +255,14 @@
     font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 5px;
     background: #eef2ff; color: var(--navy); border: 1px solid #cbd5e1;
   }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 999px;
+    font-size: 11px; font-weight: 700; background: var(--mint-soft);
+    color: var(--mint-dark); border: 1px solid var(--mint);
+  }
 
-  /* Guía de Formularios y Compuertas */
   .guide-wrap { padding: 20px; }
-  .guide-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; }
+  .guide-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 22px; }
   .guide-table th {
     background: var(--navy); color: #fff; padding: 10px; text-align: left; font-size: 12.5px;
   }
@@ -291,17 +292,18 @@
     <div class="brand">
       <div class="brand-logo">AQ</div>
       <div>
-        <h1>Modelos de Proceso AuraQuantic (Notación Oficial) — Caso 1</h1>
-        <p>TP · TS · DX · DO · DA+ · CA+ · SP · FN | Pulsa [+] en cualquier figura para abrir la Especificación Junior</p>
+        <h1>Modelador Senior AuraQuantic v2.0 — Escalable + Familias (Caso 1)</h1>
+        <p>4 Procesos Desacoplados (Cientos de Empleados) · Cuadros FAM_ (Lee/Guarda) · Pulsa [+] para Especificación Junior</p>
       </div>
     </div>
 
     <nav class="tabs" id="tabNav" aria-label="Modelos y Guías">
       <button class="tab-btn active" data-tab="m1">1. TIEM_REG_DIARIO</button>
-      <button class="tab-btn" data-tab="m2">2. TIEM_NOV_CORREO</button>
-      <button class="tab-btn" data-tab="m3">3. TIEM_CIERRE_MENSUAL</button>
-      <button class="tab-btn" data-tab="guide">📚 Guía Formularios &amp; Compuertas (Junior)</button>
-      <button class="tab-btn" data-tab="all">Vista Completa (3 Modelos)</button>
+      <button class="tab-btn" data-tab="m2">2. TIEM_INFORMES_DIARIOS</button>
+      <button class="tab-btn" data-tab="m3">3. TIEM_NOV_CORREO</button>
+      <button class="tab-btn" data-tab="m4">4. TIEM_CIERRE_MENSUAL</button>
+      <button class="tab-btn" data-tab="guide">📚 Familias, Formularios &amp; Compuertas</button>
+      <button class="tab-btn" data-tab="all">Vista Completa (4 Modelos)</button>
     </nav>
 
     <div class="tools">
@@ -317,14 +319,15 @@
 
 <div class="legend-bar">
   <div class="legend-inner">
-    <strong style="color:var(--navy);">Notación Oficial AuraQuantic:</strong>
-    <span class="leg-item"><span style="width:16px;height:16px;border-radius:50%;background:#8ca83e;border:2px solid #4d6316;display:inline-block;"></span> Evento Inicio (Flecha Amarilla)</span>
-    <span class="leg-item"><span style="width:24px;height:16px;border-radius:4px;background:linear-gradient(#f7f7f7,#d8d8d8);border:1.5px solid #555;display:inline-block;"></span> <strong>TP</strong> Tarea Personal (<em style="color:var(--aq-red);">Rol</em>)</span>
-    <span class="leg-item"><span style="width:24px;height:16px;border-radius:4px;background:linear-gradient(#f3fbfb,#c9e6ea);border:1.5px solid #4e6c73;display:inline-block;"></span> <strong>TS</strong> Tarea Sistema (<em style="color:var(--aq-red);">Tipo</em>)</span>
-    <span class="leg-item"><span style="width:16px;height:16px;transform:rotate(45deg);background:linear-gradient(#f3f3f3,#c8c8c8);border:1.5px solid #444;display:inline-block;margin:0 3px;"></span> <strong>DX / DO / DA+ / CA+</strong> Compuertas</span>
-    <span class="leg-item"><span style="width:24px;height:16px;border-radius:4px;background:linear-gradient(#faf6f0,#dcd0be);border:1.5px solid #6b5b47;display:inline-block;"></span> <strong>SP</strong> Subproceso Distribuido</span>
-    <span class="leg-item"><span style="width:16px;height:16px;border-radius:50%;background:#dcdcdc;border:3.5px solid #111;display:inline-block;"></span> <strong>FN</strong> Fin Proceso</span>
-    <span style="margin-left:auto; color:var(--mint-dark); font-weight:700;">Pulsa el botón [+] sobre cualquier figura para ver Formulario, Porqué y Paso a Paso.</span>
+    <strong style="color:var(--navy);">Simbología Senior AuraQuantic:</strong>
+    <span class="leg-item"><span style="width:15px;height:15px;border-radius:50%;background:#8ca83e;border:2px solid #4d6316;display:inline-block;"></span> Inicio</span>
+    <span class="leg-item"><span style="width:22px;height:15px;border-radius:4px;background:linear-gradient(#f7f7f7,#d8d8d8);border:1.5px solid #555;display:inline-block;"></span> <strong>TP</strong> Personal (<em style="color:var(--aq-red);">Rol</em>)</span>
+    <span class="leg-item"><span style="width:22px;height:15px;border-radius:4px;background:linear-gradient(#f3fbfb,#c9e6ea);border:1.5px solid #4e6c73;display:inline-block;"></span> <strong>TS</strong> Sistema (<em style="color:var(--aq-red);">Tipo</em>)</span>
+    <span class="leg-item"><span style="width:22px;height:15px;border-radius:4px;background:linear-gradient(#f5f3ff,#ddd6fe);border:1.5px solid #5b21b6;display:inline-block;"></span> <strong>FAM</strong> Familia/Tabla (<span style="color:var(--violet);">Lee / Guarda</span>)</span>
+    <span class="leg-item"><span style="width:14px;height:14px;transform:rotate(45deg);background:linear-gradient(#f3f3f3,#c8c8c8);border:1.5px solid #444;display:inline-block;margin:0 3px;"></span> <strong>DX / DO / DA+ / CA+</strong></span>
+    <span class="leg-item"><span style="width:22px;height:15px;border-radius:4px;background:linear-gradient(#faf6f0,#dcd0be);border:1.5px solid #6b5b47;display:inline-block;"></span> <strong>SP</strong> Subproceso</span>
+    <span class="leg-item"><span style="width:15px;height:15px;border-radius:50%;background:#dcdcdc;border:3.5px solid #111;display:inline-block;"></span> <strong>FN</strong> Fin</span>
+    <span style="margin-left:auto; color:var(--mint-dark); font-weight:700;">Línea morada punteada = Lee o Guarda en Familia/Tabla. Pulsa [+] en cualquier cuadro.</span>
   </div>
 </div>
 
@@ -348,31 +351,29 @@
     <nav class="subtabs" id="subtabNav">
       <button class="subtab-btn active" data-subtab="form">📋 Formulario y Por Qué</button>
       <button class="subtab-btn" data-subtab="steps">🛠️ Paso a Paso Junior</button>
-      <button class="subtab-btn" data-subtab="data">🔌 Datos y Curso</button>
+      <button class="subtab-btn" data-subtab="data">🗄️ Familias (Lee/Guarda)</button>
     </nav>
 
     <div class="drawer-body">
-      <!-- Subtab 1: Formulario y Por Que -->
       <div id="sub-form">
         <div class="spec-box mint">
-          <div class="spec-lbl">Tipo de Formulario AuraQuantic Usado</div>
+          <div class="spec-lbl">Tipo de Formulario / Objeto AuraQuantic</div>
           <div id="specFormType" style="font-weight:800; color:var(--navy); font-size:13.5px;">—</div>
         </div>
         <div class="spec-box">
-          <div class="spec-lbl">Por Qué Se Elige Este Tipo (Criterio Senior)</div>
+          <div class="spec-lbl">Por Qué Se Elige (Criterio Senior)</div>
           <div id="specFormWhy">—</div>
         </div>
         <div class="spec-box">
-          <div class="spec-lbl">Controles y Reglas Clave en Pantalla / Motor</div>
+          <div class="spec-lbl">Controles y Reglas Clave</div>
           <div id="specControls">—</div>
         </div>
         <div class="spec-box">
-          <div class="spec-lbl">Requerimientos del Caso Cubiertos</div>
+          <div class="spec-lbl">Requerimientos Cubiertos</div>
           <div class="tag-wrap" id="specReqs"></div>
         </div>
       </div>
 
-      <!-- Subtab 2: Paso a Paso Junior -->
       <div id="sub-steps" class="hidden">
         <div class="spec-box">
           <div class="spec-lbl">Cómo Configurarlo en AuraQuantic (Junior)</div>
@@ -384,10 +385,9 @@
         </div>
       </div>
 
-      <!-- Subtab 3: Datos y Modulo Curso -->
       <div id="sub-data" class="hidden">
-        <div class="spec-box">
-          <div class="spec-lbl">Términos, Familias y Bibliotecas que Lee o Escribe</div>
+        <div class="spec-box violet">
+          <div class="spec-lbl" style="color:var(--violet);">De Dónde Sale y Dónde Se Guarda (Familias / Tablas)</div>
           <div id="specDataRefs">—</div>
         </div>
         <div class="spec-box mint">
@@ -404,786 +404,1140 @@
   const MODELS = {
     m1: {
       id: "m1",
-      title: "Modelo 1: TIEM_REG_DIARIO — Registro Diario, Ampliación, Horas Extra y Presupuesto",
-      subtitle: "Notación oficial AuraQuantic con Boundary Timer (4:30 p.m.), DX exclusivas, DO inclusiva y paralelismo DA+ / CA+",
-      width: 1180,
-      height: 1520,
+      title: "Modelo 1: TIEM_REG_DIARIO — Registro, Gracia 15m, Calendario, Extras Real y Cruce Permisos",
+      subtitle: "Guarda todo en Familias (0 archivos por empleado); alerta 30 min antes (5:00 p. m.) con revisión de calendario ocupado y temporizador de re-diligenciamiento",
+      width: 1360,
+      height: 1440,
       nodes: [
         {
-          id: "m1_ei", kind: "ei_timer", cx: 470, cy: 56, w: 54, h: 54, code: "EI.01",
-          title: "Apertura Jornada Hábil (7/8 a.m.)", subRole: "Evento Temporizado",
-          formType: "No usa formulario de usuario (Disparo Automático por Lotes)",
-          formWhy: "El proceso nace de un reloj programado por el motor según el calendario laboral (excluye sábados, domingos y festivos de Colombia) para crear automáticamente la tarea diaria a cada empleado activo.",
-          controls: "Programación Lun–Mar 08:00 a. m. y Mié–Vie 07:00 a. m. vinculada al calendario nutrido por REST Nager.Date.",
+          id: "m1_db_nov_in", kind: "db", cx: 170, cy: 56, w: 210, h: 74, code: "FAM",
+          title: "FAM_NOVEDADES_EMP", subRole: "Lee Incapacidad Activa",
+          formType: "Familia Propia (Estructura Maestra Transaccional)",
+          formWhy: "Guarda incapacidades y permisos aprobados por rango de fechas para evitar crear tareas diarias ni alertas a quien ya está incapacitado.",
+          controls: "Columnas: Empleado, TipoNovedad, FechaInicio, FechaFin, HorasPermiso, SaldoPorCruzar, Estado.",
           juniorSteps: [
-            "Abre la clase de proceso TIEM_REG_DIARIO y ve a Eventos de Inicio.",
-            "Selecciona tipo Temporizado y activa Tratamiento por Lotes sobre Familia Empleados (Activos).",
-            "Asocia el Calendario Laboral de Colombia configurado con festivos."
+            "Crea la familia FAM_NOVEDADES_EMP en Estructura > Familias Propias.",
+            "En el Evento de Inicio EI.01 filtra empleados activos que NO tengan registro vigente aquí hoy."
           ],
-          seniorTip: "Un junior suele crear un único formulario público de inicio esperando que el empleado abra el proceso manual; si haces eso, pierdes el control de recordatorios 4:30 p. m. y cierre 5:30 p. m. por ausentes.",
-          dataRefs: "Lee: Estructura Empleados (Activos), FAM_JORNADAS, Calendario Laboral (REST Nager.Date).",
-          studyModule: "Curso 2: 2.05 (07 Cronometría y 08 Eventos de inicio) + Curso 3: 3.07 (05 Por lotes)",
+          seniorTip: "Sin este cruce previo, el sistema enviaría recordatorios diarios y marcaría incumplimiento a un empleado hospitalizado.",
+          dataRefs: "Leída por: EI.01 (apertura) y TS.07 (cruce permisos vs horas extra) | Escrita por: TIEM_NOV_CORREO (TS.24).",
+          studyModule: "Curso 2: 2.02 (04 Familias propias) + Curso 3: 3.07",
+          reqs: ["RF-T-06", "RF-T-15", "RF-T-22"]
+        },
+        {
+          id: "m1_ei", kind: "ei_timer", cx: 520, cy: 56, w: 54, h: 54, code: "EI.01",
+          title: "Apertura Hábil (7/8 a.m.)", subRole: "Evento Temporizado",
+          formType: "No lleva formulario (Disparo Temporizado por Lotes)",
+          formWhy: "Instancia 1 tarea diaria por cada empleado activo que no esté incapacitado, respetando festivos de Colombia (Nager.Date).",
+          controls: "Lotes sobre Empleados Activos excluyendo incapacidad vigente en FAM_NOVEDADES_EMP y días no hábiles.",
+          juniorSteps: [
+            "Configura Inicio Temporizado a las 8:00 a. m. (Lun–Mar) y 7:00 a. m. (Mié–Vie) sobre Calendario CO.",
+            "Aplica filtro de lote excluyendo empleados con incapacidad activa en FAM_NOVEDADES_EMP."
+          ],
+          seniorTip: "Pensado para cientos de empleados: cada empleado maneja su registro ligero en memoria y al final solo inserta filas en Familias, sin generar documentos.",
+          dataRefs: "Lee: Empleados Activos, Calendario CO (REST Nager.Date), FAM_NOVEDADES_EMP.",
+          studyModule: "Curso 2: 2.05 (07/08) + Curso 3: 3.07 (05 Por lotes)",
           reqs: ["RF-T-05", "RF-T-06", "RT-05"]
         },
         {
-          id: "m1_ts01", kind: "ts", cx: 470, cy: 165, w: 220, h: 84, code: "TS.01",
-          title: "Generar Consecutivo y Jornada", subRole: "Ingresador",
-          formType: "No lleva formulario (Tarea de Sistema Ingresador)",
-          formWhy: "Antes de mostrar la pantalla al empleado, el sistema asigna el contador único TIEM-2026-XXXXXX y carga la jornada esperada del día sin intervención manual.",
-          controls: "Término Contador + lectura de FAM_JORNADAS según día de la semana.",
+          id: "m1_db_jor", kind: "db", cx: 170, cy: 165, w: 210, h: 74, code: "FAM",
+          title: "FAM_JORNADAS / ASIGNAC.", subRole: "Lee Horario y Proyectos",
+          formType: "Familias Propias Maestras (Parametrización)",
+          formWhy: "Provee el horario estándar del día (apertura/cierre) y la lista de proyectos vigentes asignados al empleado.",
+          controls: "FAM_JORNADAS (Dia, Apertura, Cierre) + FAM_ASIGNACIONES (Empleado, Proyecto, Desde, Hasta).",
           juniorSteps: [
-            "Arrastra una Tarea de Sistema tipo Ingresador justo después del Evento de Inicio.",
-            "Asigna el término Contador con máscara TIEM-@YYYY@-@######@ al campo Asunto/Tema.",
-            "Carga en términos de cabecera la Hora Apertura, Hora Cierre y Horas Esperadas."
+            "Relaciona Empleados 1:N FAM_ASIGNACIONES N:1 FAM_PROYECTOS.",
+            "Carga los 5 registros de jornada estándar en FAM_JORNADAS."
           ],
-          seniorTip: "Configura siempre la identificación del Tema (RT-03) aquí mismo para que en Mis Tareas se vea 'TIEM-2026-000128 | Juan Pérez | Pendiente' sin abrir el formulario.",
-          dataRefs: "Escribe: Numero_Tramite, Jornada_Horas | Lee: FAM_JORNADAS.",
-          studyModule: "Curso 2: 2.05 (05 Temas) + Curso 3: 3.02 / 3.03 (Contadores)",
+          seniorTip: "Nunca quemes horarios ni asignaciones en el diagrama; así soportas cambios de jornada por decreto o contrato sin recompilar.",
+          dataRefs: "Leída por: TS.01 (cabecera) y TP.01 (dropdown limitado).",
+          studyModule: "Curso 2: 2.02 (04 Familias y 05 Relaciones)",
+          reqs: ["RF-T-01", "RF-T-03", "RF-T-04", "RT-15"]
+        },
+        {
+          id: "m1_ts01", kind: "ts", cx: 520, cy: 165, w: 230, h: 84, code: "TS.01",
+          title: "Consecutivo y Precarga Jornada", subRole: "Ingresador",
+          formType: "No lleva formulario (TS Ingresador)",
+          formWhy: "Asigna el número único TIEM-2026-XXXXXX y carga la jornada esperada + hora límite con 15 min de gracia (5:45 p. m.).",
+          controls: "Lee FAM_JORNADAS y fija Hora_Cierre_Con_Gracia = Hora_Cierre + 15 min (17:45).",
+          juniorSteps: [
+            "Asigna el Contador TIEM-@YYYY@-@######@ al Tema del trámite (RT-02/RT-03).",
+            "Lee FAM_JORNADAS para el día actual y calcula el vencimiento con los 15 minutos de gracia."
+          ],
+          seniorTip: "Guardar los 15 minutos de gracia como parámetro en FAM_PARAMETROS te permite ajustarlo luego sin tocar código.",
+          dataRefs: "Lee: FAM_JORNADAS, FAM_ASIGNACIONES | Escribe: Términos de cabecera del trámite.",
+          studyModule: "Curso 2: 2.05 (05 Temas) + Curso 3: 3.02 / 3.03",
           reqs: ["RT-02", "RT-03", "RF-T-05"]
         },
         {
-          id: "m1_tp01", kind: "tp", cx: 470, cy: 295, w: 220, h: 84, code: "TP.01",
-          title: "Registrar Actividades y Novedades", subRole: "Empleado",
+          id: "m1_tp01", kind: "tp", cx: 520, cy: 305, w: 240, h: 88, code: "TP.01",
+          title: "Registro: Cobro, Valor Real y Nov.", subRole: "Empleado",
           formType: "Formulario de Tarea Dinámico y Adaptativo (FORM_REGISTRO_DIARIO)",
-          formWhy: "Es la pantalla central del día: necesita Grupos de Campos (tablas dinámicas), campos calculados en vivo, Término Limitado por Familia-Relación (proyectos vigentes), disparos de obligatoriedad en soportes y botones de Borrador/Precarga, además de diseño adaptativo móvil.",
-          controls: "GC_ACTIVIDADES (Selector limitado por Asignaciones), GC_NOVEDADES (Disparo adjunto obligatorio), Botón Guardar Borrador (sin avanzar flujo), Botón Precargar Ayer (Traspasador) y bloqueo de check extras si cargo no genera.",
+          formWhy: "Captura en pantalla reactiva las actividades del día marcando explícitamente si cada actividad es para cobro (facturable), las horas extra reales trabajadas, novedades con soporte obligatorio y botones Borrador/Precarga.",
+          controls: "GC_ACTIVIDADES: Proyecto (limitado vigente), Inicio/Fin, ¿Es para cobro? (Sí/No), ¿Fuera horario?, Horas_Extra_Reales, Duración | GC_NOVEDADES: Soporte obligatorio | Validaciones: Fin>Ini, No traslape, <=16h.",
           juniorSteps: [
-            "En la Tarea Personal TP.01, asigna participante 'Iniciador / Empleado del lote'.",
-            "Vincula el Formulario FORM_REGISTRO_DIARIO con ayuda de 3 líneas arriba (RT-07).",
-            "Configura en el campo Proyecto el filtro Familia-Relación: Empleado = Sesión Y FechaHasta >= Hoy Y Estado = Activo.",
-            "Activa las reglas de validación al enviar: Fin > Inicio, No Traslape, Suma <= 16h y Adjunto obligatorio."
+            "Añade en GC_ACTIVIDADES la columna booleana 'Es_Para_Cobro' (default según si el proyecto es facturable, modificable por actividad).",
+            "Calcula en vivo 'Horas_Extra_Reales' (tiempo efectivo fuera de jornada) y el valor estimado según tarifa confidencial solo visible a nómina.",
+            "Configura botones 'Guardar Borrador' (sin cerrar tarea) y 'Precargar Día Anterior'."
           ],
-          seniorTip: "¡Cuidado! El botón 'Guardar Borrador' debe usar la acción de sistema 'Guardar datos sin finalizar tarea' (2.08), NO 'Enviar', para no disparar la transición BPMN antes de tiempo.",
-          dataRefs: "Lee: FAM_ASIGNACIONES, FAM_PROYECTOS, FAM_TIPOS_NOVEDAD | Escribe: GC_ACTIVIDADES, GC_NOVEDADES, Bib_SoportesNovedades.",
-          studyModule: "Curso 2: 2.04 (Calculados, Limitados, Disparos, Grupos) + 2.08 (Botones) + Curso 4: 4.05 (Móvil)",
-          reqs: ["RF-T-03", "RF-T-07", "RF-T-08", "RF-T-09", "RF-T-10", "RF-T-12", "RF-T-13", "RF-T-20", "RN-T-01", "RN-T-02", "RN-T-05", "RN-T-06", "RT-07", "RT-10"]
+          seniorTip: "Diferenciar 'Es_Para_Cobro' (facturación al cliente) de 'Horas_Extra_Reales' (tiempo real trabajado para nómina) desde la captura evita reprocesos en el cierre mensual.",
+          dataRefs: "Lee: FAM_ASIGNACIONES, FAM_TIPOS_NOVEDAD | Captura temporal hasta guardar en TS.07.",
+          studyModule: "Curso 2: 2.04 (Grupos, Calculados, Limitados, Disparos) + 2.08 + Curso 4: 4.05",
+          reqs: ["RF-T-07", "RF-T-08", "RF-T-09", "RF-T-10", "RF-T-12", "RF-T-13", "RF-T-20", "RN-T-01", "RN-T-05", "RN-T-06", "RT-10"]
         },
         {
-          id: "m1_et01", kind: "et", cx: 240, cy: 295, w: 54, h: 54, code: "ET.01",
-          title: "Alerta 4:30 p.m.", subRole: "Evento Intermedio",
+          id: "m1_et01", kind: "et", cx: 300, cy: 305, w: 54, h: 54, code: "ET.01",
+          title: "Alerta 5:00 p.m. (-30m)", subRole: "Timer 30m Antes",
           formType: "No lleva formulario (Evento Intermedio No Interruptor)",
-          formWhy: "Permite disparar una rama paralela de recordatorio exactamente a las 4:30 p. m. sin cerrar ni cancelar la tarea TP.01 que el empleado sigue diligenciando.",
-          controls: "Reloj de frontera fijado a las 16:30 mientras TP.01 siga en estado Pendiente.",
+          formWhy: "Se dispara exactamente media hora antes del cierre oficial (5:00 p. m.) si TP.01 sigue pendiente, sin cerrar el formulario.",
+          controls: "Hora disparo = Hora_Cierre - 30 min (17:00).",
           juniorSteps: [
-            "Agrega un Evento Intermedio de Tiempo en paralelo/frontera sobre TP.01 marcado como No Interruptor.",
-            "Configura la hora límite de disparo a las 16:30 del día en curso."
+            "Coloca Evento Intermedio No Interruptor sobre TP.01 programado a las 17:00 (30 min antes del cierre 17:30).",
+            "Conéctalo hacia TS.02_CAL para revisar el calendario antes de notificar."
           ],
-          seniorTip: "Si lo pones como Evento Interruptor por error, a las 4:30 p. m. le desaparecerá la tarea al empleado de su bandeja.",
-          dataRefs: "Lee: Estado de TP.01 y Correo/Usuario App del Empleado.",
+          seniorTip: "Avisar a las 5:00 p. m. (30 min antes) da margen real al consultor que está terminando su jornada, en lugar de avisar tarde.",
+          dataRefs: "Lee: Estado de TP.01.",
           studyModule: "Curso 2: 2.05 (09 Eventos intermedios)",
           reqs: ["RF-T-14"]
         },
         {
-          id: "m1_ts02", kind: "ts", cx: 140, cy: 415, w: 210, h: 84, code: "TS.02",
-          title: "Recordatorio Correo + App", subRole: "Notificador",
-          formType: "No lleva formulario (Plantilla Email + Notificación Push App)",
-          formWhy: "Automatiza el aviso multicanal exigido a las 4:30 p. m. con asunto estandarizado y enlace directo a TP.01.",
-          controls: "TS Notificador: Destinatario = Empleado | Canales = Email + Push App AuraQuantic | Enlace directo con parámetros URL.",
+          id: "m1_ts02_cal", kind: "ts", cx: 130, cy: 305, w: 195, h: 82, code: "TS.02C",
+          title: "Revisar Agenda Calendario", subRole: "Conector REST Cal.",
+          formType: "No lleva formulario (Conector REST Calendario Graph / Google)",
+          formWhy: "Consulta la disponibilidad del empleado en su calendario corporativo (Microsoft 365 / Google Calendar) para saber si está ocupado en reunión a las 5:00 p. m.",
+          controls: "GET Free/Busy del usuario entre 17:00 y 17:45 -> guarda Estado_Agenda ('Ocupado en reunión' / 'Libre').",
           juniorSteps: [
-            "Configura la TS Notificador marcando las casillas 'Notificar por Email' y 'Notificar a App móvil'.",
-            "Redacta asunto: '[AuraQuantic] @Numero_Tramite@ - Recuerde enviar su registro antes de las 5:30 p. m.'.",
-            "Inserta el token de enlace directo a la tarea TP.01."
+            "Configura Conector REST contra API de Calendario (Free/Busy) pasando el email del empleado.",
+            "Guarda el estado y el asunto de la reunión (si aplica) en Estado_Agenda para que TS.02 y TP.02 lo muestren."
           ],
-          seniorTip: "Usa parámetros URL directos de tarea (4.02) para que el usuario entre al formulario con un toque desde el celular.",
-          dataRefs: "Lee: Numero_Tramite, Email Empleado.",
-          studyModule: "Curso 3: 3.01 (02, 03, 05 Notificador) + Curso 4: 4.02 (Parámetros URL)",
+          seniorTip: "Saber si el empleado estaba en reunión con cliente evita que el Líder lo penalice injustamente al aprobar la ampliación.",
+          dataRefs: "Lee: Email Empleado | Escribe: Estado_Agenda_Empleado (término).",
+          studyModule: "Curso 3: Conectores REST",
+          reqs: ["RF-T-14", "RF-T-16"]
+        },
+        {
+          id: "m1_ts02", kind: "ts", cx: 130, cy: 435, w: 195, h: 82, code: "TS.02",
+          title: "Alerta Correo + App (-30m)", subRole: "Notificador",
+          formType: "No lleva formulario (TS Notificador Email + App)",
+          formWhy: "Envía el recordatorio de las 5:00 p. m. por correo y App, adaptando el mensaje según si el calendario mostró que está ocupado en reunión.",
+          controls: "Si Ocupado -> recuerda que tiene 15 min de gracia tras las 5:30; incluye enlace directo a TP.01.",
+          juniorSteps: [
+            "Activa Email y App móvil en TS.02.",
+            "Inserta @Estado_Agenda_Empleado@ y enlace directo al formulario TP.01."
+          ],
+          seniorTip: "Usa enlaces URL directos (4.02) para que al salir de la reunión pueda enviar desde el celular en 30 segundos.",
+          dataRefs: "Lee: Estado_Agenda_Empleado, Numero_Tramite.",
+          studyModule: "Curso 3: 3.01 (Notificador) + Curso 4: 4.02",
           reqs: ["RF-T-14", "RT-11"]
         },
         {
-          id: "m1_fn01", kind: "fn", cx: 140, cy: 535, w: 50, h: 50, code: "FN.01",
+          id: "m1_fn01", kind: "fn", cx: 130, cy: 555, w: 50, h: 50, code: "FN.01",
           title: "Fin Aviso", subRole: "Evento Fin Rama",
-          formType: "No lleva formulario (Fin de rama secundaria)",
-          formWhy: "Cierra únicamente el hilo del recordatorio 4:30 p. m. dejando viva la tarea principal TP.01.",
-          controls: "Evento de Fin simple de rama.",
+          formType: "No lleva formulario (Evento Fin simple)",
+          formWhy: "Cierra únicamente el hilo del recordatorio de las 5:00 p. m. dejando viva la tarea TP.01.",
+          controls: "Fin de rama no terminador.",
           juniorSteps: [
-            "Coloca un Evento Fin FN.01 inmediatamente después de TS.02.",
-            "No uses 'Fin Terminador de Proceso' o matarías todo el trámite del empleado."
+            "Coloca FN.01 tras TS.02.",
+            "Verifica que NO sea Fin Terminador para no cancelar TP.01."
           ],
-          seniorTip: "Diferencia clave para juniors: usa Fin simple (no Terminador) en ramas de aviso no interruptor.",
+          seniorTip: "N/A",
           dataRefs: "N/A",
-          studyModule: "Curso 2: 2.05 (04 Modelo)",
+          studyModule: "Curso 2: 2.05",
           reqs: ["RF-T-14"]
         },
         {
-          id: "m1_dx01", kind: "dx", cx: 470, cy: 430, w: 120, h: 76, code: "DX.01",
-          title: "¿Envió antes 5:30?", subRole: "Divergente Exclusiva",
-          formType: "No lleva formulario (Compuerta XOR DX)",
-          formWhy: "Evalúa una única condición excluyente: o el empleado envió antes del vencimiento (5:30 p. m. / hora ampliada) o venció el plazo y debe escalar a ampliación.",
-          controls: "Salida 1 (Enviado): Acción = Enviar | Salida 2 (Venció 5:30): Cronometría / Vencimiento TP.01.",
+          id: "m1_dx01", kind: "dx", cx: 520, cy: 445, w: 130, h: 78, code: "DX.01",
+          title: "¿Envió ≤5:45 (Gracia 15m)?", subRole: "Divergente Exclusiva",
+          formType: "No lleva formulario (Compuerta XOR DX + Gracia 15 min)",
+          formWhy: "El cierre formal es 5:30 p. m., pero se otorgan 15 minutos de gracia automática en el formulario (hasta las 5:45 p. m.) antes de exigir autorización de ampliación.",
+          controls: "Salida 1 (Enviado ≤ 17:45): pasa directo a DX.03 | Salida 2 (Venció 17:45): escala a TP.02.",
           juniorSteps: [
-            "Inserta compuerta DX.01 a la salida de TP.01.",
-            "En TP.01 activa Cronometría con plazo fijo a las 17:30 y salida por vencimiento hacia TP.02.",
-            "Configura la prioridad de salidas en DX.01."
+            "Configura la cronometría de cierre de TP.01 a las 17:45 (17:30 + 15 min de gracia).",
+            "Marca en el indicador interno si envió dentro de los 15 min de gracia vs a tiempo."
           ],
-          seniorTip: "Recuerda que en AuraQuantic las compuertas DX y DO son las únicas que exigen configurar condiciones explícitas en sus salidas.",
-          dataRefs: "Lee: Estado envío TP.01, Hora vencimiento.",
-          studyModule: "Curso 2: 2.06 (01 Compuertas DX y 06 Cronometría)",
+          seniorTip: "Esos 15 minutos de gracia absorben picos de tráfico y cierres de jornada de cientos de empleados sin saturar al Líder con solicitudes innecesarias.",
+          dataRefs: "Lee: Hora_Envio_Real, Estado_Agenda_Empleado.",
+          studyModule: "Curso 2: 2.06 (01 Compuertas y 06 Cronometría)",
           reqs: ["RF-T-05", "RF-T-16"]
         },
         {
-          id: "m1_tp02", kind: "tp", cx: 770, cy: 430, w: 220, h: 84, code: "TP.02",
-          title: "Autorizar Ampliación Horario", subRole: "Líder / Gerente Op.",
+          id: "m1_tp02", kind: "tp", cx: 830, cy: 445, w: 230, h: 86, code: "TP.02",
+          title: "Ampliación (Ve Estado Agenda)", subRole: "Líder / Gerente Op.",
           formType: "Formulario de Tarea Corto / Móvil (FORM_AMPLIACION_HORARIO)",
-          formWhy: "El Líder de Área o el Gerente de Operaciones necesita una pantalla rápida, limpia y usable desde el celular (RT-10) para leer quién se venció, escribir el motivo obligatorio y definir la nueva hora límite.",
-          controls: "Campo Motivo_Ampliacion (Obligatorio), Nueva_Hora_Limite (Hora <= 22:00), Botones: Autorizar Ampliación / Denegar.",
+          formWhy: "El Líder visualiza si el empleado estaba ocupado en calendario, ingresa el motivo obligatorio y define hasta qué hora puede volver a rellenar el registro.",
+          controls: "Muestra Estado_Agenda_Empleado (solo lectura), Motivo (obligatorio), Nueva_Hora_Limite (<=22:00), Botones Autorizar/Denegar.",
           juniorSteps: [
-            "Asigna participantes: Líder Directo del empleado (dinámico) O grupo Gerente de Operaciones (RN-T-04).",
-            "Diseña formulario compacto (1 columna para móvil) con Motivo obligatorio.",
-            "Marca bandera Es_Con_Ampliacion = Sí si se autoriza para que salga en el tablero de cumplimiento (RF-T-17)."
+            "Asigna Líder Directo o Gerente de Operaciones con Suplencias habilitadas (RT-06).",
+            "Incluye el campo informativo de si el empleado estuvo ocupado en reunión entre 5:00 y 5:45."
           ],
-          seniorTip: "Habilita Suplencias (RT-06) en el grupo de líderes para que si el líder está ausente otro par o el Gerente de Operaciones pueda aprobar sin atascar al empleado.",
-          dataRefs: "Escribe: Motivo_Ampliacion, Nueva_Hora_Limite, Bandera Con_Ampliacion | Lee: Lider_Directo.",
-          studyModule: "Curso 2: 2.06 (02 Tareas) + 2.07 (Participantes y Suplencias) + Curso 4: 4.05 (Móvil)",
+          seniorTip: "Si se autoriza, queda trazabilidad en FAM_REGISTROS_DIARIOS como 'Con Ampliación' (RF-T-17).",
+          dataRefs: "Lee: Estado_Agenda_Empleado | Escribe: Motivo_Ampliacion, Nueva_Hora_Limite.",
+          studyModule: "Curso 2: 2.06 + 2.07 + Curso 4: 4.05 (Móvil)",
           reqs: ["RF-T-16", "RF-T-17", "RN-T-04", "RT-06", "RT-10"]
         },
         {
-          id: "m1_dx02", kind: "dx", cx: 1030, cy: 430, w: 116, h: 74, code: "DX.02",
-          title: "¿Autorizada?", subRole: "Divergente Exclusiva",
+          id: "m1_dx02", kind: "dx", cx: 1130, cy: 445, w: 116, h: 74, code: "DX.02",
+          title: "¿Autoriza?", subRole: "Divergente Exclusiva",
           formType: "No lleva formulario (Compuerta XOR DX)",
-          formWhy: "Enruta exclusivamente según la decisión tomada en TP.02: si aprueba, notifica nueva hora y reabre TP.01; si rechaza, cierra el día con alerta a Talento Humano.",
-          controls: "Condición: Decision_Ampliacion == 'Autorizada' vs 'Denegada'.",
+          formWhy: "Si autoriza, habilita el re-diligenciamiento con temporizador de control; si deniega, ejecuta el cierre forzoso.",
+          controls: "Decision_Ampliacion == Autorizada vs Denegada.",
           juniorSteps: [
-            "Agrega compuerta DX.02 tras TP.02.",
-            "Configura salida 'Sí' hacia TS.04 y salida 'No' hacia TS.03."
+            "Configura salida 'Sí' hacia TS.04.",
+            "Configura salida 'No' hacia TS.03."
           ],
-          seniorTip: "Nunca dejes una compuerta DX sin rama 'Por defecto / Else' para evitar que un trámite quede colgado.",
+          seniorTip: "Siempre define una rama por defecto.",
           dataRefs: "Lee: Decision_Ampliacion.",
-          studyModule: "Curso 2: 2.06 (01 Compuertas)",
+          studyModule: "Curso 2: 2.06",
           reqs: ["RF-T-16"]
         },
         {
-          id: "m1_ts04", kind: "ts", cx: 770, cy: 295, w: 210, h: 84, code: "TS.04",
-          title: "Notificar Nueva Hora Límite", subRole: "Notificador",
-          formType: "No lleva formulario (TS Notificador)",
-          formWhy: "Avisa automáticamente al empleado que tiene plazo ampliado y registra la hora límite actualizada antes de devolverlo a TP.01.",
-          controls: "Email + App al empleado con el token @Nueva_Hora_Limite@ y enlace directo a TP.01.",
+          id: "m1_ts04", kind: "ts", cx: 830, cy: 305, w: 220, h: 84, code: "TS.04",
+          title: "Habilitar Re-diligenciamiento", subRole: "Notificador",
+          formType: "No lleva formulario (TS Notificador + Reactivación)",
+          formWhy: "Notifica al empleado que puede volver a rellenar el formulario TP.01 y fija el nuevo plazo en el temporizador ET.03.",
+          controls: "Email + App al empleado con @Nueva_Hora_Limite@ y actualización de vencimiento.",
           juniorSteps: [
-            "Configura TS.04 tipo Notificador dirigida al empleado iniciador.",
-            "Conecta su salida hacia TP.01 actualizando el plazo de cronometría con Nueva_Hora_Limite."
+            "Envía notificación directa al empleado con enlace a TP.01.",
+            "Activa el temporizador ET.03 con la Nueva_Hora_Limite para controlar si vuelve a completar."
           ],
-          seniorTip: "Usa el campo dinámico de fecha/hora en la cronometría de TP.01 para que el nuevo cierre respete exactamente la hora digitada por el Líder.",
-          dataRefs: "Lee: Nueva_Hora_Limite, Email Empleado.",
-          studyModule: "Curso 3: 3.01 (Notificador) + Curso 2: 2.06 (Cronometría dinámica)",
+          seniorTip: "Permite que el temporizador vigile el cumplimiento real de la prórroga.",
+          dataRefs: "Lee: Nueva_Hora_Limite.",
+          studyModule: "Curso 3: 3.01 (Notificador)",
           reqs: ["RF-T-16"]
         },
         {
-          id: "m1_ts03", kind: "ts", cx: 1030, cy: 560, w: 210, h: 84, code: "TS.03",
-          title: "Cierre Forzoso + Alerta TH", subRole: "Notificador",
+          id: "m1_et03", kind: "et", cx: 830, cy: 165, w: 54, h: 54, code: "ET.03",
+          title: "Timer Re-relleno", subRole: "Control Prórroga",
+          formType: "No lleva formulario (Temporizador de Control de Re-diligenciamiento)",
+          formWhy: "Vigila si el empleado volvió a rellenar y enviar el registro antes de la nueva hora límite; si vence sin completarlo, notifica automáticamente al Líder/Empleado y dispara el cierre forzoso.",
+          controls: "Cronometría dinámica hasta @Nueva_Hora_Limite@ -> alerta si no completó o requiere re-habilitación.",
+          juniorSteps: [
+            "Vincula un Evento Temporizado de control al parámetro dinámico Nueva_Hora_Limite.",
+            "Si vence sin que TP.01 se haya enviado, notifica al Líder si debe dar otra prórroga o pasa a cierre forzoso TS.03."
+          ],
+          seniorTip: "Este temporizador evita que una ampliación aprobada quede abierta indefinidamente hasta el día siguiente.",
+          dataRefs: "Lee: Nueva_Hora_Limite, Estado TP.01.",
+          studyModule: "Curso 2: 2.05 (09 Eventos intermedios) + 2.06 (Cronometría)",
+          reqs: ["RF-T-16", "RF-T-17"]
+        },
+        {
+          id: "m1_ts03", kind: "ts", cx: 1130, cy: 580, w: 220, h: 84, code: "TS.03",
+          title: "Guardar No Enviado + Alerta TH", subRole: "Ingres. / Notif.",
           formType: "No lleva formulario (TS Ingresador + Notificador)",
-          formWhy: "Materializa el supuesto definido en Fase 1: si no se autoriza ampliación o vence el límite final, marca el trámite como 'No enviado' y notifica a Talento Humano.",
-          controls: "Actualiza Estado_Cumplimiento = 'No Enviado' y envía correo a Talento Humano + Líder.",
+          formWhy: "Persiste el estado 'No Enviado' en FAM_REGISTROS_DIARIOS y notifica a Talento Humano y al Líder.",
+          controls: "Inserta fila en FAM_REGISTROS_DIARIOS (Estado='No Enviado') + correo a TH.",
           juniorSteps: [
-            "Marca el estado del registro para el indicador 3.6 como 'No enviado'.",
-            "Configura correo automático a Talento Humano."
+            "Guarda el registro de incumplimiento en FAM_REGISTROS_DIARIOS (sin crear archivos).",
+            "Envía notificación por correo a Talento Humano."
           ],
-          seniorTip: "Este flujo evita que queden trámites zombis abiertos indefinidamente en la bandeja del empleado.",
-          dataRefs: "Escribe: Estado_Tramite | Notifica: Talento Humano.",
-          studyModule: "Curso 3: 3.01 (Notificador) + Fase 1 (Supuesto 3.10)",
-          reqs: ["RF-T-17", "3.6"]
+          seniorTip: "Al quedar guardado en la familia, el proceso nocturno TIEM_INFORMES_DIARIOS lo incluirá automáticamente en el Excel consolidado.",
+          dataRefs: "Guarda en: FAM_REGISTROS_DIARIOS | Notifica: Talento Humano.",
+          studyModule: "Curso 3: 3.01 + 3.03",
+          reqs: ["RF-T-17", "3.6", "3.10"]
         },
         {
-          id: "m1_fn02", kind: "fn", cx: 1030, cy: 675, w: 50, h: 50, code: "FN.02",
+          id: "m1_fn02", kind: "fn", cx: 1130, cy: 700, w: 50, h: 50, code: "FN.02",
           title: "Fin No Enviado", subRole: "Evento Fin",
           formType: "No lleva formulario (Evento Fin)",
-          formWhy: "Cierra el trámite diario cuando el empleado incumplió el registro sin ampliación autorizada.",
+          formWhy: "Cierra el trámite tras registrar la omisión en FAM_REGISTROS_DIARIOS.",
           controls: "Evento Fin simple.",
           juniorSteps: [
-            "Coloca el Evento Fin FN.02 cerrando la rama de incumplimiento.",
-            "Confirma en propiedades del evento que sea Fin simple (no Terminador global) y mantenga auditoría."
+            "Coloca FN.02 después de TS.03.",
+            "Confirma que quede traza en auditoría (RT-08)."
           ],
-          seniorTip: "Verifica que la auditoría (RT-08) guarde quién denegó la ampliación.",
+          seniorTip: "N/A",
           dataRefs: "N/A",
           studyModule: "Curso 2: 2.05",
           reqs: ["RT-08"]
         },
         {
-          id: "m1_dx03", kind: "dx", cx: 470, cy: 555, w: 122, h: 76, code: "DX.03",
+          id: "m1_dx03", kind: "dx", cx: 520, cy: 575, w: 126, h: 76, code: "DX.03",
           title: "¿Extras y cargo?", subRole: "Divergente Exclusiva",
           formType: "No lleva formulario (Compuerta XOR DX)",
-          formWhy: "Evalúa la regla compuesta RN-T-07 / RF-T-20: solo pasa a flujo de aprobación de horas extra si existen filas marcadas fuera de horario Y el cargo del empleado genera extras.",
-          controls: "Condición: COUNT(GC_ACTIVIDADES donde FueraHorario=Sí) > 0 AND Empleado.GeneraHorasExtra == Sí.",
+          formWhy: "Solo desvía al Líder si existen actividades fuera de horario Y el cargo del empleado genera horas extra.",
+          controls: "COUNT(FueraHorario=Sí) > 0 AND Empleado.GeneraHorasExtra == Sí.",
           juniorSteps: [
-            "Inserta DX.03 debajo de DX.01.",
-            "Configura salida 'Sí' hacia TS.05 (Traspasador) y salida 'Sin Extras' directo a TS.07."
+            "Configura salida 'Sí (Extras)' hacia TS.05.",
+            "Configura salida 'Sin Extras' directo hacia TS.07 para guardar en Familias."
           ],
-          seniorTip: "Validar el atributo del cargo tanto en el formulario (bloqueo visual) como en la compuerta DX.03 (seguridad backend) es buena práctica senior.",
-          dataRefs: "Lee: GC_ACTIVIDADES.Col_Fuera_Horario, Empleado.GeneraHorasExtra.",
-          studyModule: "Curso 2: 2.06 (01 Compuertas) + 2.04 (Condiciones)",
+          seniorTip: "Ahorra clics al Líder en los cientos de registros diarios que solo tienen jornada ordinaria.",
+          dataRefs: "Lee: GC_ACTIVIDADES, Empleado.GeneraHorasExtra.",
+          studyModule: "Curso 2: 2.06",
           reqs: ["RF-T-11", "RF-T-18", "RF-T-20", "RN-T-07"]
         },
         {
-          id: "m1_ts05", kind: "ts", cx: 470, cy: 665, w: 220, h: 84, code: "TS.05",
+          id: "m1_ts05", kind: "ts", cx: 520, cy: 690, w: 220, h: 84, code: "TS.05",
           title: "Separar Extras a Contenedor", subRole: "Traspasador",
-          formType: "No lleva formulario (Tarea de Sistema Traspasador)",
-          formWhy: "El Líder solo debe aprobar las actividades fuera de horario, no todas las horas normales del día. Un Contenedor + Traspasador filtra y copia únicamente esas filas para la pantalla del Líder.",
-          controls: "Traspasador desde GC_ACTIVIDADES hacia Contenedor_Extras con filtro Col_Fuera_Horario == Sí.",
+          formType: "No lleva formulario (TS Traspasador)",
+          formWhy: "Copia únicamente las actividades fuera de horario al Contenedor_Extras para agilizar la revisión del Líder.",
+          controls: "Filtro: Col_Fuera_Horario == Sí.",
           juniorSteps: [
-            "Crea un Contenedor afiliado al Grupo de Campos GC_ACTIVIDADES (Curso 3.05).",
-            "Configura TS.05 tipo Traspasador copiando solo las líneas con Fuera_Horario = Sí."
+            "Crea Contenedor_Extras afiliado a GC_ACTIVIDADES.",
+            "Configura TS.05 copiando solo las filas fuera de horario."
           ],
-          seniorTip: "Muchos juniors muestran toda la tabla al Líder y lo obligan a buscar entre 8 filas cuál es extra. Usar Contenedores + Traspasador es exactamente lo que evalúa el temario 3.05.",
+          seniorTip: "Muestra también la columna 'Es_Para_Cobro' y 'Horas_Extra_Reales' en el contenedor.",
           dataRefs: "Lee: GC_ACTIVIDADES | Escribe: Contenedor_Extras.",
-          studyModule: "Curso 3: 3.05 (01 Contenedores y 03 Traspasador)",
+          studyModule: "Curso 3: 3.05",
           reqs: ["RF-T-18"]
         },
         {
-          id: "m1_tp03", kind: "tp", cx: 470, cy: 785, w: 220, h: 84, code: "TP.03",
-          title: "Aprobar Extras Fila x Fila", subRole: "Líder Directo",
+          id: "m1_tp03", kind: "tp", cx: 520, cy: 820, w: 230, h: 86, code: "TP.03",
+          title: "Aprobar Extras, Cobro y Real", subRole: "Líder Directo",
           formType: "Formulario de Tarea Integrada con Contenedor (FORM_APROBACION_EXTRAS)",
-          formWhy: "El Líder debe revisar actividad por actividad (no todo el día en bloque) y aprobar o rechazar cada una con comentario; la Tarea Integrada con Contenedor muestra solo las líneas fuera de horario listas para decidir.",
-          controls: "Contenedor_Extras con columnas de solo lectura (Proyecto, Horario, Duración) + Decision (Aprobar/Rechazar) y Comentario (obligatorio si rechaza).",
+          formWhy: "El Líder aprueba o rechaza línea por línea, valida si la actividad extra realmente es para cobro al cliente y confirma las horas extra reales trabajadas.",
+          controls: "Contenedor_Extras: Decision (Aprobar/Rechazar), Es_Para_Cobro, Horas_Extra_Reales, Comentario (obligatorio al rechazar).",
           juniorSteps: [
-            "Asigna participante por campo dinámico: Empleado.LiderDirecto (2.07 07) y habilita Suplencias (RT-06).",
-            "Configura el formulario mostrando el Contenedor_Extras y diseño móvil para aprobar desde el celular."
+            "Asigna participante dinámicamente a Empleado.LiderDirecto (con Suplencias RT-06).",
+            "Muestra las columnas Es_Para_Cobro y Horas_Extra_Reales para que el Líder las valide."
           ],
-          seniorTip: "Asegúrate de activar 'Asignación dinámica mediante campo de panel' (2.07 07) apuntando al Líder del iniciador, en lugar de asignar un departamento entero.",
-          dataRefs: "Lee/Escribe: Contenedor_Extras (Estado_Aprobacion, Comentario_Lider) | Lee: Empleado.LiderDirecto.",
-          studyModule: "Curso 2: 2.06 (08 Tareas integradas) + 2.07 (07 Asignación dinámica) + Curso 3: 3.05",
+          seniorTip: "Validar el cobro aquí evita sorpresas al Director del Proyecto en el cierre mensual.",
+          dataRefs: "Lee/Escribe: Contenedor_Extras.",
+          studyModule: "Curso 2: 2.06 (08) + 2.07 (07) + Curso 3: 3.05",
           reqs: ["RF-T-18", "RT-06", "RT-10"]
         },
         {
-          id: "m1_dx04", kind: "dx", cx: 470, cy: 900, w: 116, h: 74, code: "DX.04",
+          id: "m1_dx04", kind: "dx", cx: 520, cy: 950, w: 120, h: 74, code: "DX.04",
           title: "¿Alguna rechazada?", subRole: "Divergente Exclusiva",
           formType: "No lleva formulario (Compuerta XOR DX)",
-          formWhy: "Verifica si el Líder rechazó al menos una actividad extra y si el empleado aún no ha gastado su único intento de corrección/reclasificación (RF-T-19).",
-          controls: "Condición: COUNT(Extras donde Estado == Rechazada) > 0 AND Intentos_Correccion == 0.",
+          formWhy: "Verifica si hubo rechazos del Líder y si el empleado tiene disponible su única corrección (RF-T-19).",
+          controls: "COUNT(Rechazada) > 0 AND Intentos_Correccion == 0.",
           juniorSteps: [
-            "Inserta DX.04 debajo de TP.03.",
-            "Rama 'Sí' va hacia TS.06 (Desviador/Limpiador); rama 'Todas OK' va directa a TS.07."
+            "Rama 'Sí' -> TS.06 (Desviador/Limpiador).",
+            "Rama 'Todas OK' -> TS.07."
           ],
-          seniorTip: "El contador Intentos_Correccion == 0 garantiza la regla 'una sola vez' de RF-T-19 y evita bucles infinitos.",
+          seniorTip: "Garantiza 1 solo ciclo de corrección.",
           dataRefs: "Lee: Contenedor_Extras, Intentos_Correccion.",
-          studyModule: "Curso 2: 2.06 (01 Compuertas)",
+          studyModule: "Curso 2: 2.06",
           reqs: ["RF-T-19"]
         },
         {
-          id: "m1_ts06", kind: "ts", cx: 730, cy: 900, w: 210, h: 84, code: "TS.06",
-          title: "Desviar Rechazadas y Limpiar", subRole: "Desviador / Limpiador",
-          formType: "No lleva formulario (TS Desviador + TS Limpiador)",
-          formWhy: "Separa las líneas rechazadas hacia un contenedor de corrección y limpia marcas temporales para que el empleado pueda ajustarlas o reclasificarlas dentro de horario.",
-          controls: "TS Desviador (desvío múltiple por patrón Estado == Rechazada) + TS Limpiador + incrementa Intentos_Correccion = 1.",
+          id: "m1_ts06", kind: "ts", cx: 780, cy: 950, w: 210, h: 84, code: "TS.06",
+          title: "Desviar Rechazadas (1 vez)", subRole: "Desviador / Limp.",
+          formType: "No lleva formulario (TS Desviador + Limpiador)",
+          formWhy: "Separa solo las filas rechazadas para corrección única sin alterar las aprobadas.",
+          controls: "Desvío múltiple por patrón Estado == Rechazada + Limpiador + Intentos = 1.",
           juniorSteps: [
-            "Configura TS Desviador moviendo solo las líneas con Estado_Aprobacion = Rechazada.",
-            "Usa TS Limpiador para habilitar edición en esas líneas y bloquea las ya aprobadas."
+            "Configura TS Desviador moviendo filas rechazadas a Contenedor_Rechazadas.",
+            "Usa TS Limpiador para habilitar edición e incrementar Intentos_Correccion."
           ],
-          seniorTip: "Las actividades ya aprobadas NO se tocan ni se devuelven; quedan firmes para horas extra mientras el empleado corrige solo las rechazadas.",
-          dataRefs: "Lee/Escribe: GC_ACTIVIDADES, Contenedor_Rechazadas.",
-          studyModule: "Curso 3: 3.01 (09 Limpiador) + 3.06 (03 Desvío múltiple)",
+          seniorTip: "Conserva intactas las horas aprobadas.",
+          dataRefs: "Escribe: Contenedor_Rechazadas.",
+          studyModule: "Curso 3: 3.01 + 3.06",
           reqs: ["RF-T-19"]
         },
         {
-          id: "m1_tp04", kind: "tp", cx: 1000, cy: 900, w: 210, h: 84, code: "TP.04",
-          title: "Corregir / Reclasificar (1 vez)", subRole: "Empleado",
-          formType: "Formulario de Tarea Restringido (Solo líneas rechazadas)",
-          formWhy: "Reutiliza el diseño de registro diario pero bloqueando en solo lectura las filas aprobadas y mostrando el comentario del Líder junto a las filas rechazadas.",
-          controls: "Visible solo Contenedor_Rechazadas con comentario del líder + check para reclasificar a 'Dentro de horario'.",
+          id: "m1_tp04", kind: "tp", cx: 1070, cy: 950, w: 215, h: 84, code: "TP.04",
+          title: "Corregir / Reclasificar", subRole: "Empleado",
+          formType: "Formulario de Tarea Restringido (Solo rechazadas)",
+          formWhy: "Permite al empleado ajustar horario o reclasificar como dentro de horario (1 sola vez, con temporizador límite).",
+          controls: "Muestra comentario del líder + check Fuera_de_Horario editable + reloj límite.",
           juniorSteps: [
-            "Asigna participante al Iniciador (Empleado).",
-            "Muestra el comentario del líder en rojo y permite cambiar horario o desmarcar Fuera de Horario."
+            "Asigna al Iniciador (Empleado).",
+            "Configura cronometría de 2 horas hábiles para evitar demoras antes del corte de informes."
           ],
-          seniorTip: "Al enviar TP.04, llévalo a TS.07 para consolidar el día sin volver a molestar al Líder si las reclasificó dentro de horario.",
-          dataRefs: "Escribe: GC_ACTIVIDADES (líneas corregidas).",
-          studyModule: "Curso 2: 2.04 (Atributos) + Curso 3: 3.05 / 3.06",
+          seniorTip: "Al enviar, continúa a TS.07 para persistir en las Familias.",
+          dataRefs: "Escribe: GC_ACTIVIDADES (corregidas).",
+          studyModule: "Curso 2: 2.04 + Curso 3: 3.05",
           reqs: ["RF-T-19"]
         },
         {
-          id: "m1_ts07", kind: "ts", cx: 470, cy: 1020, w: 220, h: 84, code: "TS.07",
-          title: "Calcular Saldos y Consumo Proy.", subRole: "Ingresador",
-          formType: "No lleva formulario (TS Ingresador + Modifica Familia)",
-          formWhy: "Calcula automáticamente horas extra aprobadas, ausentismos y saldo de compensación acumulado del empleado, y suma las horas aprobadas al consumo de cada proyecto.",
-          controls: "Ingresos en términos + Modifica elemento en Empleado (SaldoCompensacion) y en FAM_PROYECTOS (HorasConsumidas).",
+          id: "m1_db_perm", kind: "db", cx: 165, cy: 1110, w: 210, h: 76, code: "FAM",
+          title: "FAM_NOVEDADES_EMP", subRole: "Lee Permisos p/ Cruce",
+          formType: "Familia Propia (Permisos Pendientes de Compensar)",
+          formWhy: "Provee los permisos y salidas tempranas del empleado para hacer el cruce automático contra sus horas extra aprobadas.",
+          controls: "Lee: HorasPermisoPendientes, EsRemunerada, EstadoCruce.",
           juniorSteps: [
-            "Calcula Horas_Extra_Dia = Suma de filas donde FueraHorario=Sí y Estado=Aprobada.",
-            "Calcula Ausentismo_Dia y actualiza Empleado.SaldoCompensacion += (Extras - Ausentismo).",
-            "Recorre las actividades y suma sus horas a FAM_PROYECTOS.HorasConsumidas."
+            "Filtra registros del empleado con SaldoPermisoPorCompensar > 0.",
+            "Pásalos a TS.07 para restar o cruzar contra las horas extra del día."
           ],
-          seniorTip: "Actualiza FAM_PROYECTOS mediante 'Ingresos en familias' (3.03) justo antes de la compuerta de alertas para evaluar el porcentaje exacto actualizado.",
-          dataRefs: "Escribe: Empleado.SaldoCompensacion, FAM_PROYECTOS.HorasConsumidas, Términos de resumen diario.",
-          studyModule: "Curso 3: 3.02 (Ingresos) + 3.03 (Modifica elementos de familia)",
-          reqs: ["RF-T-22", "RF-T-23", "RF-T-24"]
+          seniorTip: "Si un empleado pidió 2 h de permiso ayer y hoy hizo 3 h extra aprobadas, el cruce deja 0 h pendientes de permiso y +1 h extra neta.",
+          dataRefs: "Leída y actualizada (SaldoPermiso) por TS.07.",
+          studyModule: "Curso 2: 2.02 + Curso 3: 3.03",
+          reqs: ["RF-T-22", "RF-T-23"]
         },
         {
-          id: "m1_da01", kind: "da", cx: 470, cy: 1140, w: 116, h: 74, code: "DA.01",
-          title: "Paralela AND", subRole: "Divergente Paralela",
-          formType: "No lleva formulario (Compuerta Paralela DA+)",
-          formWhy: "Dispara al mismo tiempo (sin evaluar condiciones) dos procesos de cierre diario: emitir el consolidado Excel a Operaciones y verificar los umbrales de presupuesto de los proyectos.",
-          controls: "Dos salidas paralelas obligatorias hacia TS.08 y DO.01.",
+          id: "m1_ts07", kind: "ts", cx: 520, cy: 1110, w: 240, h: 88, code: "TS.07",
+          title: "Valor Real + Cruce Permisos", subRole: "Ingresador / Cruce",
+          formType: "No lleva formulario (TS Ingresador + Motor de Cálculo)",
+          formWhy: "Calcula las horas extra reales trabajadas, hace el cruce automático restando permisos/ausentismos pendientes, calcula el valor en pesos (confidencial: HorasExtraNetas * Empleado.ValorHora * factor) y GUARDA todo en Familias sin generar archivos.",
+          controls: "Cruce: ExtrasNetas = MAX(0, ExtrasReales - PermisosPendientes); ValorReal = ExtrasNetas * TarifaHora * Recargo; SaldoComp = Neto.",
           juniorSteps: [
-            "Coloca DA.01 (símbolo +) después de TS.07.",
-            "No intentes poner condiciones en una DA+; AuraQuantic siempre ejecuta todas sus salidas."
+            "Ejecuta la regla de cruce: resta horas de permiso por reponer a las horas extra aprobadas.",
+            "Calcula Valor_Real_Extras usando Empleado.ValorHora (campo confidencial RT-14).",
+            "Inserta los registros resultantes en FAM_REGISTROS_DIARIOS, FAM_DETALLE_ACTIVIDADES, FAM_HORAS_EXTRA y actualiza FAM_SALDO_COMPENSACION."
           ],
-          seniorTip: "Diferencia de examen: DA+ siempre abre todas las ramas; DO abre una o varias según condiciones.",
-          dataRefs: "N/A",
-          studyModule: "Curso 2: 2.06 (01 Compuertas)",
-          reqs: ["RF-T-21", "RF-T-24"]
+          seniorTip: "Aquí está la clave de escalabilidad: NO generas ningún Excel ni PDF aquí. Guardas filas estructuradas en Familias para que el proceso único TIEM_INFORMES_DIARIOS consolide cientos de empleados en 1 solo archivo.",
+          dataRefs: "Lee: FAM_NOVEDADES_EMP, Empleado.ValorHora | Guarda: FAM_REGISTROS_DIARIOS, FAM_DETALLE_ACTIVIDADES, FAM_HORAS_EXTRA, FAM_SALDO_COMPENSACION.",
+          studyModule: "Curso 3: 3.02 (Ingresos) + 3.03 (Reglas y Modifica Familia)",
+          reqs: ["RF-T-22", "RF-T-23", "RT-14"]
         },
         {
-          id: "m1_ts08", kind: "ts", cx: 200, cy: 1255, w: 220, h: 84, code: "TS.08",
-          title: "Excel Diario 6 p. m. Operaciones", subRole: "Doc. Base / Notif.",
-          formType: "No lleva formulario (Documento Excel + TS Notificador)",
-          formWhy: "Genera el consolidado diario en Excel con todos los registros de los empleados al cierre y lo envía por correo al Gerente de Operaciones.",
-          controls: "Exportación tabular Excel + archivo en biblioteca + correo adjunto a Gerente de Operaciones.",
+          id: "m1_db_reg", kind: "db", cx: 280, cy: 1265, w: 240, h: 78, code: "FAM",
+          title: "FAM_REGISTROS / ACTIVIDADES", subRole: "Guarda Día + EsParaCobro",
+          formType: "Familias Propias Transaccionales (Cabecera + Detalle)",
+          formWhy: "Almacena de forma relacional el registro diario de cada empleado y cada actividad marcada con EsParaCobro (Sí/No), proyecto y horas reales.",
+          controls: "FAM_REGISTROS_DIARIOS (1 por emp/día) + FAM_DETALLE_ACTIVIDADES (1..N por actividad).",
           juniorSteps: [
-            "Configura la generación del consolidado diario en Excel (3.04 / Informe exportable).",
-            "Adjúntalo en TS Notificador hacia Gerente de Operaciones (resolución supuesto 3.10)."
+            "Guarda cabecera (Tramite, Empleado, Fecha, EstadoCumplimiento) en FAM_REGISTROS_DIARIOS.",
+            "Guarda líneas de GC_ACTIVIDADES (Proyecto, HorasReales, EsParaCobro) en FAM_DETALLE_ACTIVIDADES."
           ],
-          seniorTip: "Guarda también una copia en biblioteca documental para auditoría (RT-09).",
-          dataRefs: "Lee: Registros del día | Escribe: Biblioteca Documental | Notifica: Gerente Operaciones.",
-          studyModule: "Curso 3: 3.04 (Documentos automáticos) + 3.01 (Notificador)",
-          reqs: ["RF-T-21", "RT-09"]
+          seniorTip: "Esta tabla es la fuente única de verdad tanto para el Excel diario (m2) como para la facturación mensual al cliente (m4).",
+          dataRefs: "Escrita por: TS.07 | Leída por: TIEM_INFORMES_DIARIOS (TS.11/TS.13) y TIEM_CIERRE_MENSUAL (TS.30).",
+          studyModule: "Curso 2: 2.02 (Familias) + Curso 3: 3.03",
+          reqs: ["RF-T-07", "RF-T-21", "RF-T-25"]
         },
         {
-          id: "m1_do01", kind: "do", cx: 700, cy: 1140, w: 116, h: 74, code: "DO.01",
-          title: "¿Umbral Presup.?", subRole: "Divergente Inclusiva",
-          formType: "No lleva formulario (Compuerta Inclusiva OR DO)",
-          formWhy: "Un mismo proyecto o lote del día puede disparar la alerta de 80 %, la de 100 % (si saltó de 79 % a 101 %) o ninguna (<80 %). La compuerta DO permite evaluar múltiples condiciones a la vez.",
-          controls: "Condición 1: % >= Param.80 AND Alerta80==No | Condición 2: % >= 100 AND Alerta100==No | Condición 3: < 80%.",
+          id: "m1_db_ext", kind: "db", cx: 760, cy: 1265, w: 240, h: 78, code: "FAM",
+          title: "FAM_HORAS_EXTRA + SALDO", subRole: "Guarda Real, Valor y Cruce",
+          formType: "Familias Propias de Nómina y Compensación",
+          formWhy: "Responde exactamente en qué familia se guardan las horas extra: aquí se persisten las horas extra reales trabajadas, el cruce aplicado contra permisos, el valor monetario real (solo perfil TH) y el saldo acumulado del empleado.",
+          controls: "FAM_HORAS_EXTRA (Empleado, Fecha, Proyecto, HorasReales, PermisosCruzados, HorasNetas, ValorRealCOP, Aprobador) + FAM_SALDO_COMPENSACION.",
           juniorSteps: [
-            "Coloca compuerta DO.01 (Inclusiva OR) en la rama derecha.",
-            "Lee el porcentaje de alerta desde FAM_PARAMETROS (no quemes '80' en código, RN-T-09)."
+            "Crea la familia FAM_HORAS_EXTRA con perfil de seguridad restringido en el campo ValorRealCOP (RT-14).",
+            "Actualiza FAM_SALDO_COMPENSACION para mostrarlo en el widget del Portal Empleado (RF-T-23)."
           ],
-          seniorTip: "Combinar la bandera Alerta80Enviada == No en DO.01 garantiza el criterio 3.11: el Director recibe la alerta del 80 % UNA sola vez.",
-          dataRefs: "Lee: FAM_PROYECTOS (Presupuesto, Consumidas, Flags), FAM_PARAMETROS.",
-          studyModule: "Curso 2: 2.06 (01 Compuertas DO) + Curso 3: 3.03 (Reglas) + Curso 4: 4.02 (Watcher)",
-          reqs: ["RF-T-24", "RN-T-09"]
+          seniorTip: "Guardar ValorRealCOP ya calculado en FAM_HORAS_EXTRA permite que el cierre mensual y la API de nómina solo lean la tabla sin recalcular cientos de registros.",
+          dataRefs: "Escrita por: TS.07 | Leída por: TIEM_INFORMES_DIARIOS (TS.11), TIEM_CIERRE_MENSUAL (TS.30) y Portal Empleado.",
+          studyModule: "Curso 2: 2.02 + 2.07 (06 Perfiles) + Curso 3: 3.03",
+          reqs: ["RF-T-22", "RF-T-23", "RF-T-30", "RT-14"]
         },
         {
-          id: "m1_ts09", kind: "ts", cx: 980, cy: 1095, w: 210, h: 80, code: "TS.09",
-          title: "Alerta Única 80 % Director", subRole: "Notificador",
-          formType: "No lleva formulario (TS Notificador + Ingresador Flag)",
-          formWhy: "Avisa al Director del proyecto al cruzar el 80 % y marca Alerta80Enviada = Sí para no repetir correos.",
-          controls: "Correo + App al Director del proyecto + actualiza Alerta80Enviada = Sí.",
-          juniorSteps: [
-            "Notifica dinámicamente a Proyecto.Director.",
-            "Actualiza en FAM_PROYECTOS el booleano Alerta80Enviada = Sí."
-          ],
-          seniorTip: "Usa el Universal Watcher (4.02) como respaldo visual en el tablero gerencial.",
-          dataRefs: "Escribe: FAM_PROYECTOS.Alerta80Enviada | Notifica: Director Proyecto.",
-          studyModule: "Curso 3: 3.01 + 3.03 + Curso 4: 4.02",
-          reqs: ["RF-T-24"]
-        },
-        {
-          id: "m1_ts10", kind: "ts", cx: 980, cy: 1215, w: 210, h: 80, code: "TS.10",
-          title: "Sobreconsumo Dir + Gerente", subRole: "Notif. / Ingresador",
-          formType: "No lleva formulario (TS Ingresador + Notificador)",
-          formWhy: "Al tocar o superar el 100 %, cambia el estado visual del proyecto a 'En sobreconsumo' y escala alerta tanto al Director como al Gerente de Operaciones.",
-          controls: "Actualiza Estado_Presupuesto = 'En sobreconsumo' + Alerta100Enviada = Sí + correo a Director y Gerente.",
-          juniorSteps: [
-            "Cambia el campo de estado en FAM_PROYECTOS a 'En sobreconsumo'.",
-            "Configura TS Notificador con doble destinatario: Director del proyecto y Gerente de Operaciones."
-          ],
-          seniorTip: "Si un proyecto pasa de 75 % a 102 % en un solo día, DO.01 dispara ambas ramas sin perder ninguna notificación.",
-          dataRefs: "Escribe: FAM_PROYECTOS (Estado, Alerta100Enviada) | Notifica: Director y Gerente.",
-          studyModule: "Curso 3: 3.01 + 3.03",
-          reqs: ["RF-T-24"]
-        },
-        {
-          id: "m1_ca01", kind: "ca", cx: 470, cy: 1345, w: 116, h: 74, code: "CA.01",
-          title: "Convergente +", subRole: "Convergencia Paralela",
-          formType: "No lleva formulario (Compuerta Convergente CA+)",
-          formWhy: "Sincroniza el final de la rama del Excel diario y de las alertas presupuestales antes de concluir oficialmente la instancia diaria.",
-          controls: "Espera la llegada de ambas ramas paralelas nacidas en DA.01.",
-          juniorSteps: [
-            "Une todas las salidas de TS.08 y DO.01/TS.09/TS.10 en CA.01.",
-            "Conecta CA.01 hacia el Evento Fin FN.03."
-          ],
-          seniorTip: "Toda bifurcación DA+ debe cerrar con su pareja CA+ para mantener un BPMN limpio y libre de tokens huérfanos.",
-          dataRefs: "N/A",
-          studyModule: "Curso 2: 2.06 (01 Compuertas)",
-          reqs: ["RF-T-21", "RF-T-24"]
-        },
-        {
-          id: "m1_fn03", kind: "fn", cx: 470, cy: 1455, w: 50, h: 50, code: "FN.03",
-          title: "Fin Proceso", subRole: "Evento Fin",
+          id: "m1_fn03", kind: "fn", cx: 520, cy: 1380, w: 50, h: 50, code: "FN.03",
+          title: "Fin Registro (0 Archivos)", subRole: "Evento Fin",
           formType: "No lleva formulario (Evento Fin)",
-          formWhy: "Cierra el ciclo diario dejando la trazabilidad completa lista para ser consultada en el Documento Descriptivo (RT-08).",
+          formWhy: "Cierra la instancia individual del empleado dejando los datos limpios en las Familias; la generación de archivos se delega al proceso único TIEM_INFORMES_DIARIOS.",
           controls: "Evento Fin simple.",
           juniorSteps: [
-            "Coloca FN.03 cerrando el diagrama principal tras CA.01.",
-            "Configura la plantilla del Documento Descriptivo en la clase de proceso para auditoría (RT-08)."
+            "Coloca FN.03 tras TS.07.",
+            "Comprueba en pruebas que no se crean archivos adjuntos individuales por empleado."
           ],
-          seniorTip: "Activa el Documento Descriptivo del proceso (2.08 05) para cumplir RT-08 con un clic.",
-          dataRefs: "Historial de auditoría del proceso.",
-          studyModule: "Curso 2: 2.08 (05 Documento descriptivo)",
-          reqs: ["RT-08"]
+          seniorTip: "Así evitas generar 300 archivos diarios cuando operan cientos de empleados.",
+          dataRefs: "N/A",
+          studyModule: "Curso 2: 2.05",
+          reqs: ["RT-08", "RT-17"]
         }
       ],
       edges: [
-        { pts: [[470,83],[470,123]], isStart: true },
-        { pts: [[470,207],[470,253]] },
-        { pts: [[360,295],[267,295]] },
-        { pts: [[240,322],[240,355],[140,355],[140,373]] },
-        { pts: [[140,457],[140,510]] },
-        { pts: [[470,337],[470,392]] },
-        { pts: [[530,430],[660,430]], label: "Venció 5:30", lpos: [595,416] },
-        { pts: [[880,430],[972,430]] },
-        { pts: [[1030,393],[1030,295],[875,295]], label: "Sí (Autoriza)", lpos: [955,281] },
-        { pts: [[665,295],[580,295]] },
-        { pts: [[1030,467],[1030,518]], label: "No", lpos: [1048,492] },
-        { pts: [[1030,602],[1030,650]] },
-        { pts: [[470,468],[470,517]], label: "Enviado", lpos: [506,492] },
-        { pts: [[470,593],[470,623]], label: "Sí (Extras)", lpos: [512,608] },
-        { pts: [[409,555],[318,555],[318,1020],[360,1020]], label: "Sin Extras", lpos: [358,541] },
-        { pts: [[470,707],[470,743]] },
-        { pts: [[470,827],[470,863]] },
-        { pts: [[528,900],[625,900]], label: "Sí (Rechazada)", lpos: [576,886] },
-        { pts: [[835,900],[895,900]] },
-        { pts: [[1000,942],[1000,1020],[580,1020]] },
-        { pts: [[470,937],[470,978]], label: "Todas OK", lpos: [508,957] },
-        { pts: [[470,1062],[470,1103]] },
-        { pts: [[412,1140],[200,1140],[200,1213]] },
-        { pts: [[200,1297],[200,1345],[412,1345]] },
-        { pts: [[528,1140],[642,1140]] },
-        { pts: [[758,1125],[815,1125],[815,1095],[875,1095]], label: "≥80%", lpos: [835,1082] },
-        { pts: [[758,1155],[815,1155],[815,1215],[875,1215]], label: "≥100%", lpos: [835,1230] },
-        { pts: [[700,1177],[700,1345],[528,1345]], label: "<80%", lpos: [722,1260] },
-        { pts: [[1085,1095],[1125,1095],[1125,1345],[528,1345]] },
-        { pts: [[1085,1215],[1125,1215]] },
-        { pts: [[470,1382],[470,1430]] }
+        { pts: [[275,56],[493,56]], isData: true, label: "Lee", lpos: [385,43] },
+        { pts: [[520,83],[520,123]], isStart: true },
+        { pts: [[275,165],[405,165]], isData: true, label: "Lee", lpos: [340,152] },
+        { pts: [[520,207],[520,261]] },
+        { pts: [[400,305],[327,305]] },
+        { pts: [[273,305],[227.5,305]] },
+        { pts: [[130,346],[130,394]] },
+        { pts: [[130,476],[130,530]] },
+        { pts: [[520,349],[520,406]] },
+        { pts: [[585,445],[715,445]], label: "Venció 5:45", lpos: [650,431] },
+        { pts: [[945,445],[1072,445]] },
+        { pts: [[1130,482],[1130,538]], label: "No", lpos: [1148,510] },
+        { pts: [[1130,622],[1130,675]] },
+        { pts: [[1188,445],[1245,445],[1245,305],[940,305]], label: "Sí (Autoriza)", lpos: [1205,290] },
+        { pts: [[720,305],[640,305]] },
+        { pts: [[830,263],[830,192]] },
+        { pts: [[857,165],[1285,165],[1285,580],[1240,580]], label: "Si vence sin re-rellenar", lpos: [1085,151] },
+        { pts: [[520,484],[520,537]], label: "Enviado", lpos: [558,510] },
+        { pts: [[520,613],[520,648]], label: "Sí (Extras)", lpos: [562,630] },
+        { pts: [[457,575],[332,575],[332,1088],[400,1088]], label: "Sin Extras", lpos: [380,561] },
+        { pts: [[520,732],[520,777]] },
+        { pts: [[520,863],[520,913]] },
+        { pts: [[580,950],[675,950]], label: "Sí (Rechazada)", lpos: [628,936] },
+        { pts: [[885,950],[962.5,950]] },
+        { pts: [[1070,992],[1070,1110],[640,1110]] },
+        { pts: [[520,987],[520,1066]], label: "Todas OK", lpos: [558,1026] },
+        { pts: [[270,1124],[400,1124]], isData: true, label: "Lee/Cruza", lpos: [335,1139] },
+        { pts: [[460,1154],[460,1194],[280,1194],[280,1226]], isData: true, label: "Guarda", lpos: [365,1181] },
+        { pts: [[580,1154],[580,1194],[760,1194],[760,1226]], isData: true, label: "Guarda", lpos: [670,1181] },
+        { pts: [[520,1154],[520,1355]] }
       ]
     },
 
     m2: {
       id: "m2",
-      title: "Modelo 2: TIEM_NOV_CORREO — Recepción de Incapacidades por Correo Entrante",
-      subtitle: "Proceso disparado por Evento de Mensaje (Conector Buzón IMAP) para empleados sin acceso web",
-      width: 980,
-      height: 880,
+      title: "Modelo 2: TIEM_INFORMES_DIARIOS — Consolidado Único Diario y Presupuesto (1 Instancia / Día)",
+      subtitle: "Proceso separado para evitar generar un archivo por cada empleado: lee de Familias para cientos de colaboradores y emite 1 único Excel + alertas",
+      width: 1180,
+      height: 850,
       nodes: [
         {
-          id: "m2_ei", kind: "ei_msg", cx: 300, cy: 56, w: 54, h: 54, code: "EI.20",
-          title: "Correo Entrante Buzón", subRole: "Evento de Mensaje",
-          formType: "No lleva formulario de inicio (Disparado por Conector Correo Entrante)",
-          formWhy: "El empleado incapacitado no puede entrar al portal; el inicio ocurre automáticamente cuando entra un email al buzón de novedades.",
-          controls: "Conector IMAP/SMTP escuchando cuenta novedades@empresa + mapeo de Remitente, Asunto, Cuerpo y Adjuntos.",
+          id: "m2_ei", kind: "ei_timer", cx: 520, cy: 56, w: 54, h: 54, code: "EI.10",
+          title: "Corte Único 6:15 p. m. (1/Día)", subRole: "Evento Temporizado",
+          formType: "No lleva formulario (1 Sola Instancia Diaria para Toda la Empresa)",
+          formWhy: "En lugar de disparar un archivo Excel cada vez que un empleado termina su registro, este proceso independiente corre una sola vez al final del día hábil para toda la compañía.",
+          controls: "Programación diaria 18:15 en días hábiles (Calendario Colombia).",
           juniorSteps: [
-            "Configura el buzón de correo entrante en Integración > Conectores de Correo.",
-            "Crea el Evento de Inicio tipo Mensaje en TIEM_NOV_CORREO vinculado a ese buzón."
+            "Crea una clase de proceso aparte llamada TIEM_INFORMES_DIARIOS.",
+            "Configura Inicio Temporizado SIN lotes (solo 1 instancia global por día hábil)."
           ],
-          seniorTip: "Mapea siempre los archivos adjuntos hacia una Biblioteca o Término Documento desde el propio evento de entrada para no perder el PDF médico.",
-          dataRefs: "Escribe: Email_Remitente, Adjunto_Soporte, Observaciones.",
-          studyModule: "Curso 2: 2.05 (08 Eventos inicio) + Curso 3: Conectores Correo Entrante",
-          reqs: ["RF-T-15"]
+          seniorTip: "Separar el informe diario en su propia clase evita bloqueos de concurrencia cuando 300 empleados envían a las 5:30 p. m.",
+          dataRefs: "Lee: Calendario Laboral CO.",
+          studyModule: "Curso 2: 2.05 (08 Eventos de inicio)",
+          reqs: ["RF-T-21", "RT-17"]
         },
         {
-          id: "m2_ts20", kind: "ts", cx: 300, cy: 165, w: 220, h: 84, code: "TS.20",
-          title: "Validar Remitente en Empleados", subRole: "Ingresador",
-          formType: "No lleva formulario (TS Ingresador)",
-          formWhy: "Busca automáticamente el correo remitente dentro de la estructura de Empleados activos para identificar al colaborador y obtener su ID y líder.",
-          controls: "Consulta por Email en Estructura Empleados y cuenta número de adjuntos recibidos.",
+          id: "m2_db_in", kind: "db", cx: 170, cy: 170, w: 235, h: 80, code: "FAM",
+          title: "FAM_REGISTROS / EXTRAS / NOV.", subRole: "Lee Lote del Día",
+          formType: "Familias Propias Transaccionales (Lectura Masiva)",
+          formWhy: "Concentran todos los registros diarios, actividades (con EsParaCobro), horas extra reales y novedades guardadas por el Modelo 1 y Modelo 3.",
+          controls: "Consulta filtrada por Fecha_Registro == Hoy.",
           juniorSteps: [
-            "Agrega TS Ingresador que consulte Empleados donde Email == Email_Remitente.",
-            "Guarda el resultado en Empleado_Encontrado (booleano) y en Empleado_Responsable."
+            "Crea una vista/consulta sobre FAM_REGISTROS_DIARIOS y FAM_DETALLE_ACTIVIDADES filtrada por la fecha del corte.",
+            "Incluye los registros marcados como 'No Enviado' y los 'Incapacitados'."
           ],
-          seniorTip: "Normaliza el email a minúsculas y sin espacios (trim/lower) al comparar para evitar rechazos tontos por mayúsculas.",
-          dataRefs: "Lee: Estructura Empleados | Escribe: Empleado_Responsable, Es_Empleado_Activo.",
-          studyModule: "Curso 3: 3.02 / 3.03 (Ingresos)",
-          reqs: ["RF-T-15"]
+          seniorTip: "Leer tablas indexadas por fecha tarda milisegundos incluso con cientos de empleados.",
+          dataRefs: "Leída por: TS.11.",
+          studyModule: "Curso 2: 2.02 + Curso 4: 4.02 (Consultas)",
+          reqs: ["RF-T-21", "RF-T-24"]
         },
         {
-          id: "m2_dx21", kind: "dx", cx: 300, cy: 285, w: 116, h: 74, code: "DX.21",
-          title: "¿Empleado Activo?", subRole: "Divergente Exclusiva",
-          formType: "No lleva formulario (Compuerta XOR DX)",
-          formWhy: "Bifurca de manera excluyente según si el remitente pertenece o no a la firma.",
-          controls: "Condición: Es_Empleado_Activo == Sí vs No.",
+          id: "m2_ts11", kind: "ts", cx: 520, cy: 170, w: 240, h: 84, code: "TS.11",
+          title: "Consultar Registros en Lote", subRole: "Ingresador Masivo",
+          formType: "No lleva formulario (TS Ingresador Consulta Batch)",
+          formWhy: "Extrae en bloque el resumen del día de los cientos de empleados desde las Familias y agrupa las horas aprobadas por proyecto.",
+          controls: "Agrupación por Empleado (para Excel) y por Proyecto (para sumar consumo presupuestal).",
           juniorSteps: [
-            "Inserta DX.21 debajo de TS.20 con salida 'Sí' hacia DX.22.",
-            "Configura la salida 'No' (Por defecto) hacia TS.21 para responder automáticamente."
+            "Configura TS.11 leyendo de FAM_REGISTROS_DIARIOS, FAM_DETALLE_ACTIVIDADES y FAM_HORAS_EXTRA del día.",
+            "Prepara los totales por proyecto para TS.13."
           ],
-          seniorTip: "Esto protege tu cola de Talento Humano contra spam o correos externos equivocados.",
-          dataRefs: "Lee: Es_Empleado_Activo.",
-          studyModule: "Curso 2: 2.06 (01 Compuertas DX)",
-          reqs: ["RF-T-15"]
+          seniorTip: "Asegúrate de incluir tanto horas ordinarias como horas extra aprobadas.",
+          dataRefs: "Lee: FAM_REGISTROS_DIARIOS, FAM_DETALLE_ACTIVIDADES, FAM_HORAS_EXTRA, FAM_NOVEDADES_EMP.",
+          studyModule: "Curso 3: 3.02 / 3.03",
+          reqs: ["RF-T-21", "RF-T-24"]
         },
         {
-          id: "m2_ts21", kind: "ts", cx: 610, cy: 285, w: 220, h: 84, code: "TS.21",
-          title: "Responder: No Procesado", subRole: "Notificador",
-          formType: "No lleva formulario (TS Notificador Email Externo)",
-          formWhy: "Cumple la exigencia explícita de RF-T-15: responder automáticamente cuando el remitente no es empleado.",
-          controls: "Destinatario = Email_Remitente (externo) | Mensaje estándar de no procesamiento.",
+          id: "m2_da11", kind: "da", cx: 520, cy: 295, w: 116, h: 74, code: "DA.11",
+          title: "Paralela AND", subRole: "Divergente Paralela",
+          formType: "No lleva formulario (Compuerta Paralela DA+)",
+          formWhy: "Ejecuta en paralelo la generación del único archivo Excel diario y la actualización masiva del presupuesto de proyectos.",
+          controls: "Dispara simultáneamente TS.12 y TS.13.",
           juniorSteps: [
-            "Configura TS Notificador hacia dirección de correo libre (@Email_Remitente@).",
-            "Redacta respuesta amable indicando usar correo corporativo registrado."
+            "Coloca DA.11+ tras TS.11.",
+            "Conecta rama izquierda a TS.12 y rama derecha a TS.13."
           ],
-          seniorTip: "Recuerda en TS Notificador usar la opción de envío a 'Email en término' porque un remitente desconocido no existe como usuario en AuraQuantic.",
-          dataRefs: "Lee: Email_Remitente.",
-          studyModule: "Curso 3: 3.01 (03 Notifica por email)",
-          reqs: ["RF-T-15"]
+          seniorTip: "Recuerda cerrar siempre DA+ con CA+.",
+          dataRefs: "N/A",
+          studyModule: "Curso 2: 2.06 (01 Compuertas)",
+          reqs: ["RF-T-21", "RF-T-24"]
         },
         {
-          id: "m2_fn20", kind: "fn", cx: 850, cy: 285, w: 50, h: 50, code: "FN.20",
-          title: "Fin Rechazo", subRole: "Evento Fin",
+          id: "m2_ts12", kind: "ts", cx: 260, cy: 425, w: 230, h: 86, code: "TS.12",
+          title: "1 Único Excel + Enviar Gerencia", subRole: "Doc. Base / Notif.",
+          formType: "No lleva formulario (Informe Exportable Excel + TS Notificador)",
+          formWhy: "Genera UN ÚNICO libro Excel con todos los empleados del día (evitando N archivos), lo guarda en biblioteca y lo envía al Gerente de Operaciones.",
+          controls: "Archivo Consolidado_Diario_@YYYYMMDD@.xlsx -> adjunto en correo a Gerente Operaciones.",
+          juniorSteps: [
+            "Configura generación del Excel único usando la consulta del día.",
+            "Archívalo en BIB_INFORMES_DIARIOS y adjúntalo en TS Notificador al Gerente de Operaciones."
+          ],
+          seniorTip: "Con 300 empleados tendrás 1 Excel con 300+ filas, no 300 archivos sueltos en el correo ni en la base de datos.",
+          dataRefs: "Guarda: BIB_INFORMES_DIARIOS | Notifica: Gerente de Operaciones.",
+          studyModule: "Curso 3: 3.01 + 3.04 + Curso 4: 4.02",
+          reqs: ["RF-T-21", "RT-09"]
+        },
+        {
+          id: "m2_db_bib", kind: "db", cx: 260, cy: 560, w: 230, h: 76, code: "BIB",
+          title: "BIB_INFORMES_DIARIOS", subRole: "Guarda 1 Excel / Día",
+          formType: "Biblioteca Documental AuraQuantic",
+          formWhy: "Repositorio único donde se archiva exactamente un archivo Excel consolidado por cada día hábil para auditoría y consulta de Gerencia.",
+          controls: "Carpeta /{Año}/{Mes}/Consolidado_Diario_YYYYMMDD.xlsx.",
+          juniorSteps: [
+            "Crea la biblioteca BIB_INFORMES_DIARIOS en Gestión de Datos > Bibliotecas.",
+            "Restringe su consulta solo a Gerencia de Operaciones y Talento Humano (RT-14)."
+          ],
+          seniorTip: "Ordenar por Año/Mes mantiene rápida la navegación aunque pasen varios años.",
+          dataRefs: "Escrita por: TS.12.",
+          studyModule: "Curso 2: 2.02 (06 Bibliotecas)",
+          reqs: ["RF-T-21", "RT-09", "RT-14"]
+        },
+        {
+          id: "m2_ts13", kind: "ts", cx: 760, cy: 425, w: 230, h: 84, code: "TS.13",
+          title: "Actualizar Consumo Proyectos", subRole: "Ingresador",
+          formType: "No lleva formulario (TS Ingresador en Familia)",
+          formWhy: "Suma en bloque las horas aprobadas del día a HorasConsumidas de cada proyecto afectado en FAM_PROYECTOS.",
+          controls: "Modifica elemento en FAM_PROYECTOS acumulando horas del día.",
+          juniorSteps: [
+            "Configura TS Ingresador actualizando FAM_PROYECTOS.HorasConsumidas.",
+            "Recalcula el % de consumo frente a PresupuestoHoras."
+          ],
+          seniorTip: "Actualizar por lotes aquí evita bloqueos de escritura concurrente sobre un mismo proyecto.",
+          dataRefs: "Guarda en: FAM_PROYECTOS (HorasConsumidas).",
+          studyModule: "Curso 3: 3.03 (Modifica elementos de familia)",
+          reqs: ["RF-T-24"]
+        },
+        {
+          id: "m2_db_proy", kind: "db", cx: 1035, cy: 425, w: 210, h: 76, code: "FAM",
+          title: "FAM_PROYECTOS", subRole: "Guarda Consumo Real",
+          formType: "Familia Propia Maestra de Proyectos",
+          formWhy: "Mantiene el presupuesto, horas consumidas acumuladas, estado (Activo/En sobreconsumo) y banderas de alerta enviada (80 % / 100 %).",
+          controls: "Campos: Codigo, PresupuestoHoras, HorasConsumidas, Alerta80Enviada, Alerta100Enviada, EstadoPresupuesto.",
+          juniorSteps: [
+            "Define las banderas booleanas Alerta80Enviada y Alerta100Enviada en FAM_PROYECTOS.",
+            "Conecta el Cuadro de Mandos (semáforo Verde/Amarillo/Rojo) a esta familia."
+          ],
+          seniorTip: "Esta tabla también recibe actualizaciones nocturnas del conector REST de Proyectos (RF-T-02).",
+          dataRefs: "Escrita por: TS.13, TS.14, TS.15, REST Proyectos | Leída por: DO.11, Tablero Gerencia.",
+          studyModule: "Curso 2: 2.02 + Curso 4: 4.02 (Watcher)",
+          reqs: ["RF-T-01", "RF-T-02", "RF-T-24"]
+        },
+        {
+          id: "m2_do11", kind: "do", cx: 760, cy: 555, w: 116, h: 74, code: "DO.11",
+          title: "¿Umbral Presup.?", subRole: "Divergente Inclusiva",
+          formType: "No lleva formulario (Compuerta Inclusiva OR DO)",
+          formWhy: "Evalúa umbrales parametrizables (FAM_PARAMETROS): puede disparar alerta 80 %, alerta 100 %, ambas si saltó de golpe, o ninguna (<80 %).",
+          controls: "Condición 1: % >= Param.80 AND Alerta80==No | Condición 2: % >= 100 AND Alerta100==No | Condición 3: <80%.",
+          juniorSteps: [
+            "Coloca DO.11 debajo de TS.13.",
+            "Lee el porcentaje de alerta desde FAM_PARAMETROS (RN-T-09)."
+          ],
+          seniorTip: "La bandera Alerta80Enviada == No garantiza que el Director reciba el aviso UNA única vez (criterio 3.11).",
+          dataRefs: "Lee: FAM_PROYECTOS, FAM_PARAMETROS.",
+          studyModule: "Curso 2: 2.06 (Compuertas DO) + Curso 4: 4.02",
+          reqs: ["RF-T-24", "RN-T-09"]
+        },
+        {
+          id: "m2_ts14", kind: "ts", cx: 1035, cy: 525, w: 210, h: 74, code: "TS.14",
+          title: "Alerta Única 80 % Director", subRole: "Notificador",
+          formType: "No lleva formulario (TS Notificador + Flag)",
+          formWhy: "Avisa al Director del proyecto al alcanzar el 80 % y marca Alerta80Enviada = Sí.",
+          controls: "Notifica a Proyecto.Director + guarda Alerta80Enviada = Sí.",
+          juniorSteps: [
+            "Envía correo al Director del proyecto.",
+            "Actualiza el booleano Alerta80Enviada = Sí en FAM_PROYECTOS."
+          ],
+          seniorTip: "N/A",
+          dataRefs: "Guarda: FAM_PROYECTOS.Alerta80Enviada.",
+          studyModule: "Curso 3: 3.01 + 3.03",
+          reqs: ["RF-T-24"]
+        },
+        {
+          id: "m2_ts15", kind: "ts", cx: 1035, cy: 625, w: 210, h: 74, code: "TS.15",
+          title: "Sobreconsumo Dir + Gerente", subRole: "Notif. / Ingres.",
+          formType: "No lleva formulario (TS Ingresador + Notificador)",
+          formWhy: "Al llegar al 100 %, marca el proyecto 'En sobreconsumo' y notifica al Director y al Gerente de Operaciones.",
+          controls: "Estado = 'En sobreconsumo', Alerta100Enviada = Sí, correo doble.",
+          juniorSteps: [
+            "Actualiza EstadoPresupuesto = 'En sobreconsumo' en FAM_PROYECTOS.",
+            "Notifica a Director y Gerente de Operaciones."
+          ],
+          seniorTip: "N/A",
+          dataRefs: "Guarda: FAM_PROYECTOS.EstadoPresupuesto.",
+          studyModule: "Curso 3: 3.01 + 3.03",
+          reqs: ["RF-T-24"]
+        },
+        {
+          id: "m2_ca11", kind: "ca", cx: 520, cy: 675, w: 116, h: 74, code: "CA.11",
+          title: "Convergente +", subRole: "Convergencia Paralela",
+          formType: "No lleva formulario (Compuerta Convergente CA+)",
+          formWhy: "Sincroniza el cierre del Excel consolidado con la actualización presupuestal.",
+          controls: "Espera ramas de TS.12 y DO.11.",
+          juniorSteps: [
+            "Une todas las salidas hacia CA.11+.",
+            "Conecta CA.11+ hacia FN.10."
+          ],
+          seniorTip: "N/A",
+          dataRefs: "N/A",
+          studyModule: "Curso 2: 2.06",
+          reqs: ["RF-T-21", "RF-T-24"]
+        },
+        {
+          id: "m2_fn10", kind: "fn", cx: 520, cy: 785, w: 50, h: 50, code: "FN.10",
+          title: "Fin Informe", subRole: "Evento Fin",
           formType: "No lleva formulario (Evento Fin)",
-          formWhy: "Termina el flujo tras responder el correo de rechazo automático.",
+          formWhy: "Finaliza la ejecución única diaria de informes y alertas.",
           controls: "Evento Fin simple.",
           juniorSteps: [
-            "Coloca FN.20 cerrando la rama de rechazo tras TS.21.",
-            "Valida en pruebas enviando un correo desde una cuenta Gmail no registrada."
+            "Coloca FN.10 tras CA.11+.",
+            "Verifica que exista 1 solo trámite de informe por día hábil."
           ],
           seniorTip: "N/A",
           dataRefs: "N/A",
           studyModule: "Curso 2: 2.05",
-          reqs: ["RF-T-15"]
-        },
-        {
-          id: "m2_dx22", kind: "dx", cx: 300, cy: 420, w: 116, h: 74, code: "DX.22",
-          title: "¿Trae Soporte?", subRole: "Divergente Exclusiva",
-          formType: "No lleva formulario (Compuerta XOR DX)",
-          formWhy: "Verifica si el correo del empleado incluyó archivo adjunto obligatorio para incapacidad (RF-T-13).",
-          controls: "Condición: Cantidad_Adjuntos > 0.",
-          juniorSteps: [
-            "Usa la función/contador de documentos en el panel para validar si llegó al menos 1 adjunto.",
-            "Conecta la salida 'Sí' hacia TS.23 y 'No' hacia TS.22."
-          ],
-          seniorTip: "En AuraQuantic puedes contar los documentos de una biblioteca o término panel con la función 'Contar documentos' (3.04).",
-          dataRefs: "Lee: Adjunto_Soporte.",
-          studyModule: "Curso 3: 3.04 (Contar documentos)",
-          reqs: ["RF-T-13", "RF-T-15"]
-        },
-        {
-          id: "m2_ts22", kind: "ts", cx: 610, cy: 420, w: 220, h: 84, code: "TS.22",
-          title: "Solicitar Soporte Adjunto", subRole: "Notificador",
-          formType: "No lleva formulario (TS Notificador)",
-          formWhy: "Notifica al empleado para que reenvíe la incapacidad con el soporte EPS adjunto.",
-          controls: "Notificación a Empleado_Responsable.",
-          juniorSteps: [
-            "Configura TS Notificador hacia Empleado_Responsable explicando que falta adjuntar el soporte médico.",
-            "Incluye el correo del buzón de novedades para que pueda reenviar el archivo."
-          ],
-          seniorTip: "Incluye el listado de tipos de soporte aceptados para evitar reintentos fallidos.",
-          dataRefs: "Lee: Empleado_Responsable.",
-          studyModule: "Curso 3: 3.01",
-          reqs: ["RF-T-13"]
-        },
-        {
-          id: "m2_fn21", kind: "fn", cx: 850, cy: 420, w: 50, h: 50, code: "FN.21",
-          title: "Fin Incompleto", subRole: "Evento Fin",
-          formType: "No lleva formulario (Evento Fin)",
-          formWhy: "Cierra el intento sin soporte.",
-          controls: "Evento Fin simple.",
-          juniorSteps: [
-            "Coloca FN.21 tras TS.22 cerrando el intento sin soporte.",
-            "Verifica que no se haya creado ninguna novedad vacía en Talento Humano."
-          ],
-          seniorTip: "N/A",
-          dataRefs: "N/A",
-          studyModule: "Curso 2: 2.05",
-          reqs: ["RF-T-13"]
-        },
-        {
-          id: "m2_ts23", kind: "ts", cx: 300, cy: 555, w: 220, h: 84, code: "TS.23",
-          title: "Archivar en Bib. Tipo / Mes", subRole: "Ingresador",
-          formType: "No lleva formulario (TS Ingresador en Biblioteca)",
-          formWhy: "Cataloga el soporte médico automáticamente en el expediente del empleado clasificado por tipo de novedad y mes (RF-T-13 / RT-09).",
-          controls: "Ingreso en biblioteca Bib_SoportesNovedades con metadatos Empleado, Tipo_Novedad y Mes.",
-          juniorSteps: [
-            "Configura TS Ingresador de documentos hacia la biblioteca Bib_SoportesNovedades.",
-            "Mapea las carpetas/metadatos: Empleado / Tipo / Mes."
-          ],
-          seniorTip: "No dejes el archivo suelto solo dentro del trámite; llévalo siempre a la biblioteca estructurada para poder consultarlo desde el expediente del empleado.",
-          dataRefs: "Escribe: Bib_SoportesNovedades.",
-          studyModule: "Curso 3: 3.04 (Ingresos en bibliotecas y etiquetas)",
-          reqs: ["RF-T-13", "RF-T-15", "RT-09"]
-        },
-        {
-          id: "m2_tp20", kind: "tp", cx: 300, cy: 675, w: 220, h: 84, code: "TP.20",
-          title: "Validar Novedad e Incapacidad", subRole: "Talento Humano",
-          formType: "Formulario de Tarea con Visor Documental (FORM_VALIDACION_NOVEDAD_TH)",
-          formWhy: "Talento Humano necesita ver el soporte PDF adjunto, seleccionar el Tipo de Novedad exacto, confirmar fecha inicio/fin (cuando abarca varios días) y aprobar o rechazar la radicación.",
-          controls: "Visor del soporte adjunto, Selector FAM_TIPOS_NOVEDAD, Fecha_Inicio, Fecha_Fin, Días_Habiles_Afectados, Comentario TH.",
-          juniorSteps: [
-            "Asigna participante: Grupo Funcional 'Talento Humano'.",
-            "Diseña formulario con bloque de solo lectura del correo recibido y sección editable de fechas y tipo de novedad."
-          ],
-          seniorTip: "Incluye Fecha_Inicio y Fecha_Fin para resolver el punto 3.10 sobre incapacidades de varios días.",
-          dataRefs: "Lee: FAM_TIPOS_NOVEDAD, Bib_SoportesNovedades | Escribe: Fecha_Inicio, Fecha_Fin, Estado_Validacion_TH.",
-          studyModule: "Curso 2: 2.06 (02 Tareas) + 2.07 (03 Grupo de empleados)",
-          reqs: ["RF-T-15", "3.10"]
-        },
-        {
-          id: "m2_ts24", kind: "ts", cx: 300, cy: 795, w: 220, h: 84, code: "TS.24",
-          title: "Aplicar Ausentismo Multidía", subRole: "Ingresador",
-          formType: "No lleva formulario (TS Ingresador / Creador)",
-          formWhy: "Calcula e imputa las horas de ausentismo de cada día hábil cubierto por la incapacidad para el consolidado mensual de nómina.",
-          controls: "Genera registros de ausentismo en el rango Fecha_Inicio..Fecha_Fin excluyendo festivos.",
-          juniorSteps: [
-            "Usa TS Creador/Ingresador recorriendo los días hábiles del rango aprobado por Talento Humano.",
-            "Actualiza el acumulado mensual del empleado para el certificado de nómina."
-          ],
-          seniorTip: "Si la novedad es remunerada (como incapacidad), respeta la regla de nómina sin penalizar injustificadamente al empleado.",
-          dataRefs: "Escribe: Registros diarios de ausentismo.",
-          studyModule: "Curso 3: 3.01 (08 Creador) + 3.02 (Ingresos)",
-          reqs: ["RF-T-22", "3.10"]
-        },
-        {
-          id: "m2_fn22", kind: "fn", cx: 610, cy: 795, w: 50, h: 50, code: "FN.22",
-          title: "Fin Novedad", subRole: "Evento Fin",
-          formType: "No lleva formulario (Evento Fin)",
-          formWhy: "Cierra el proceso de novedad por correo con el soporte archivado y validado.",
-          controls: "Evento Fin simple.",
-          juniorSteps: [
-            "Coloca FN.22 al final del flujo tras TS.24.",
-            "Comprueba en el portal del empleado y en Bib_SoportesNovedades que el soporte quedó clasificado."
-          ],
-          seniorTip: "N/A",
-          dataRefs: "N/A",
-          studyModule: "Curso 2: 2.05",
-          reqs: ["RF-T-15"]
+          reqs: ["RF-T-21"]
         }
       ],
       edges: [
-        { pts: [[300,83],[300,123]], isStart: true },
-        { pts: [[300,207],[300,248]] },
-        { pts: [[358,285],[500,285]], label: "No", lpos: [430,271] },
-        { pts: [[720,285],[825,285]] },
-        { pts: [[300,322],[300,383]], label: "Sí", lpos: [320,352] },
-        { pts: [[358,420],[500,420]], label: "No", lpos: [430,406] },
-        { pts: [[720,420],[825,420]] },
-        { pts: [[300,457],[300,513]], label: "Sí", lpos: [320,485] },
-        { pts: [[300,597],[300,633]] },
-        { pts: [[300,717],[300,753]] },
-        { pts: [[410,795],[585,795]] }
+        { pts: [[520,83],[520,128]], isStart: true },
+        { pts: [[287.5,170],[400,170]], isData: true, label: "Lee", lpos: [344,156] },
+        { pts: [[520,212],[520,258]] },
+        { pts: [[462,295],[260,295],[260,382]] },
+        { pts: [[260,468],[260,522]], isData: true, label: "Guarda 1x", lpos: [295,495] },
+        { pts: [[375,425],[405,425],[405,675],[462,675]] },
+        { pts: [[578,295],[760,295],[760,383]] },
+        { pts: [[875,425],[930,425]], isData: true, label: "Guarda", lpos: [902,412] },
+        { pts: [[760,467],[760,518]] },
+        { pts: [[818,542],[870,542],[870,525],[930,525]], label: "≥80%", lpos: [880,512] },
+        { pts: [[818,568],[870,568],[870,625],[930,625]], label: "≥100%", lpos: [880,639] },
+        { pts: [[760,592],[760,675],[578,675]], label: "<80%", lpos: [738,634] },
+        { pts: [[1140,525],[1158,525],[1158,675],[578,675]] },
+        { pts: [[1140,625],[1158,625]] },
+        { pts: [[520,712],[520,760]] }
       ]
     },
 
     m3: {
       id: "m3",
-      title: "Modelo 3: TIEM_CIERRE_MENSUAL — Distribuido por Proyecto, Firma Digital, Finanzas y Nómina",
-      subtitle: "Subproceso Causal SP.31 (1..N proyectos), temporizadores 5/10 días, Confluencia CA+ y REST Nómina con Reto 3x",
-      width: 1180,
+      title: "Modelo 3: TIEM_NOV_CORREO — Incapacidades Automatizadas (OCR + Guardado en Familias)",
+      subtitle: "Lectura automática OCR/IA de incapacidades médicas, ruta Zero-Touch sin intervención manual (≥90 %) y bloqueo automático de días en registros",
+      width: 1080,
+      height: 1040,
+      nodes: [
+        {
+          id: "m3_ei", kind: "ei_msg", cx: 370, cy: 56, w: 54, h: 54, code: "EI.20",
+          title: "Correo Entrante Buzón IMAP", subRole: "Evento de Mensaje",
+          formType: "No lleva formulario de inicio (Conector Correo Entrante)",
+          formWhy: "Inicia automáticamente cuando un empleado incapacitado envía un correo con su soporte al buzón de novedades.",
+          controls: "Escucha IMAP novedades@empresa -> extrae Remitente, Asunto, Cuerpo y Adjuntos.",
+          juniorSteps: [
+            "Configura el buzón de correo entrante en Integración > Conectores de Correo.",
+            "Asocia el Evento de Inicio tipo Mensaje de TIEM_NOV_CORREO a ese buzón."
+          ],
+          seniorTip: "Activa el almacenamiento automático de adjuntos para pasar el PDF directo al conector OCR.",
+          dataRefs: "Escribe: Email_Remitente, Adjunto_Soporte.",
+          studyModule: "Curso 2: 2.05 (08) + Conectores Correo",
+          reqs: ["RF-T-15"]
+        },
+        {
+          id: "m3_ts20", kind: "ts", cx: 370, cy: 165, w: 220, h: 84, code: "TS.20",
+          title: "Validar Remitente en Empleados", subRole: "Ingresador",
+          formType: "No lleva formulario (TS Ingresador)",
+          formWhy: "Cruza el correo remitente contra la estructura de Empleados activos para identificar al colaborador.",
+          controls: "Normaliza email y busca coincidencia exacta en Empleados.",
+          juniorSteps: [
+            "Consulta Empleados donde Email == Lower(Trim(Email_Remitente)).",
+            "Guarda Es_Empleado_Activo y Empleado_Responsable."
+          ],
+          seniorTip: "Evita duplicar empleados o fallar por mayúsculas en el correo.",
+          dataRefs: "Lee: Estructura Empleados | Escribe: Empleado_Responsable.",
+          studyModule: "Curso 3: 3.02 / 3.03",
+          reqs: ["RF-T-15"]
+        },
+        {
+          id: "m3_dx21", kind: "dx", cx: 370, cy: 285, w: 116, h: 74, code: "DX.21",
+          title: "¿Empleado Activo?", subRole: "Divergente Exclusiva",
+          formType: "No lleva formulario (Compuerta XOR DX)",
+          formWhy: "Descarta automáticamente remitentes externos o desconocidos.",
+          controls: "Es_Empleado_Activo == Sí vs No.",
+          juniorSteps: [
+            "Salida 'Sí' continúa a DX.22.",
+            "Salida 'No' pasa a TS.21 para respuesta automática de rechazo."
+          ],
+          seniorTip: "Protege a Talento Humano contra correos ajenos.",
+          dataRefs: "Lee: Es_Empleado_Activo.",
+          studyModule: "Curso 2: 2.06",
+          reqs: ["RF-T-15"]
+        },
+        {
+          id: "m3_ts21", kind: "ts", cx: 700, cy: 285, w: 220, h: 84, code: "TS.21",
+          title: "Responder: No Procesado", subRole: "Notificador",
+          formType: "No lleva formulario (TS Notificador Externo)",
+          formWhy: "Responde automáticamente al remitente desconocido que su correo no fue procesado (RF-T-15).",
+          controls: "Email a @Email_Remitente@ con plantilla de rechazo automático.",
+          juniorSteps: [
+            "Configura TS Notificador hacia término Email_Remitente.",
+            "Cierra en FN.20."
+          ],
+          seniorTip: "Usa envío por 'Email en término' ya que el remitente no tiene usuario AuraQuantic.",
+          dataRefs: "Lee: Email_Remitente.",
+          studyModule: "Curso 3: 3.01",
+          reqs: ["RF-T-15"]
+        },
+        {
+          id: "m3_fn20", kind: "fn", cx: 940, cy: 285, w: 50, h: 50, code: "FN.20",
+          title: "Fin Rechazo", subRole: "Evento Fin",
+          formType: "No lleva formulario (Evento Fin)",
+          formWhy: "Cierra el intento de remitente desconocido.",
+          controls: "Fin simple.",
+          juniorSteps: [
+            "Coloca FN.20 tras TS.21.",
+            "Prueba enviando un email desde cuenta externa."
+          ],
+          seniorTip: "N/A",
+          dataRefs: "N/A",
+          studyModule: "Curso 2: 2.05",
+          reqs: ["RF-T-15"]
+        },
+        {
+          id: "m3_dx22", kind: "dx", cx: 370, cy: 415, w: 116, h: 74, code: "DX.22",
+          title: "¿Trae Soporte?", subRole: "Divergente Exclusiva",
+          formType: "No lleva formulario (Compuerta XOR DX)",
+          formWhy: "Valida que el correo traiga soporte médico adjunto (RF-T-13).",
+          controls: "Cantidad_Adjuntos > 0.",
+          juniorSteps: [
+            "Evalúa contador de adjuntos recibidos > 0.",
+            "Si falta soporte, pide reenvío en TS.22."
+          ],
+          seniorTip: "Usa función 'Contar documentos' (3.04).",
+          dataRefs: "Lee: Adjunto_Soporte.",
+          studyModule: "Curso 3: 3.04",
+          reqs: ["RF-T-13", "RF-T-15"]
+        },
+        {
+          id: "m3_ts22", kind: "ts", cx: 700, cy: 415, w: 220, h: 84, code: "TS.22",
+          title: "Solicitar Soporte Adjunto", subRole: "Notificador",
+          formType: "No lleva formulario (TS Notificador)",
+          formWhy: "Pide al empleado reenviar el correo adjuntando la incapacidad EPS.",
+          controls: "Email a Empleado_Responsable.",
+          juniorSteps: [
+            "Configura TS Notificador hacia Empleado_Responsable.",
+            "Indica el correo del buzón para reenvío."
+          ],
+          seniorTip: "N/A",
+          dataRefs: "Lee: Empleado_Responsable.",
+          studyModule: "Curso 3: 3.01",
+          reqs: ["RF-T-13"]
+        },
+        {
+          id: "m3_fn21", kind: "fn", cx: 940, cy: 415, w: 50, h: 50, code: "FN.21",
+          title: "Fin Incompleto", subRole: "Evento Fin",
+          formType: "No lleva formulario (Evento Fin)",
+          formWhy: "Finaliza el envío sin adjunto.",
+          controls: "Fin simple.",
+          juniorSteps: [
+            "Coloca FN.21 tras TS.22.",
+            "Verifica que no inserte registros vacíos en FAM_NOVEDADES_EMP."
+          ],
+          seniorTip: "N/A",
+          dataRefs: "N/A",
+          studyModule: "Curso 2: 2.05",
+          reqs: ["RF-T-13"]
+        },
+        {
+          id: "m3_db_bib", kind: "db", cx: 110, cy: 545, w: 185, h: 76, code: "BIB",
+          title: "BIB_SOPORTES_NOV.", subRole: "Guarda Soporte PDF",
+          formType: "Biblioteca Documental Clasificada",
+          formWhy: "Archiva el PDF/imagen médico clasificado por Empleado / Tipo de Novedad / Mes (RF-T-13 / RT-09).",
+          controls: "Metadatos: ID_Empleado, Tipo_Novedad, Mes, Codigo_CIE10.",
+          juniorSteps: [
+            "Crea BIB_SOPORTES_NOVEDADES con carpetas por Año/Mes/Tipo.",
+            "Asigna lectura solo a Talento Humano y al propio empleado (RT-14)."
+          ],
+          seniorTip: "Centralizar los soportes aquí evita duplicar archivos en múltiples procesos.",
+          dataRefs: "Escrita por: TS.23.",
+          studyModule: "Curso 2: 2.02 (06) + Curso 3: 3.04",
+          reqs: ["RF-T-13", "RT-09", "RT-14"]
+        },
+        {
+          id: "m3_ts23", kind: "ts", cx: 370, cy: 545, w: 230, h: 84, code: "TS.23",
+          title: "OCR Automático + Archivar Bib.", subRole: "Conector OCR / Ingres.",
+          formType: "No lleva formulario (Conector OCR / IA + TS Ingresador Biblioteca)",
+          formWhy: "Automatiza la lectura de incapacidades: extrae Fecha_Inicio, Fecha_Fin, Días, Tipo y CIE-10 del PDF sin digitación manual y archiva en BIB_SOPORTES_NOVEDADES.",
+          controls: "Devuelve JSON con campos extraídos + Porcentaje_Confianza_OCR (0..100 %).",
+          juniorSteps: [
+            "Conecta el adjunto al servicio OCR/IA documental vía Conector REST.",
+            "Mapea Fecha_Inicio, Fecha_Fin, Tipo_Novedad y Confianza_OCR, y guarda el PDF en BIB_SOPORTES_NOVEDADES."
+          ],
+          seniorTip: "Con cientos de empleados, automatizar el 80-90 % de incapacidades con OCR evita cuellos de botella en Talento Humano.",
+          dataRefs: "Guarda: BIB_SOPORTES_NOVEDADES | Escribe: Campos extraídos y Confianza_OCR.",
+          studyModule: "Curso 3: 3.04 + Conectores REST",
+          reqs: ["RF-T-13", "RF-T-15", "RT-09"]
+        },
+        {
+          id: "m3_dx23", kind: "dx", cx: 370, cy: 675, w: 124, h: 74, code: "DX.23",
+          title: "¿OCR ≥90 % válido?", subRole: "Zero-Touch vs Excep.",
+          formType: "No lleva formulario (Compuerta XOR DX)",
+          formWhy: "Si el OCR extrajo fechas y tipo con alta confianza (≥90 %), automatiza el registro directo (Zero-Touch) sin molestar a Talento Humano; solo si es ilegible o dudoso pasa a revisión humana.",
+          controls: "Confianza_OCR >= 90 AND Fecha_Fin >= Fecha_Inicio.",
+          juniorSteps: [
+            "Salida 'Sí (Auto)' salta directo a TS.24.",
+            "Salida 'No (Excepción)' envía a TP.20 (Talento Humano)."
+          ],
+          seniorTip: "Este patrón 'Exception-Based Processing' convierte un proceso manual en uno altamente automatizado.",
+          dataRefs: "Lee: Confianza_OCR, Fecha_Inicio, Fecha_Fin.",
+          studyModule: "Curso 2: 2.06",
+          reqs: ["RF-T-15"]
+        },
+        {
+          id: "m3_tp20", kind: "tp", cx: 700, cy: 675, w: 220, h: 84, code: "TP.20",
+          title: "Validar Excepción OCR", subRole: "Talento Humano",
+          formType: "Formulario de Tarea con Visor PDF (FORM_VALIDACION_NOVEDAD_TH)",
+          formWhy: "Solo se abre cuando el PDF viene borroso o el OCR tiene baja confianza; muestra el PDF al lado de los campos pre-llenados para confirmar o corregir en segundos.",
+          controls: "Visor del PDF en BIB_SOPORTES_NOVEDADES + Tipo_Novedad + Fecha_Inicio + Fecha_Fin + Motivo.",
+          juniorSteps: [
+            "Asigna al grupo Talento Humano.",
+            "Pre-llena los campos con lo poco que leyó el OCR para reducir digitación."
+          ],
+          seniorTip: "Talento Humano solo atiende excepciones (~10-15 % de los casos) en lugar del 100 %.",
+          dataRefs: "Lee: BIB_SOPORTES_NOVEDADES | Escribe: Fecha_Inicio, Fecha_Fin, Tipo_Novedad.",
+          studyModule: "Curso 2: 2.06 + 2.07",
+          reqs: ["RF-T-15", "3.10"]
+        },
+        {
+          id: "m3_db_nov", kind: "db", cx: 110, cy: 775, w: 190, h: 72, code: "FAM",
+          title: "FAM_NOVEDADES_EMP", subRole: "Guarda Rango + Remun.",
+          formType: "Familia Propia de Novedades del Empleado",
+          formWhy: "Registra formalmente la incapacidad/permiso con rango Fecha_Inicio..Fecha_Fin, si es remunerada y las horas para nómina o cruce con extras.",
+          controls: "Inserta fila maestra por el rango completo de días hábiles.",
+          juniorSteps: [
+            "Guarda Empleado, Tipo, FechaInicio, FechaFin, DiasHabiles, EsRemunerada.",
+            "Enlaza el ID del documento archivado en BIB_SOPORTES_NOVEDADES."
+          ],
+          seniorTip: "Así el empleado y nómina consultan un historial limpio sin abrir decenas de trámites.",
+          dataRefs: "Escrita por: TS.24 | Leída por: TIEM_REG_DIARIO (EI.01/TS.07) y TIEM_CIERRE_MENSUAL.",
+          studyModule: "Curso 2: 2.02 + Curso 3: 3.03",
+          reqs: ["RF-T-15", "RF-T-22", "3.10"]
+        },
+        {
+          id: "m3_db_reg", kind: "db", cx: 110, cy: 875, w: 190, h: 72, code: "FAM",
+          title: "FAM_REGISTROS_DIARIOS", subRole: "Marca Días Incapacit.",
+          formType: "Familia Propia de Registros Diarios",
+          formWhy: "Pre-marca automáticamente los días hábiles del rango como 'Incapacitado / Ausentismo Justificado' para que no se abran tareas diarias ni salgan alertas de incumplimiento.",
+          controls: "Inserta o actualiza estado = 'Incapacidad' por cada día hábil entre Fecha_Inicio y Fecha_Fin.",
+          juniorSteps: [
+            "Usa TS Ingresador en bucle por cada día hábil del rango.",
+            "Marca EstadoCumplimiento = 'Incapacidad (Justificado)'."
+          ],
+          seniorTip: "Al quedar en FAM_REGISTROS_DIARIOS, el Excel diario (m2) muestra inmediatamente qué empleados están incapacitados ese día.",
+          dataRefs: "Escrita por: TS.24 | Leída por: TIEM_INFORMES_DIARIOS (TS.11).",
+          studyModule: "Curso 3: 3.01 (Creador) + 3.03",
+          reqs: ["RF-T-21", "RF-T-22", "3.10"]
+        },
+        {
+          id: "m3_ts24", kind: "ts", cx: 370, cy: 815, w: 230, h: 84, code: "TS.24",
+          title: "Guardar Novedad y Bloquear Días", subRole: "Ingresador Multidía",
+          formType: "No lleva formulario (TS Ingresador / Dispersor Multidía)",
+          formWhy: "Persiste el registro en FAM_NOVEDADES_EMP y pre-marca automáticamente todos los días hábiles de incapacidad en FAM_REGISTROS_DIARIOS (resolviendo punto 3.10).",
+          controls: "Calcula días hábiles excluyendo festivos CO y escribe simultáneamente en ambas familias.",
+          juniorSteps: [
+            "Guarda la novedad completa en FAM_NOVEDADES_EMP.",
+            "Dispersa los días hábiles cubiertos en FAM_REGISTROS_DIARIOS para silenciar tareas diarias."
+          ],
+          seniorTip: "Resuelve de forma automática y elegante el supuesto de incapacidades de varios días.",
+          dataRefs: "Guarda en: FAM_NOVEDADES_EMP y FAM_REGISTROS_DIARIOS.",
+          studyModule: "Curso 3: 3.02 + 3.03",
+          reqs: ["RF-T-15", "RF-T-22", "3.10"]
+        },
+        {
+          id: "m3_ts25", kind: "ts", cx: 370, cy: 955, w: 220, h: 82, code: "TS.25",
+          title: "Confirmar Emp. y Resumen TH", subRole: "Notificador",
+          formType: "No lleva formulario (TS Notificador)",
+          formWhy: "Informa al empleado que su incapacidad fue radicada automáticamente con los días cubiertos y envía resumen informativo a Talento Humano.",
+          controls: "Email al empleado + notificación de respaldo a TH.",
+          juniorSteps: [
+            "Envía correo de confirmación al empleado indicando el rango de fechas aprobado.",
+            "Conecta a FN.22."
+          ],
+          seniorTip: "Mejora la experiencia del empleado enfermo confirmando que no recibirá recordatorios mientras se recupera.",
+          dataRefs: "Lee: FAM_NOVEDADES_EMP.",
+          studyModule: "Curso 3: 3.01",
+          reqs: ["RF-T-15", "RT-11"]
+        },
+        {
+          id: "m3_fn22", kind: "fn", cx: 660, cy: 955, w: 50, h: 50, code: "FN.22",
+          title: "Fin Novedad", subRole: "Evento Fin",
+          formType: "No lleva formulario (Evento Fin)",
+          formWhy: "Cierra el proceso de recepción de novedades con trazabilidad completa en Familias y Biblioteca.",
+          controls: "Fin simple.",
+          juniorSteps: [
+            "Coloca FN.22 tras TS.25.",
+            "Valida que la novedad aparezca en el siguiente cierre mensual."
+          ],
+          seniorTip: "N/A",
+          dataRefs: "N/A",
+          studyModule: "Curso 2: 2.05",
+          reqs: ["RF-T-15"]
+        }
+      ],
+      edges: [
+        { pts: [[370,83],[370,123]], isStart: true },
+        { pts: [[370,207],[370,248]] },
+        { pts: [[428,285],[590,285]], label: "No", lpos: [508,271] },
+        { pts: [[810,285],[915,285]] },
+        { pts: [[370,322],[370,378]], label: "Sí", lpos: [390,350] },
+        { pts: [[428,415],[590,415]], label: "No", lpos: [508,401] },
+        { pts: [[810,415],[915,415]] },
+        { pts: [[370,452],[370,503]], label: "Sí", lpos: [390,477] },
+        { pts: [[255,545],[202.5,545]], isData: true, label: "Guarda", lpos: [228,531] },
+        { pts: [[370,587],[370,638]] },
+        { pts: [[432,675],[590,675]], label: "No (<90%)", lpos: [510,661] },
+        { pts: [[700,717],[700,815],[485,815]] },
+        { pts: [[370,712],[370,773]], label: "Sí (Auto)", lpos: [410,742] },
+        { pts: [[255,795],[225,795],[225,775],[205,775]], isData: true, label: "Guarda", lpos: [232,761] },
+        { pts: [[255,835],[225,835],[225,875],[205,875]], isData: true, label: "Guarda", lpos: [232,891] },
+        { pts: [[370,857],[370,914]] },
+        { pts: [[480,955],[635,955]] }
+      ]
+    },
+
+    m4: {
+      id: "m4",
+      title: "Modelo 4: TIEM_CIERRE_MENSUAL — Escalable en Familias (0 PDFs Masivos por Empleado)",
+      subtitle: "Consolida cientos de empleados en Familias de Cierre, genera 1 PDF únicamente por proyecto facturable, transmite Nómina en lote REST y emite certificados bajo demanda",
+      width: 1320,
       height: 1650,
       nodes: [
         {
-          id: "m3_ei", kind: "ei_timer", cx: 460, cy: 56, w: 54, h: 54, code: "EI.30",
+          id: "m4_ei", kind: "ei_timer", cx: 540, cy: 56, w: 54, h: 54, code: "EI.30",
           title: "1er Día Hábil del Mes", subRole: "Evento Temporizado",
           formType: "No lleva formulario (Disparo Temporizado Mensual)",
-          formWhy: "Inicia automáticamente el cierre del mes anterior el primer día hábil de cada mes, evitando olvidos operativos.",
-          controls: "Programación mensual día hábil #1 a las 06:00 a. m. sobre Calendario Colombia.",
+          formWhy: "Inicia el cierre del mes anterior el primer día hábil del mes.",
+          controls: "Programación mensual día hábil #1 a las 06:00 a. m.",
           juniorSteps: [
-            "En TIEM_CIERRE_MENSUAL configura Evento de Inicio Temporizado mensual.",
-            "Calcula automáticamente el rango Fecha_Inicio_Mes y Fecha_Fin_Mes del mes vencido."
+            "Configura Inicio Temporizado mensual sobre Calendario CO.",
+            "Calcula Fecha_Inicio_Mes y Fecha_Fin_Mes del mes anterior."
           ],
-          seniorTip: "Usa el calendario laboral para que si el día 1 cae sábado, domingo o festivo, el proceso arranque exactamente el primer día hábil.",
-          dataRefs: "Lee: Calendario Laboral Colombia.",
-          studyModule: "Curso 2: 2.05 (07 Cronometría y 08 Eventos inicio)",
+          seniorTip: "Corre antes del horario laboral para que a las 8:00 a. m. los Directores ya tengan su revisión en bandeja.",
+          dataRefs: "Lee: Calendario Laboral CO.",
+          studyModule: "Curso 2: 2.05",
           reqs: ["RF-T-25"]
         },
         {
-          id: "m3_ts30", kind: "ts", cx: 460, cy: 165, w: 220, h: 84, code: "TS.30",
-          title: "Consultar Proy. Facturables", subRole: "Ingresador",
-          formType: "No lleva formulario (TS Ingresador)",
-          formWhy: "Identifica qué proyectos facturables tuvieron horas registradas en el mes para alimentar el tratamiento distribuido.",
-          controls: "Filtra FAM_PROYECTOS donde EsFacturable == Sí y existen horas aprobadas en el período.",
+          id: "m4_db_in", kind: "db", cx: 170, cy: 170, w: 230, h: 78, code: "FAM",
+          title: "FAM_ACT. / HORAS_EXTRA / NOV.", subRole: "Lee Datos del Mes",
+          formType: "Familias Propias Transaccionales (Fuente Mensual)",
+          formWhy: "Al haber guardado diariamente cada actividad (con EsParaCobro), cada hora extra neta y cada novedad en Familias, el cierre mensual solo lee tablas estructuradas sin abrir cientos de trámites viejos.",
+          controls: "Lectura SQL/Vista filtrada por Período = MesAnterior.",
           juniorSteps: [
-            "Configura TS Ingresador consultando FAM_PROYECTOS con EsFacturable == Sí.",
-            "Llena la lista/contenedor auxiliar que alimentará el Tratamiento Distribuido SP.31."
+            "Crea consultas agregadas por Proyecto (solo EsParaCobro=Sí) y por Empleado (Nómina).",
+            "Verifica que las actividades excluidas de cobro sigan en la vista de Nómina (RN-T-08)."
           ],
-          seniorTip: "Si hubo 0 proyectos facturables, el flujo debe saltar el cierre sin colgarse.",
-          dataRefs: "Lee: FAM_PROYECTOS, Registros del mes.",
-          studyModule: "Curso 3: 3.02 / 3.07",
-          reqs: ["RF-T-25"]
+          seniorTip: "Aquí se demuestra la arquitectura para cientos de empleados: 20,000 filas en Familias se agregan en segundos.",
+          dataRefs: "Leída por: TS.30.",
+          studyModule: "Curso 2: 2.02 + Curso 4: 4.02",
+          reqs: ["RF-T-25", "RN-T-08"]
         },
         {
-          id: "m3_sp31", kind: "sp", cx: 460, cy: 285, w: 240, h: 84, code: "SP.31",
+          id: "m4_ts30", kind: "ts", cx: 540, cy: 170, w: 240, h: 84, code: "TS.30",
+          title: "Consolidar Mes en Familias", subRole: "Ingresador",
+          formType: "No lleva formulario (TS Ingresador Consolidación Batch)",
+          formWhy: "Agrega los registros diarios del mes y guarda las tablas resumen en FAM_CIERRE_PROYECTO_MES y FAM_CIERRE_NOMINA_MES (0 PDFs generados aquí).",
+          controls: "Crea 1 fila por proyecto facturable y 1 fila por empleado en tablas de cierre mensual.",
+          juniorSteps: [
+            "Lee registros del mes desde FAM_DETALLE_ACTIVIDADES, FAM_HORAS_EXTRA y FAM_NOVEDADES_EMP.",
+            "Guarda los totales consolidados en FAM_CIERRE_PROYECTO_MES y FAM_CIERRE_NOMINA_MES."
+          ],
+          seniorTip: "Pre-calcular estas dos familias desacopla totalmente la facturación al cliente de la transmisión a nómina.",
+          dataRefs: "Lee: FAM_DETALLE_ACTIVIDADES, FAM_HORAS_EXTRA, FAM_NOVEDADES_EMP | Guarda: FAM_CIERRE_PROYECTO_MES, FAM_CIERRE_NOMINA_MES.",
+          studyModule: "Curso 3: 3.02 / 3.03",
+          reqs: ["RF-T-25", "RF-T-30"]
+        },
+        {
+          id: "m4_db_mes", kind: "db", cx: 930, cy: 170, w: 250, h: 80, code: "FAM",
+          title: "FAM_CIERRE_PROY / NOMINA_MES", subRole: "Guarda Tablas Cierre",
+          formType: "Familias Propias de Cierre Mensual (0 PDFs por Emp.)",
+          formWhy: "Reemplaza la generación masiva de cientos de documentos individuales: almacena en tablas el consolidado por proyecto y por empleado, generando certificados PDF por empleado únicamente bajo demanda desde el Portal Empleado.",
+          controls: "FAM_CIERRE_PROYECTO_MES (Proyecto, HorasFact, EstadoFirma) + FAM_CIERRE_NOMINA_MES (Empleado, ExtrasNetas, ValorReal, Novedades, ReciboREST).",
+          juniorSteps: [
+            "Crea ambas familias con clave compuesta Periodo + ID.",
+            "En el Portal del Empleado coloca un botón 'Descargar Certificado del Mes' conectado a Documento Base bajo demanda."
+          ],
+          seniorTip: "Si tienes 400 empleados, generar 400 PDFs cada mes satura el almacenamiento; guardar los datos en FAM_CIERRE_NOMINA_MES y emitir el PDF solo cuando el empleado lo pide es arquitectura senior.",
+          dataRefs: "Escrita por: TS.30, TP.31, TS.33, TS.35 | Leída por: TS.31, TS.34, TS.35 y Portal Empleado.",
+          studyModule: "Curso 2: 2.02 + 2.08 (Doc Base bajo demanda)",
+          reqs: ["RF-T-25", "RF-T-29", "RF-T-30", "RT-17"]
+        },
+        {
+          id: "m4_sp31", kind: "sp", cx: 540, cy: 290, w: 240, h: 84, code: "SP.31",
           title: "Subproceso Causal 1..N Proy.", subRole: "Tratamiento Distribuido",
-          formType: "Subproceso Distribuido Causal (Contiene TP.31 + TS.31 + TP.32)",
-          formWhy: "Si hubo 3 proyectos facturables, RF-T-25 exige abrir 3 trámites de aprobación independientes. El Tratamiento Distribuido Causal de AuraQuantic lanza una instancia paralela por cada proyecto.",
-          controls: "Instanciación dinámica 1:N por cada proyecto del mes; cada instancia sigue su propio ciclo con su Director y su Cliente.",
+          formType: "Subproceso Distribuido Causal (1 por Proyecto Facturable)",
+          formWhy: "Abre un trámite independiente por cada proyecto facturable existente en FAM_CIERRE_PROYECTO_MES (RF-T-25).",
+          controls: "Proceso Derivado Confluencial iterando FAM_CIERRE_PROYECTO_MES del período.",
           juniorSteps: [
-            "Configura en la clase el Tratamiento Distribuido tipo Proceso Derivado Confluencial (Curso 3.07 04).",
-            "Pasa como parámetros de entrada al subproceso: ID_Proyecto, Director_Proyecto, Cuenta_Cliente y Período."
+            "Configura Tratamiento Distribuido tipo Proceso Derivado Confluencial (3.07 04).",
+            "Pasa ID_Cierre_Proyecto como parámetro a cada subproceso."
           ],
-          seniorTip: "El bloque punteado inmediatamente debajo muestra el flujo interno que ejecuta cada instancia de SP.31.",
-          dataRefs: "Lee: Proyecto, Director, Cliente | Lanza 1..N instancias independientes.",
-          studyModule: "Curso 3: 3.07 (02 Causales y 04 Proceso derivado confluencial)",
+          seniorTip: "Solo se abren instancias por proyectos facturables (ej. 10-20 proyectos), nunca por cientos de empleados.",
+          dataRefs: "Lee: FAM_CIERRE_PROYECTO_MES.",
+          studyModule: "Curso 3: 3.07 (02 y 04)",
           reqs: ["RF-T-25"]
         },
         {
-          id: "m3_tp31", kind: "tp", cx: 460, cy: 415, w: 230, h: 84, code: "TP.31",
-          title: "Revisar y Excluir No Fact.", subRole: "Director Proyecto",
-          formType: "Formulario de Tarea Tabular con Edición Parcial (FORM_CIERRE_PROYECTO)",
-          formWhy: "El Director de Proyecto necesita ver el detalle de horas por empleado y actividad, marcar exclusiones no facturables con justificación obligatoria (RF-T-26) y validar.",
-          controls: "Grid con switch Facturable (Sí/No), Justificación (obligatoria si excluye) y totales calculados sin alterar horas de nómina (RN-T-08).",
+          id: "m4_db_est", kind: "db", cx: 145, cy: 350, w: 215, h: 76, code: "FAM",
+          title: "FAM_CIERRE_PROYECTO_MES", subRole: "Lee/Guarda Exclusiones",
+          formType: "Familia Propia (Estado de Aprobación por Proyecto)",
+          formWhy: "Persiste qué actividades excluyó el Director (con su justificación) y el total facturable actualizado sin alterar FAM_CIERRE_NOMINA_MES.",
+          controls: "Campos: HorasFacturables, HorasExcluidas, MotivoExclusion, EstadoAprobacion.",
           juniorSteps: [
-            "Asigna participante dinámicamente a Proyecto.Director.",
-            "Configura condición: si Facturable == No, Justificación es obligatoria.",
-            "Separa el total Facturable_Cliente del total Nómina_Empleado (RN-T-08)."
+            "Vincula TP.31 para leer/actualizar los registros de detalle de ese proyecto.",
+            "Nunca modifiques FAM_CIERRE_NOMINA_MES desde esta pantalla (RN-T-08)."
           ],
-          seniorTip: "Error fatal de junior: borrar la fila o restarla del total de nómina del empleado. Debes usar un booleano independiente 'Col_Facturable_Cliente' para cumplir RN-T-08.",
-          dataRefs: "Lee/Escribe: Detalle horas proyecto (Col_Facturable_Cliente, Justificacion).",
-          studyModule: "Curso 2: 2.07 (07 Asignación dinámica) + 2.08 (Formularios)",
+          seniorTip: "Garantiza físicamente en BD que excluir una hora de facturación jamás la borra de nómina.",
+          dataRefs: "Leída/Escrita por: TP.31 y TS.33.",
+          studyModule: "Curso 2: 2.02 + RN-T-08",
           reqs: ["RF-T-26", "RN-T-08"]
         },
         {
-          id: "m3_ts31", kind: "ts", cx: 460, cy: 535, w: 230, h: 84, code: "TS.31",
-          title: "Generar PDF y Portal Cliente", subRole: "Documento Base",
-          formType: "No lleva formulario UI (Usa Plantilla Documento Base Word → PDF)",
-          formWhy: "RF-T-27 exige generar un Reporte mensual en PDF con logo corporativo, datos del cliente, período, detalle y totales, y dejarlo publicado en el Portal de Clientes.",
-          controls: "Plantilla .docx con tokens @Cliente@, @NIT@, @Tabla_Horas@, conversión automática a PDF y guardado en Bib_ReportesProyecto.",
+          id: "m4_tp31", kind: "tp", cx: 540, cy: 420, w: 230, h: 84, code: "TP.31",
+          title: "Revisar y Excluir No Fact.", subRole: "Director Proyecto",
+          formType: "Formulario de Tarea Tabular (FORM_CIERRE_PROYECTO)",
+          formWhy: "El Director revisa el detalle por empleado y actividad desde la familia, excluye horas no facturables con justificación obligatoria y valida.",
+          controls: "Switch EsParaCobro (Sí/No), Justificación obligatoria si No, Total Facturable vs Total Nómina intacto.",
           juniorSteps: [
-            "Sube tu plantilla Word corporativa con tokens de AuraQuantic en Documento Base (2.08 01).",
-            "Configura TS.31 para generar PDF bloqueado y archivarlo en Bib_ReportesProyecto vinculado a Cuenta_Cliente."
+            "Asigna dinámicamente a Proyecto.Director.",
+            "Guarda las exclusiones y totales validados en FAM_CIERRE_PROYECTO_MES."
           ],
-          seniorTip: "Verifica que la biblioteca o vista del portal filtre estrictamente por Cuenta_Cliente == Cliente_Sesión para cumplir RT-14.",
-          dataRefs: "Lee: Datos proyecto y horas facturables | Escribe: Bib_ReportesProyecto (PDF).",
-          studyModule: "Curso 2: 2.08 (01 Documento base) + Curso 3: 3.04 (PDF) + Curso 4: 4.03 (Portal externos)",
+          seniorTip: "Muestra las observaciones previas si el cliente devolvió el reporte en DX.31.",
+          dataRefs: "Lee/Guarda: FAM_CIERRE_PROYECTO_MES.",
+          studyModule: "Curso 2: 2.07 (07) + 2.08",
+          reqs: ["RF-T-26", "RN-T-08"]
+        },
+        {
+          id: "m4_ts31", kind: "ts", cx: 540, cy: 540, w: 230, h: 84, code: "TS.31",
+          title: "1 PDF / Proyecto + Portal", subRole: "Documento Base",
+          formType: "No lleva formulario UI (Documento Base Word → PDF)",
+          formWhy: "Genera el Reporte mensual de horas del proyecto (1 solo PDF por proyecto facturable) con logo, cliente, período, detalle y totales, y lo publica en Portal Clientes.",
+          controls: "Plantilla Word -> PDF archivado en BIB_REPORTES_PROYECTO por Cuenta_Cliente.",
+          juniorSteps: [
+            "Combina la plantilla corporativa con los datos aprobados en FAM_CIERRE_PROYECTO_MES.",
+            "Publica el PDF en la vista del Portal Clientes filtrada por NIT."
+          ],
+          seniorTip: "Solo genera 1 PDF por proyecto facturable aprobado, manteniendo liviana la biblioteca.",
+          dataRefs: "Lee: FAM_CIERRE_PROYECTO_MES | Guarda: BIB_REPORTES_PROYECTO (PDF).",
+          studyModule: "Curso 2: 2.08 (01) + Curso 3: 3.04 + Curso 4: 4.03",
           reqs: ["RF-T-27", "RT-01", "RT-09", "RT-14"]
         },
         {
-          id: "m3_tp32", kind: "tp_ext", cx: 460, cy: 655, w: 230, h: 84, code: "TP.32",
+          id: "m4_tp32", kind: "tp_ext", cx: 540, cy: 660, w: 230, h: 84, code: "TP.32",
           title: "Firma Digital / Observaciones", subRole: "Contacto Cliente (Ext)",
           formType: "Formulario Externo con Visor PDF y Firma Digital (FORM_CLIENTE_FIRMA)",
-          formWhy: "El contacto del cliente es un usuario externo sin licencia interna (Contacto de Cuenta en Portal Clientes) y debe aprobar con certificado de firma digital o devolver con observaciones.",
-          controls: "Visor PDF incrustado, campo Observaciones (obligatorio si rechaza), Botón Firmar Digitalmente (certificado pruebas) y Botón Enviar Observaciones.",
+          formWhy: "El contacto externo del cliente ve exclusivamente los proyectos de su NIT en el Portal Clientes y aprueba con firma digital o devuelve observaciones.",
+          controls: "Visor PDF, Observaciones (obligatorio si devuelve), Firma Digital con certificado de pruebas.",
           juniorSteps: [
-            "Asigna participante externo por Rol de Contacto de Cuenta asociado a Proyecto.Cliente (2.07 05).",
-            "Marca el formulario como Formulario Externo en Portal de Clientes (2.08 03).",
-            "Agrega componente de Firma Digital usando el certificado de pruebas del Bootcamp (2.08 04)."
+            "Asigna Contacto de Cuenta (Externo) de Proyecto.Cliente.",
+            "Configura Firma Digital y filtro estricto Cuenta_Cliente == Cliente_Sesión."
           ],
-          seniorTip: "Si expones el formulario a externos sin filtrar por Cuenta_Cliente, cualquier cliente vería reportes ajenos; valida siempre el aislamiento por NIT.",
-          dataRefs: "Lee: Reporte PDF, Certificado Pruebas | Escribe: PDF Firmado, Observaciones_Cliente.",
-          studyModule: "Curso 2: 2.07 (05 Contactos) + 2.08 (03 Externos y 04 Firma digital) + Curso 4: 4.03",
+          seniorTip: "El cliente nunca ve datos internos ni tarifas de nómina de empleados.",
+          dataRefs: "Lee: BIB_REPORTES_PROYECTO | Guarda: PDF Firmado, Observaciones.",
+          studyModule: "Curso 2: 2.07 (05) + 2.08 (03/04) + Curso 4: 4.03",
           reqs: ["RF-T-28", "RT-14"]
         },
         {
-          id: "m3_et31", kind: "et", cx: 710, cy: 605, w: 54, h: 54, code: "ET.31",
+          id: "m4_et31", kind: "et", cx: 780, cy: 610, w: 54, h: 54, code: "ET.31",
           title: "5 Días Hábiles", subRole: "Timer Recordatorio",
           formType: "No lleva formulario (Evento Intermedio No Interruptor 5d)",
-          formWhy: "Dispara el recordatorio único al cliente si pasan 5 días hábiles sin respuesta, sin cerrar la tarea TP.32.",
-          controls: "Duración leída dinámicamente desde FAM_PARAMETROS.DiasRecordatorioCliente (5 días hábiles, RN-T-09).",
+          formWhy: "Dispara recordatorio único al cliente tras 5 días hábiles sin respuesta.",
+          controls: "Plazo leído de FAM_PARAMETROS.DiasRecordatorioCliente.",
           juniorSteps: [
-            "Añade Evento Intermedio No Interruptor sobre TP.32.",
-            "Asocia el plazo al término parametrizable (5 días) en calendario laboral."
+            "Añade Timer No Interruptor sobre TP.32 leyendo parámetro 5 días.",
+            "Conecta hacia TS.32."
           ],
-          seniorTip: "No quemes '5 días' fijo; léelo de FAM_PARAMETROS para cumplir RN-T-09 y RT-15.",
-          dataRefs: "Lee: FAM_PARAMETROS.DiasRecordatorioCliente.",
-          studyModule: "Curso 2: 2.05 (09 Eventos intermedios) + RN-T-09",
-          reqs: ["RF-T-28", "RN-T-09", "RT-15"]
+          seniorTip: "Parametrizable según RN-T-09.",
+          dataRefs: "Lee: FAM_PARAMETROS.",
+          studyModule: "Curso 2: 2.05 (09)",
+          reqs: ["RF-T-28", "RN-T-09"]
         },
         {
-          id: "m3_ts32", kind: "ts", cx: 950, cy: 605, w: 210, h: 76, code: "TS.32",
+          id: "m4_ts32", kind: "ts", cx: 1010, cy: 610, w: 205, h: 74, code: "TS.32",
           title: "Recordatorio Único Día 5", subRole: "Notificador",
           formType: "No lleva formulario (TS Notificador Externo)",
-          formWhy: "Envía el recordatorio único por correo al contacto externo con enlace a su portal.",
-          controls: "Email a Contacto_Cliente con enlace directo al Portal Clientes.",
+          formWhy: "Avisa por correo al contacto del cliente con enlace al portal.",
+          controls: "Email único al contacto externo.",
           juniorSteps: [
-            "Configura TS.32 tipo Notificador dirigida al contacto externo del proyecto.",
-            "Conecta su salida hacia el evento Fin de rama FN.31."
+            "Configura TS Notificador hacia Contacto_Cliente.",
+            "Cierra en FN.31."
           ],
-          seniorTip: "Al ser No Interruptor, el cliente aún conserva la tarea abierta hasta el día 10.",
+          seniorTip: "No interrumpe TP.32.",
           dataRefs: "Lee: Email Contacto Cliente.",
-          studyModule: "Curso 3: 3.01 (02 Notifica a externo)",
+          studyModule: "Curso 3: 3.01",
           reqs: ["RF-T-28"]
         },
         {
-          id: "m3_fn31", kind: "fn", cx: 1125, cy: 605, w: 46, h: 46, code: "FN.31",
+          id: "m4_fn31", kind: "fn", cx: 1185, cy: 610, w: 46, h: 46, code: "FN.31",
           title: "Fin Aviso", subRole: "Evento Fin Rama",
-          formType: "No lleva formulario (Evento Fin rama recordatorio)",
-          formWhy: "Finaliza únicamente el aviso del día 5.",
-          controls: "Evento Fin simple.",
+          formType: "No lleva formulario (Evento Fin rama)",
+          formWhy: "Termina el aviso del día 5.",
+          controls: "Fin simple.",
           juniorSteps: [
-            "Coloca FN.31 tras TS.32 para cerrar solo la rama del aviso del día 5.",
-            "Confirma que no sea Fin Terminador para dejar abierta la tarea TP.32 hasta el día 10."
+            "Coloca FN.31 tras TS.32.",
+            "No uses Terminador global."
           ],
           seniorTip: "N/A",
           dataRefs: "N/A",
@@ -1191,194 +1545,209 @@
           reqs: ["RF-T-28"]
         },
         {
-          id: "m3_et32", kind: "et", cx: 710, cy: 715, w: 54, h: 54, code: "ET.32",
+          id: "m4_et32", kind: "et", cx: 780, cy: 720, w: 54, h: 54, code: "ET.32",
           title: "10 Días Hábiles", subRole: "Timer Interruptor",
           formType: "No lleva formulario (Evento Intermedio Interruptor 10d)",
-          formWhy: "Al décimo día hábil sin respuesta del cliente, interrumpe la espera en TP.32 y fuerza la aprobación tácita.",
-          controls: "Duración leída de FAM_PARAMETROS.DiasAprobacionTacita (10 días hábiles).",
+          formWhy: "Al décimo día hábil sin respuesta, cierra TP.32 y aplica aprobación tácita.",
+          controls: "Plazo leído de FAM_PARAMETROS.DiasAprobacionTacita (10 días).",
           juniorSteps: [
-            "Añade segundo Evento Intermedio Interruptor sobre TP.32.",
-            "Vincula su plazo al parámetro de 10 días hábiles."
+            "Añade Timer Interruptor sobre TP.32 leyendo parámetro 10 días.",
+            "Conecta hacia TS.33."
           ],
-          seniorTip: "Este sí DEBE ser Interruptor porque al día 10 la tarea TP.32 debe cerrarse automáticamente.",
-          dataRefs: "Lee: FAM_PARAMETROS.DiasAprobacionTacita.",
-          studyModule: "Curso 2: 2.05 (09 Eventos intermedios)",
+          seniorTip: "Debe ser Interruptor para cerrar TP.32 automáticamente.",
+          dataRefs: "Lee: FAM_PARAMETROS.",
+          studyModule: "Curso 2: 2.05 (09)",
           reqs: ["RF-T-28", "RN-T-09"]
         },
         {
-          id: "m3_ts33", kind: "ts", cx: 950, cy: 715, w: 210, h: 76, code: "TS.33",
-          title: "Aprobación Tácita + Acta", subRole: "Doc. Base / Ingres.",
-          formType: "No lleva formulario (Documento Base Constancia Tácita)",
-          formWhy: "RF-T-28 ordena que al décimo día hábil se dé por aprobado dejando constancia formal en el expediente.",
-          controls: "Estado = 'Aprobado Tácitamente' + genera PDF de constancia y lo guarda en Bib_ReportesProyecto.",
+          id: "m4_ts33", kind: "ts", cx: 1010, cy: 720, w: 205, h: 74, code: "TS.33",
+          title: "Aprobación Tácita + Guarda", subRole: "Ingres. / Doc.",
+          formType: "No lleva formulario (TS Ingresador + Constancia Tácita)",
+          formWhy: "Registra 'Aprobado Tácitamente' en FAM_CIERRE_PROYECTO_MES y deja constancia documental en expediente.",
+          controls: "Actualiza FAM_CIERRE_PROYECTO_MES + constancia PDF.",
           juniorSteps: [
-            "Actualiza el estado del proyecto del mes a 'Aprobado (Tácito)'.",
-            "Genera constancia automática en biblioteca y conecta directo hacia la Confluencia CA.31."
+            "Guarda EstadoAprobacion = 'Aprobado Tácito' en FAM_CIERRE_PROYECTO_MES.",
+            "Archiva constancia en BIB_REPORTES_PROYECTO y envía a CA.31+."
           ],
-          seniorTip: "Dejar la constancia PDF firmada por el sistema te protege legalmente en auditorías (RT-08/RT-09).",
-          dataRefs: "Escribe: Bib_ReportesProyecto (Constancia Tácita), Estado_Proyecto_Mes.",
+          seniorTip: "Dejar constancia automática respalda el cobro legalmente.",
+          dataRefs: "Guarda: FAM_CIERRE_PROYECTO_MES, BIB_REPORTES_PROYECTO.",
           studyModule: "Curso 2: 2.08 + Curso 3: 3.04",
-          reqs: ["RF-T-28", "RT-08", "RT-09"]
+          reqs: ["RF-T-28", "RT-09"]
         },
         {
-          id: "m3_dx31", kind: "dx", cx: 460, cy: 775, w: 116, h: 74, code: "DX.31",
+          id: "m4_dx31", kind: "dx", cx: 540, cy: 780, w: 116, h: 74, code: "DX.31",
           title: "¿Firmado?", subRole: "Divergente Exclusiva",
           formType: "No lleva formulario (Compuerta XOR DX)",
-          formWhy: "Si el cliente firmó digitalmente, el proyecto avanza hacia la confluencia; si envió observaciones, regresa al Director (TP.31).",
-          controls: "Condición: Decision_Cliente == 'Firmado' vs 'Con Observaciones'.",
+          formWhy: "Si firmó, avanza a confluencia; si observó, devuelve a TP.31.",
+          controls: "Decision_Cliente == Firmado vs Observaciones.",
           juniorSteps: [
-            "Configura la salida 'Firmado' hacia CA.31 para avanzar a confluencia.",
-            "Configura la salida 'Observaciones' regresando a TP.31 para que el Director ajuste."
+            "Salida 'Firmado' -> CA.31+.",
+            "Salida 'Observaciones' -> regresa a TP.31."
           ],
-          seniorTip: "Cuando regresa a TP.31 por observaciones, muestra las notas del cliente en un cuadro destacado arriba del formulario del Director.",
-          dataRefs: "Lee: Decision_Cliente, Observaciones_Cliente.",
-          studyModule: "Curso 2: 2.06 (01 Compuertas)",
+          seniorTip: "N/A",
+          dataRefs: "Lee: Decision_Cliente.",
+          studyModule: "Curso 2: 2.06",
           reqs: ["RF-T-28"]
         },
         {
-          id: "m3_ca31", kind: "ca", cx: 460, cy: 895, w: 122, h: 76, code: "CA.31",
+          id: "m4_ca31", kind: "ca", cx: 540, cy: 900, w: 122, h: 76, code: "CA.31",
           title: "Confluencia 100%", subRole: "Convergencia Causal",
-          formType: "No lleva formulario (Confluencia de Tratamiento Distribuido)",
-          formWhy: "RF-T-29 exige enviar el resumen a Finanzas SOLO cuando TODOS los proyectos del mes estén aprobados (por firma o tácita).",
-          controls: "Compuerta Confluencial esperando N de N subprocesos de SP.31 finalizados.",
+          formType: "No lleva formulario (Confluencia Proceso Derivado)",
+          formWhy: "Espera que el 100 % de los proyectos facturables del mes queden aprobados (firma o tácita) antes de avisar a Finanzas (RF-T-29).",
+          controls: "Sincronización Confluencial de N/N instancias de SP.31.",
           juniorSteps: [
-            "En la clase padre TIEM_CIERRE_MENSUAL, conecta la salida del SP.31 (Proceso derivado confluencial) a CA.31.",
-            "AuraQuantic retiene el flujo automáticamente hasta que el 100 % de instancias terminen."
+            "Conecta SP.31 (Derivado Confluencial) hacia CA.31+.",
+            "AuraQuantic retiene el avance hasta cerrar el último proyecto."
           ],
-          seniorTip: "No intentes simular esto con bucles de espera manuales: el Proceso Derivado Confluencial nativo de AuraQuantic (3.07 04) lo resuelve de fábrica.",
-          dataRefs: "Lee: Estado de todas las instancias hijas del mes.",
-          studyModule: "Curso 3: 3.07 (04 Proceso derivado confluencial)",
+          seniorTip: "Resuelve automáticamente el criterio 3.11 de 3 proyectos -> 1 solo correo a Finanzas.",
+          dataRefs: "Lee: FAM_CIERRE_PROYECTO_MES.",
+          studyModule: "Curso 3: 3.07 (04)",
           reqs: ["RF-T-25", "RF-T-29"]
         },
         {
-          id: "m3_da31", kind: "da", cx: 460, cy: 1010, w: 116, h: 74, code: "DA.31",
+          id: "m4_da31", kind: "da", cx: 540, cy: 1015, w: 116, h: 74, code: "DA.31",
           title: "Paralela AND", subRole: "Divergente Paralela",
           formType: "No lleva formulario (Compuerta Paralela DA+)",
-          formWhy: "RF-T-30 indica que en paralelo al envío a Finanzas se deben emitir los certificados por empleado y transmitir a Nómina.",
-          controls: "Bifurcación simultánea sin condiciones: Rama Finanzas (TS.34) y Rama Nómina (TS.35).",
+          formWhy: "Dispara en paralelo el resumen consolidado a Finanzas y la transmisión en lote a Nómina REST.",
+          controls: "Salidas simultáneas a TS.34 y TS.35.",
           juniorSteps: [
-            "Coloca DA.31+ inmediatamente después de CA.31.",
-            "Conecta una salida hacia TS.34 (Finanzas) y otra simultánea hacia TS.35 (Nómina REST)."
+            "Coloca DA.31+ tras CA.31+.",
+            "Conecta rama izquierda a TS.34 y derecha a TS.35."
           ],
-          seniorTip: "Recuerda cerrar ambas ramas paralelas al final con su compuerta CA.32 +.",
+          seniorTip: "N/A",
           dataRefs: "N/A",
-          studyModule: "Curso 2: 2.06 (01 Compuertas)",
+          studyModule: "Curso 2: 2.06",
           reqs: ["RF-T-29", "RF-T-30"]
         },
         {
-          id: "m3_ts34", kind: "ts", cx: 190, cy: 1130, w: 220, h: 84, code: "TS.34",
-          title: "Resumen Mensual a Finanzas", subRole: "Doc. Base / Notif.",
-          formType: "No lleva formulario (Consolidado Excel/PDF + TS Notificador)",
-          formWhy: "Emite un único correo a Finanzas adjuntando el resumen consolidado de facturación de todos los proyectos aprobados del mes.",
-          controls: "Genera Resumen_Facturacion_Mes (Excel/PDF) y envía 1 solo correo a Finanzas.",
+          id: "m4_ts34", kind: "ts", cx: 240, cy: 1135, w: 230, h: 84, code: "TS.34",
+          title: "1 Resumen Consolidado Finanzas", subRole: "Doc. Base / Notif.",
+          formType: "No lleva formulario (Consolidado Único + TS Notificador)",
+          formWhy: "Lee FAM_CIERRE_PROYECTO_MES ya aprobada y envía 1 único correo consolidado a Finanzas.",
+          controls: "1 solo archivo resumen con los N proyectos aprobados -> Email a Finanzas.",
           juniorSteps: [
-            "Arma el documento consolidado con la suma de los N proyectos aprobados.",
-            "Envíalo por TS Notificador al grupo Finanzas."
+            "Genera el resumen leyendo exclusivamente FAM_CIERRE_PROYECTO_MES.",
+            "Envía 1 correo al grupo Finanzas."
           ],
-          seniorTip: "Verifica el criterio 3.11: si hubo 3 proyectos, Finanzas recibe 1 solo correo al cerrar los 3, no 3 correos sueltos.",
-          dataRefs: "Lee: Totales aprobados de los N proyectos | Notifica: Finanzas.",
+          seniorTip: "No re-proceses logs diarios aquí; lee la tabla mensual ya validada.",
+          dataRefs: "Lee: FAM_CIERRE_PROYECTO_MES | Notifica: Finanzas.",
           studyModule: "Curso 3: 3.01 + 3.04",
           reqs: ["RF-T-29"]
         },
         {
-          id: "m3_ts35", kind: "ts", cx: 630, cy: 1130, w: 230, h: 84, code: "TS.35",
-          title: "Certificado + REST Nómina", subRole: "Doc. Base / REST",
-          formType: "No lleva formulario (Documento Base PDF + Conector REST)",
-          formWhy: "Genera el Certificado mensual de horas extra y novedades por empleado (PDF) y transmite los datos vía POST al servicio REST de Nómina (Anexo B).",
-          controls: "Documento Base Certificado PDF + POST {mock}/nomina/novedades con JSON de período, empleado, extras y novedades.",
+          id: "m4_db_nom", kind: "db", cx: 1110, cy: 1135, w: 230, h: 78, code: "FAM",
+          title: "FAM_CIERRE_NOMINA_MES", subRole: "Lee Lote / Guarda Recibo",
+          formType: "Familia Propia de Cierre Nómina (Sin PDFs Masivos)",
+          formWhy: "Contiene 1 registro consolidado por empleado (extras netas tras cruce, valor real y novedades). Permite enviar un lote JSON a Nómina y que cada empleado descargue su Certificado PDF bajo demanda en el Portal (0 explosión de archivos).",
+          controls: "Lee Lote JSON | Guarda NumeroReciboREST y EstadoEnvioNomina.",
           juniorSteps: [
-            "Genera el Certificado PDF por empleado y envíalo a Talento Humano y empleado.",
-            "Llama al Conector REST Nómina enviando el payload JSON y captura el código HTTP de respuesta."
+            "Expón una vista de esta familia en el Portal del Empleado con botón 'Descargar Certificado PDF' bajo demanda.",
+            "Guarda el número de recibo devuelto por la API de Nómina."
           ],
-          seniorTip: "Guarda siempre el código HTTP y el cuerpo de respuesta de la API en dos términos del proceso para poder evaluarlos en DX.32 y mostrarlos si hay error.",
-          dataRefs: "Escribe: Codigo_HTTP_Nomina, Mensaje_Error_Nomina, Recibo_Nomina.",
-          studyModule: "Curso 2: 2.08 (01 Doc. base) + Curso 3: Conectores REST",
-          reqs: ["RF-T-30", "RF-T-31"]
+          seniorTip: "Esta es la solución profesional para 300-1000 empleados: transmites datos estructurados por API y emites PDF solo cuando el empleado lo solicita.",
+          dataRefs: "Leída y actualizada por TS.35; leída por TP.33 y Portal Empleado.",
+          studyModule: "Curso 2: 2.02 + 2.08 + Curso 4: 4.03",
+          reqs: ["RF-T-30", "RT-17"]
         },
         {
-          id: "m3_dx32", kind: "dx", cx: 630, cy: 1255, w: 116, h: 74, code: "DX.32",
+          id: "m4_ts35", kind: "ts", cx: 720, cy: 1135, w: 240, h: 84, code: "TS.35",
+          title: "POST REST Lote Nómina", subRole: "Conector REST Batch",
+          formType: "No lleva formulario (Conector REST Batch + PDF Bajo Demanda)",
+          formWhy: "Lee FAM_CIERRE_NOMINA_MES y transmite en lote JSON al servicio REST de Nómina (Anexo B) las horas extra netas, valor real y novedades de los cientos de empleados; guarda el recibo devuelto.",
+          controls: "POST {mock}/nomina/novedades (lote JSON) -> captura CodigoHTTP y ReciboREST.",
+          juniorSteps: [
+            "Lee los registros del período desde FAM_CIERRE_NOMINA_MES.",
+            "Ejecuta POST al Conector REST de Nómina y guarda CodigoHTTP y ReciboREST."
+          ],
+          seniorTip: "Enviar en lote desde la tabla de cierre evita disparar cientos de peticiones HTTP separadas y respeta las buenas prácticas de rendimiento (RT-17).",
+          dataRefs: "Lee/Guarda: FAM_CIERRE_NOMINA_MES.",
+          studyModule: "Curso 3: Conectores REST + Curso 4: 4.05",
+          reqs: ["RF-T-30", "RF-T-31", "RT-17"]
+        },
+        {
+          id: "m4_dx32", kind: "dx", cx: 720, cy: 1255, w: 116, h: 74, code: "DX.32",
           title: "¿200 OK?", subRole: "Divergente Exclusiva",
           formType: "No lleva formulario (Compuerta XOR DX)",
-          formWhy: "Comprueba si el servicio REST de Nómina aceptó la transmisión (HTTP 200/201) o devolvió rechazo/timeout.",
-          controls: "Condición: Codigo_HTTP_Nomina == 200 vs != 200.",
+          formWhy: "Verifica si el servicio REST de Nómina confirmó la recepción del lote.",
+          controls: "CodigoHTTP == 200 vs != 200.",
           juniorSteps: [
-            "Evalúa Codigo_HTTP_Nomina en DX.32.",
-            "Si es 200 OK avanza a TP.33 (Talento Humano confirma); si falla, desvía a DX.33."
+            "Salida 'Sí' -> TP.33 (Talento Humano confirma).",
+            "Salida 'No' -> DX.33 (Reto reintentos 3x)."
           ],
-          seniorTip: "No asumas que las APIs nunca fallan; siempre captura el status code.",
-          dataRefs: "Lee: Codigo_HTTP_Nomina.",
-          studyModule: "Curso 2: 2.06 (01 Compuertas) + Conectores",
+          seniorTip: "N/A",
+          dataRefs: "Lee: CodigoHTTP.",
+          studyModule: "Curso 2: 2.06",
           reqs: ["RF-T-30", "RF-T-31"]
         },
         {
-          id: "m3_tp33", kind: "tp", cx: 630, cy: 1375, w: 220, h: 84, code: "TP.33",
-          title: "Confirmar Cierre Nómina", subRole: "Talento Humano",
-          formType: "Formulario de Tarea Tabular Corto (FORM_CONFIRMACION_NOMINA_TH)",
-          formWhy: "Talento Humano tiene visibilidad confidencial del Valor Hora (RT-14) y debe confirmar o corregir el cierre antes de archivar el mes.",
-          controls: "Resumen de extras/novedades por empleado, Número de Recibo Nómina, Valor Hora visible solo a perfil TH, Botón Confirmar.",
+          id: "m4_tp33", kind: "tp", cx: 720, cy: 1375, w: 225, h: 84, code: "TP.33",
+          title: "Confirmar Lote Nómina (Real)", subRole: "Talento Humano",
+          formType: "Formulario de Tarea Tabular con Perfil Confidencial (FORM_CONFIRMACION_NOMINA_TH)",
+          formWhy: "Talento Humano revisa el lote consolidado desde FAM_CIERRE_NOMINA_MES (viendo valores reales en COP protegidos por perfil RT-14) y confirma el cierre.",
+          controls: "Tabla paginada de FAM_CIERRE_NOMINA_MES, ReciboREST, ValorReal visible solo a TH.",
           juniorSteps: [
-            "Asigna participante al grupo Talento Humano.",
-            "Aplica Perfil de Confidencialidad (2.07 06) para que solo TH vea la columna Valor Hora."
+            "Asigna a grupo Talento Humano con Perfil Confidencial.",
+            "Usa paginación en tabla para visualizar cientos de empleados rápido (<3s, RT-17)."
           ],
-          seniorTip: "Este es el lugar exacto para demostrar RT-14 (Confidencialidad por perfiles) en tu demo.",
-          dataRefs: "Lee: Empleado.ValorHora, Certificado PDF, Recibo_Nomina.",
-          studyModule: "Curso 2: 2.07 (06 Perfiles) + 2.06",
-          reqs: ["RF-T-30", "RT-14"]
+          seniorTip: "Con 1 sola tarea TP.33 confirmas el lote completo en lugar de abrir 300 tareas a Talento Humano.",
+          dataRefs: "Lee/Actualiza: FAM_CIERRE_NOMINA_MES.",
+          studyModule: "Curso 2: 2.07 (06 Perfiles) + Curso 4: 4.05",
+          reqs: ["RF-T-30", "RT-14", "RT-17"]
         },
         {
-          id: "m3_dx33", kind: "dx", cx: 880, cy: 1255, w: 120, h: 74, code: "DX.33",
+          id: "m4_dx33", kind: "dx", cx: 960, cy: 1255, w: 118, h: 74, code: "DX.33",
           title: "¿Intentos < 3?", subRole: "Reto RF-T-31",
           formType: "No lleva formulario (Compuerta Bucle Reintentos)",
-          formWhy: "Implementa el requerimiento [Reto] RF-T-31: si Nómina rechaza o no responde, reintenta automáticamente hasta 3 veces antes de escalar a un humano.",
-          controls: "Incrementa Contador_Reintentos += 1; si < 3 reintenta TS.35, si >= 3 escala a TP.34.",
+          formWhy: "Ejecuta hasta 3 reintentos automáticos si Nómina falla o no responde (RF-T-31).",
+          controls: "Contador_Reintentos < 3.",
           juniorSteps: [
-            "Inicializa Contador_Reintentos = 0 antes de TS.35.",
-            "En la salida de error suma 1 y evalúa Contador_Reintentos < 3."
+            "Suma 1 a Contador_Reintentos en la salida de fallo.",
+            "Si < 3 reintenta TS.35; si >= 3 escala a TP.34."
           ],
-          seniorTip: "Agrega un breve temporizador de espera entre reintentos (ej. 1 minuto) para que un micro-corte de red tenga tiempo de recuperarse.",
+          seniorTip: "N/A",
           dataRefs: "Lee/Escribe: Contador_Reintentos.",
-          studyModule: "Curso 2: 2.06 + Curso 3: Conectores REST",
+          studyModule: "Curso 2: 2.06 + Conectores",
           reqs: ["RF-T-31"]
         },
         {
-          id: "m3_tp34", kind: "tp", cx: 1030, cy: 1375, w: 210, h: 84, code: "TP.34",
-          title: "Gestionar Error REST", subRole: "Talento Humano",
+          id: "m4_tp34", kind: "tp", cx: 1110, cy: 1375, w: 210, h: 84, code: "TP.34",
+          title: "Gestionar Error REST Lote", subRole: "Talento Humano",
           formType: "Formulario de Tarea Excepción (FORM_ERROR_NOMINA_TH)",
-          formWhy: "Tras 3 reintentos fallidos, Talento Humano necesita ver el código y mensaje de error exacto devuelto por la API para corregirlo y reenviar manualmente.",
-          controls: "Campos solo lectura: Codigo_HTTP_Nomina y Mensaje_Error_Nomina + Botones: Reintentar Envío / Cerrar Manualmente.",
+          formWhy: "Tras 3 fallos de Nómina, muestra el código y mensaje de error HTTP a Talento Humano para corrección y reenvío.",
+          controls: "Campos error HTTP solo lectura + botón Reintentar / Cerrar Manual.",
           juniorSteps: [
-            "Asigna participante al grupo Talento Humano.",
-            "Muestra en un recuadro rojo el campo Mensaje_Error_Nomina recibido del mock."
+            "Asigna a Talento Humano.",
+            "Muestra Mensaje_Error_Nomina en bloque de alerta."
           ],
-          seniorTip: "Este nodo te suma el +10 % del criterio de Retos en la rúbrica del Bootcamp.",
-          dataRefs: "Lee: Codigo_HTTP_Nomina, Mensaje_Error_Nomina.",
-          studyModule: "Curso 2: 2.06 + Conectores REST",
+          seniorTip: "Cubre el +10 % del criterio Retos.",
+          dataRefs: "Lee: CodigoHTTP, Mensaje_Error_Nomina.",
+          studyModule: "Curso 2: 2.06 + Conectores",
           reqs: ["RF-T-31"]
         },
         {
-          id: "m3_ca32", kind: "ca", cx: 400, cy: 1495, w: 116, h: 74, code: "CA.32",
+          id: "m4_ca32", kind: "ca", cx: 480, cy: 1495, w: 116, h: 74, code: "CA.32",
           title: "Convergente +", subRole: "Convergencia Paralela",
           formType: "No lleva formulario (Compuerta Convergente CA+)",
-          formWhy: "Une las ramas paralelas de Finanzas y Nómina para dar cierre único al proceso mensual.",
-          controls: "Sincronización paralela de cierre.",
+          formWhy: "Une las ramas paralelas de Finanzas y Nómina para concluir el cierre mensual.",
+          controls: "Sincronización paralela.",
           juniorSteps: [
-            "Coloca CA.32+ cerrando el bloque paralelo iniciado en DA.31+.",
-            "Conecta todas las ramas finales (TS.34, TP.33 y TP.34) hacia CA.32+ antes de FN.30."
+            "Une salidas de TS.34, TP.33 y TP.34 en CA.32+.",
+            "Conecta hacia FN.30."
           ],
-          seniorTip: "Mantén la simetría DA.31 -> CA.32.",
+          seniorTip: "N/A",
           dataRefs: "N/A",
-          studyModule: "Curso 2: 2.06 (01 Compuertas)",
+          studyModule: "Curso 2: 2.06",
           reqs: ["RF-T-29", "RF-T-30"]
         },
         {
-          id: "m3_fn30", kind: "fn", cx: 400, cy: 1595, w: 50, h: 50, code: "FN.30",
-          title: "Fin Proceso", subRole: "Evento Fin",
+          id: "m4_fn30", kind: "fn", cx: 480, cy: 1595, w: 50, h: 50, code: "FN.30",
+          title: "Fin Cierre Mes", subRole: "Evento Fin",
           formType: "No lleva formulario (Evento Fin)",
-          formWhy: "Finaliza el cierre mensual completo con trazabilidad y expedientes cerrados.",
-          controls: "Evento Fin simple.",
+          formWhy: "Cierra el mes con todas las tablas actualizadas y cero explosión documental.",
+          controls: "Fin simple.",
           juniorSteps: [
-            "Coloca FN.30 cerrando TIEM_CIERRE_MENSUAL tras CA.32+.",
-            "Verifica en el monitor que todos los documentos (PDFs, constancias y resumen) estén en biblioteca."
+            "Coloca FN.30 tras CA.32+.",
+            "Verifica en el Cuadro de Mandos los KPIs del mes cerrado."
           ],
           seniorTip: "N/A",
           dataRefs: "N/A",
@@ -1387,32 +1756,36 @@
         }
       ],
       edges: [
-        { pts: [[460,83],[460,123]], isStart: true },
-        { pts: [[460,207],[460,243]] },
-        { pts: [[460,327],[460,373]] },
-        { pts: [[460,457],[460,493]] },
-        { pts: [[460,577],[460,613]] },
-        { pts: [[575,638],[645,638],[645,605],[683,605]] },
-        { pts: [[737,605],[845,605]] },
-        { pts: [[1055,605],[1102,605]] },
-        { pts: [[575,672],[645,672],[645,715],[683,715]] },
-        { pts: [[737,715],[845,715]] },
-        { pts: [[950,753],[950,895],[521,895]] },
-        { pts: [[460,697],[460,738]] },
-        { pts: [[402,775],[210,775],[210,415],[345,415]], label: "Observaciones", lpos: [275,761] },
-        { pts: [[460,812],[460,857]], label: "Firmado", lpos: [494,834] },
-        { pts: [[460,933],[460,973]] },
-        { pts: [[402,1010],[190,1010],[190,1088]] },
-        { pts: [[518,1010],[630,1010],[630,1088]] },
-        { pts: [[190,1172],[190,1495],[342,1495]] },
-        { pts: [[630,1172],[630,1218]] },
-        { pts: [[630,1292],[630,1333]], label: "Sí", lpos: [648,1312] },
-        { pts: [[688,1255],[820,1255]], label: "No", lpos: [754,1241] },
-        { pts: [[880,1218],[880,1130],[745,1130]], label: "Sí (<3)", lpos: [880,1168] },
-        { pts: [[940,1255],[1030,1255],[1030,1333]], label: "No (3x)", lpos: [995,1241] },
-        { pts: [[630,1417],[630,1495],[458,1495]] },
-        { pts: [[1030,1417],[1030,1495],[458,1495]] },
-        { pts: [[400,1532],[400,1570]] }
+        { pts: [[285,170],[420,170]], isData: true, label: "Lee", lpos: [352,156] },
+        { pts: [[660,170],[805,170]], isData: true, label: "Guarda", lpos: [732,156] },
+        { pts: [[540,83],[540,128]], isStart: true },
+        { pts: [[540,212],[540,248]] },
+        { pts: [[540,332],[540,378]] },
+        { pts: [[252.5,350],[455,350],[455,378]], isData: true, label: "Lee/Guarda", lpos: [354,336] },
+        { pts: [[540,462],[540,498]] },
+        { pts: [[540,582],[540,618]] },
+        { pts: [[655,644],[715,644],[715,610],[753,610]] },
+        { pts: [[807,610],[907.5,610]] },
+        { pts: [[1112.5,610],[1162,610]] },
+        { pts: [[655,676],[715,676],[715,720],[753,720]] },
+        { pts: [[807,720],[907.5,720]] },
+        { pts: [[1010,757],[1010,900],[601,900]] },
+        { pts: [[540,702],[540,743]] },
+        { pts: [[482,780],[295,780],[295,420],[425,420]], label: "Observaciones", lpos: [365,766] },
+        { pts: [[540,817],[540,862]], label: "Firmado", lpos: [574,839] },
+        { pts: [[540,938],[540,978]] },
+        { pts: [[482,1015],[240,1015],[240,1093]] },
+        { pts: [[598,1015],[720,1015],[720,1093]] },
+        { pts: [[240,1177],[240,1495],[422,1495]] },
+        { pts: [[840,1135],[995,1135]], isData: true, label: "Lee/Guarda", lpos: [918,1121] },
+        { pts: [[720,1177],[720,1218]] },
+        { pts: [[720,1292],[720,1333]], label: "Sí", lpos: [738,1312] },
+        { pts: [[778,1255],[901,1255]], label: "No", lpos: [840,1241] },
+        { pts: [[960,1218],[960,1166],[840,1166]], label: "Sí (<3)", lpos: [960,1190] },
+        { pts: [[1019,1255],[1110,1255],[1110,1333]], label: "No (3x)", lpos: [1072,1241] },
+        { pts: [[720,1417],[720,1495],[538,1495]] },
+        { pts: [[1110,1417],[1110,1495],[538,1495]] },
+        { pts: [[480,1532],[480,1570]] }
       ]
     }
   };
@@ -1421,7 +1794,7 @@
   let zoom = 1.0;
   let selectedId = "m1_tp01";
   let activeSubtab = "form";
-  let drawerMode = "normal"; // 'normal' | 'wide' | 'closed'
+  let drawerMode = "normal";
   const nodeIndex = {};
 
   function esc(str) {
@@ -1453,6 +1826,9 @@
         <marker id="arr-gold-${model.id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
           <path d="M 0 1 L 10 5 L 0 9 z" fill="#b8a512"/>
         </marker>
+        <marker id="arr-data-${model.id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+          <path d="M 0 1 L 10 5 L 0 9 z" fill="#6d28d9"/>
+        </marker>
         <linearGradient id="g-tp-${model.id}" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#fafafa"/><stop offset="100%" stop-color="#d4d6db"/>
         </linearGradient>
@@ -1461,6 +1837,9 @@
         </linearGradient>
         <linearGradient id="g-sp-${model.id}" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#faf6f0"/><stop offset="100%" stop-color="#dcd0be"/>
+        </linearGradient>
+        <linearGradient id="g-db-${model.id}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f8f6ff"/><stop offset="100%" stop-color="#ddd6fe"/>
         </linearGradient>
         <linearGradient id="g-gw-${model.id}" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#f7f7f7"/><stop offset="100%" stop-color="#c5c7cd"/>
@@ -1474,29 +1853,32 @@
       </defs>
     `;
 
-    // Marco visual del subproceso interno en Modelo 3
     let extraLayer = "";
-    if (model.id === "m3") {
+    if (model.id === "m4") {
       extraLayer = `
-        <rect x="280" y="360" width="840" height="465" rx="12" fill="rgba(255,255,255,0.45)" stroke="#6b5b47" stroke-width="1.5" stroke-dasharray="6,4"/>
-        <text x="296" y="382" font-family="Segoe UI" font-size="11" font-weight="700" fill="#6b5b47">Detalle interno por cada instancia del Subproceso SP.31 (Tratamiento Distribuido 1..N Proyectos)</text>
+        <rect x="265" y="365" width="975" height="465" rx="12" fill="rgba(255,255,255,0.45)" stroke="#6b5b47" stroke-width="1.5" stroke-dasharray="6,4"/>
+        <text x="282" y="387" font-family="Segoe UI" font-size="11" font-weight="700" fill="#6b5b47">Detalle interno por cada instancia del Subproceso SP.31 (1..N Proyectos Facturables)</text>
       `;
     }
 
     const edgesHtml = model.edges.map(e => {
       const ptsAttr = e.pts.map(p => p.join(",")).join(" ");
-      const stroke = e.isStart ? "#c9b82e" : "#4a70b0";
-      const sw = e.isStart ? "3" : "1.8";
-      const mk = e.isStart ? `url(#arr-gold-${model.id})` : `url(#arr-blue-${model.id})`;
+      const stroke = e.isData ? "#6d28d9" : (e.isStart ? "#c9b82e" : "#4a70b0");
+      const sw = e.isStart ? "3" : (e.isData ? "1.9" : "1.8");
+      const dash = e.isData ? 'stroke-dasharray="5,3"' : "";
+      const mk = e.isData ? `url(#arr-data-${model.id})` : (e.isStart ? `url(#arr-gold-${model.id})` : `url(#arr-blue-${model.id})`);
       let lbl = "";
       if (e.label && e.lpos) {
-        const lw = Math.max(30, e.label.length * 6.5 + 10);
+        const lw = Math.max(32, e.label.length * 6.4 + 12);
+        const lbg = e.isData ? "#f5f3ff" : "rgba(255,255,255,0.92)";
+        const lstroke = e.isData ? "#8b5cf6" : "#cbd5e1";
+        const lfg = e.isData ? "#5b21b6" : "#2c4f8a";
         lbl = `
-          <rect x="${e.lpos[0] - lw/2}" y="${e.lpos[1] - 9}" width="${lw}" height="17" rx="4" fill="rgba(255,255,255,0.9)" stroke="#cbd5e1" stroke-width="0.8"/>
-          <text x="${e.lpos[0]}" y="${e.lpos[1] + 3.5}" text-anchor="middle" font-family="Segoe UI" font-size="10.5" font-weight="700" fill="#2c4f8a">${esc(e.label)}</text>
+          <rect x="${e.lpos[0] - lw/2}" y="${e.lpos[1] - 9}" width="${lw}" height="17" rx="4" fill="${lbg}" stroke="${lstroke}" stroke-width="0.9"/>
+          <text x="${e.lpos[0]}" y="${e.lpos[1] + 3.5}" text-anchor="middle" font-family="Segoe UI" font-size="10" font-weight="700" fill="${lfg}">${esc(e.label)}</text>
         `;
       }
-      return `<polyline points="${ptsAttr}" fill="none" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round" marker-end="${mk}"/>${lbl}`;
+      return `<polyline points="${ptsAttr}" fill="none" stroke="${stroke}" stroke-width="${sw}" ${dash} stroke-linejoin="round" marker-end="${mk}"/>${lbl}`;
     }).join("");
 
     const nodesHtml = model.nodes.map(n => {
@@ -1511,13 +1893,13 @@
         const divY = y + n.h - 22;
         const tLines = wrapLines(n.title, 26);
         const tHtml = tLines.map((ln, i) =>
-          `<text x="${n.cx}" y="${y + 20 + i * 14}" text-anchor="middle" font-family="Segoe UI" font-size="11.5" font-weight="700" fill="#1e293b">${esc(ln)}</text>`
+          `<text x="${n.cx}" y="${y + 20 + i * 14}" text-anchor="middle" font-family="Segoe UI" font-size="11.3" font-weight="700" fill="#1e293b">${esc(ln)}</text>`
         ).join("");
         const iconFill = n.kind === "tp_ext" ? "#d97706" : "#2563eb";
         inner = `
           <rect class="aq-shape" x="${x}" y="${y}" width="${n.w}" height="${n.h}" rx="7" fill="url(#g-tp-${model.id})" stroke="#4b5563" stroke-width="1.6"/>
           ${tHtml}
-          <text x="${x + 10}" y="${divY - 5}" font-family="Segoe UI" font-size="10.5" font-style="italic" font-weight="600" fill="#a31515">${esc(n.subRole)}</text>
+          <text x="${x + 10}" y="${divY - 5}" font-family="Segoe UI" font-size="10.2" font-style="italic" font-weight="600" fill="#a31515">${esc(n.subRole)}</text>
           <line x1="${x + 6}" y1="${divY}" x2="${x + n.w - 6}" y2="${divY}" stroke="#4b5563" stroke-width="1"/>
           <text x="${x + 10}" y="${y + n.h - 7}" font-family="Segoe UI" font-size="10.5" font-weight="800" fill="#111827">${esc(n.code)}</text>
           <g transform="translate(${x + n.w - 22}, ${divY + 3})">
@@ -1529,12 +1911,12 @@
         const divY = y + n.h - 22;
         const tLines = wrapLines(n.title, 25);
         const tHtml = tLines.map((ln, i) =>
-          `<text x="${n.cx}" y="${y + 20 + i * 14}" text-anchor="middle" font-family="Segoe UI" font-size="11.5" font-weight="700" fill="#0f172a">${esc(ln)}</text>`
+          `<text x="${n.cx}" y="${y + 20 + i * 14}" text-anchor="middle" font-family="Segoe UI" font-size="11.3" font-weight="700" fill="#0f172a">${esc(ln)}</text>`
         ).join("");
         inner = `
           <rect class="aq-shape" x="${x}" y="${y}" width="${n.w}" height="${n.h}" rx="7" fill="url(#g-ts-${model.id})" stroke="#47666e" stroke-width="1.6"/>
           ${tHtml}
-          <text x="${x + 10}" y="${divY - 5}" font-family="Segoe UI" font-size="10.5" font-style="italic" font-weight="600" fill="#a31515">${esc(n.subRole)}</text>
+          <text x="${x + 10}" y="${divY - 5}" font-family="Segoe UI" font-size="10.2" font-style="italic" font-weight="600" fill="#a31515">${esc(n.subRole)}</text>
           <line x1="${x + 6}" y1="${divY}" x2="${x + n.w - 6}" y2="${divY}" stroke="#47666e" stroke-width="1"/>
           <text x="${x + 10}" y="${y + n.h - 7}" font-family="Segoe UI" font-size="10.5" font-weight="800" fill="#111827">${esc(n.code)}</text>
           <g transform="translate(${x + n.w - 15}, ${divY + 11})">
@@ -1542,16 +1924,33 @@
             <circle cx="0" cy="0" r="2.3" fill="#fff"/>
           </g>
         `;
+      } else if (n.kind === "db") {
+        const divY = y + n.h - 21;
+        const tLines = wrapLines(n.title, 26);
+        const tHtml = tLines.map((ln, i) =>
+          `<text x="${n.cx}" y="${y + 19 + i * 13}" text-anchor="middle" font-family="Segoe UI" font-size="10.8" font-weight="800" fill="#4c1d95">${esc(ln)}</text>`
+        ).join("");
+        inner = `
+          <rect class="aq-shape" x="${x}" y="${y}" width="${n.w}" height="${n.h}" rx="8" fill="url(#g-db-${model.id})" stroke="#5b21b6" stroke-width="1.8"/>
+          ${tHtml}
+          <text x="${x + 10}" y="${divY - 4}" font-family="Segoe UI" font-size="9.8" font-style="italic" font-weight="600" fill="#6d28d9">${esc(n.subRole)}</text>
+          <line x1="${x + 6}" y1="${divY}" x2="${x + n.w - 6}" y2="${divY}" stroke="#7c3aed" stroke-width="0.9"/>
+          <text x="${x + 10}" y="${y + n.h - 6}" font-family="Segoe UI" font-size="10" font-weight="800" fill="#4c1d95">${esc(n.code)}</text>
+          <g transform="translate(${x + n.w - 23}, ${divY + 3})">
+            <ellipse cx="7" cy="3.5" rx="6.5" ry="2.6" fill="#7c3aed"/>
+            <path d="M0.5,3.5 L0.5,12.5 C0.5,14 13.5,14 13.5,12.5 L13.5,3.5" fill="none" stroke="#5b21b6" stroke-width="1.4"/>
+          </g>
+        `;
       } else if (n.kind === "sp") {
         const divY = y + n.h - 22;
         const tLines = wrapLines(n.title, 26);
         const tHtml = tLines.map((ln, i) =>
-          `<text x="${n.cx}" y="${y + 20 + i * 14}" text-anchor="middle" font-family="Segoe UI" font-size="11.5" font-weight="700" fill="#1e293b">${esc(ln)}</text>`
+          `<text x="${n.cx}" y="${y + 20 + i * 14}" text-anchor="middle" font-family="Segoe UI" font-size="11.3" font-weight="700" fill="#1e293b">${esc(ln)}</text>`
         ).join("");
         inner = `
           <rect class="aq-shape" x="${x}" y="${y}" width="${n.w}" height="${n.h}" rx="7" fill="url(#g-sp-${model.id})" stroke="#6b5b47" stroke-width="1.6"/>
           ${tHtml}
-          <text x="${x + 10}" y="${divY - 5}" font-family="Segoe UI" font-size="10.5" font-style="italic" font-weight="600" fill="#a31515">${esc(n.subRole)}</text>
+          <text x="${x + 10}" y="${divY - 5}" font-family="Segoe UI" font-size="10.2" font-style="italic" font-weight="600" fill="#a31515">${esc(n.subRole)}</text>
           <line x1="${x + 6}" y1="${divY}" x2="${x + n.w - 6}" y2="${divY}" stroke="#6b5b47" stroke-width="1"/>
           <text x="${x + 10}" y="${y + n.h - 7}" font-family="Segoe UI" font-size="10.5" font-weight="800" fill="#111827">${esc(n.code)}</text>
           <rect x="${x + n.w - 20}" y="${divY + 4}" width="13" height="13" rx="2" fill="#e6fcf7" stroke="#0a7d6b" stroke-width="1.2"/>
@@ -1562,12 +1961,13 @@
         const hasPlus = n.kind === "da" || n.kind === "ca";
         plusX = n.cx + n.w / 2 - 4;
         plusY = y + 8;
+        const lblW = Math.max(114, n.title.length * 6.1 + 14);
         inner = `
           <polygon class="aq-shape" points="${pts}" fill="url(#g-gw-${model.id})" stroke="#374151" stroke-width="1.8"/>
           <text x="${n.cx}" y="${hasPlus ? n.cy - 1 : n.cy + 4}" text-anchor="middle" font-family="Segoe UI" font-size="11.5" font-weight="800" fill="#111827">${esc(n.code)}</text>
           ${hasPlus ? `<text x="${n.cx}" y="${n.cy + 14}" text-anchor="middle" font-family="Segoe UI" font-size="15" font-weight="900" fill="#00015a">+</text>` : ""}
-          <rect x="${n.cx + 12}" y="${y - 14}" width="114" height="16" rx="4" fill="rgba(255,255,255,0.88)" stroke="#cbd5e1" stroke-width="0.7"/>
-          <text x="${n.cx + 69}" y="${y - 2.5}" text-anchor="middle" font-family="Segoe UI" font-size="10" font-weight="700" fill="#1e293b">${esc(n.title)}</text>
+          <rect x="${n.cx + 12}" y="${y - 14}" width="${lblW}" height="16" rx="4" fill="rgba(255,255,255,0.9)" stroke="#cbd5e1" stroke-width="0.7"/>
+          <text x="${n.cx + 12 + lblW/2}" y="${y - 2.5}" text-anchor="middle" font-family="Segoe UI" font-size="10" font-weight="700" fill="#1e293b">${esc(n.title)}</text>
         `;
       } else if (n.kind === "ei_timer" || n.kind === "ei_msg") {
         const r = n.w / 2;
@@ -1577,8 +1977,8 @@
           ? `<rect x="${n.cx - 10}" y="${n.cy - 7}" width="20" height="14" rx="2" fill="none" stroke="#fff" stroke-width="1.8"/><polyline points="${n.cx - 10},${n.cy - 7} ${n.cx},${n.cy + 2} ${n.cx + 10},${n.cy - 7}" fill="none" stroke="#fff" stroke-width="1.6"/>`
           : `<circle cx="${n.cx}" cy="${n.cy}" r="11" fill="none" stroke="#fff" stroke-width="1.8"/><polyline points="${n.cx},${n.cy - 6} ${n.cx},${n.cy} ${n.cx + 5},${n.cy + 3}" fill="none" stroke="#fff" stroke-width="1.8"/>`;
         inner = `
-          <rect x="${n.cx - 95}" y="${y - 22}" width="190" height="17" rx="4" fill="rgba(255,255,255,0.9)"/>
-          <text x="${n.cx}" y="${y - 10}" text-anchor="middle" font-family="Segoe UI" font-size="10.5" font-weight="700" fill="#1e293b">${esc(n.title)}</text>
+          <rect x="${n.cx - 102}" y="${y - 22}" width="204" height="17" rx="4" fill="rgba(255,255,255,0.9)"/>
+          <text x="${n.cx}" y="${y - 10}" text-anchor="middle" font-family="Segoe UI" font-size="10.2" font-weight="700" fill="#1e293b">${esc(n.title)}</text>
           <circle class="aq-shape" cx="${n.cx}" cy="${n.cy}" r="${r}" fill="url(#g-ei-${model.id})" stroke="#4d6316" stroke-width="2"/>
           ${icon}
         `;
@@ -1586,9 +1986,10 @@
         const r = n.w / 2;
         plusX = n.cx + r + 2;
         plusY = n.cy - r + 2;
+        const lblW = Math.max(114, n.title.length * 6.0 + 14);
         inner = `
-          <rect x="${n.cx - 56}" y="${y - 21}" width="112" height="16" rx="4" fill="rgba(255,255,255,0.9)"/>
-          <text x="${n.cx}" y="${y - 9.5}" text-anchor="middle" font-family="Segoe UI" font-size="10" font-weight="700" fill="#92400e">${esc(n.title)}</text>
+          <rect x="${n.cx - lblW/2}" y="${y - 21}" width="${lblW}" height="16" rx="4" fill="rgba(255,255,255,0.9)"/>
+          <text x="${n.cx}" y="${y - 9.5}" text-anchor="middle" font-family="Segoe UI" font-size="9.8" font-weight="700" fill="#92400e">${esc(n.title)}</text>
           <circle class="aq-shape" cx="${n.cx}" cy="${n.cy}" r="${r}" fill="url(#g-et-${model.id})" stroke="#92400e" stroke-width="2"/>
           <circle cx="${n.cx}" cy="${n.cy}" r="${r - 4}" fill="none" stroke="#fff" stroke-width="1.3"/>
           <polyline points="${n.cx},${n.cy - 7} ${n.cx},${n.cy} ${n.cx + 6},${n.cy + 3}" fill="none" stroke="#fff" stroke-width="2"/>
@@ -1617,7 +2018,7 @@
     }).join("");
 
     return `
-      <svg id="svg-${model.id}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${model.width} ${model.height}" width="${Math.round(model.width * 0.86)}" height="auto" role="img" aria-label="${esc(model.title)}">
+      <svg id="svg-${model.id}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${model.width} ${model.height}" width="${Math.round(model.width * 0.84)}" height="auto" role="img" aria-label="${esc(model.title)}">
         ${defs}
         ${extraLayer}
         ${edgesHtml}
@@ -1629,10 +2030,84 @@
   function buildGuideMarkup() {
     return `
       <div class="guide-wrap">
-        <h2 style="margin:0 0 6px; color:var(--navy);">Guía Senior para Juniors: Tipos de Formularios y Compuertas en AuraQuantic</h2>
-        <p style="margin:0 0 16px; color:var(--muted); font-size:13.5px;">Todo lo que un desarrollador Junior debe saber para elegir el formulario o compuerta correcta al construir el Caso 1.</p>
+        <h2 style="margin:0 0 6px; color:var(--navy);">Mapa Maestro de Familias, Formularios y Compuertas (Arquitectura para Cientos de Empleados)</h2>
+        <p style="margin:0 0 16px; color:var(--muted); font-size:13.5px;">Guía Senior de dónde nace y dónde se guarda cada dato en AuraQuantic para evitar explosión de archivos.</p>
 
-        <h3 style="color:var(--navy); font-size:15.5px; margin:0 0 8px;">1. Qué Tipo de Formulario se Usa en Cada Punto y Por Qué</h3>
+        <h3 style="color:var(--navy); font-size:15.5px; margin:0 0 8px;">1. Mapa Maestro de Familias / Tablas (Dónde Sale y Dónde se Guarda la Información)</h3>
+        <table class="guide-table">
+          <thead>
+            <tr>
+              <th>Familia / Biblioteca</th>
+              <th>Quién Guarda (Escritura)</th>
+              <th>Quién Lee (Lectura)</th>
+              <th>Campos Clave y Escalabilidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong><code>FAM_REGISTROS_DIARIOS</code></strong></td>
+              <td><code>TS.07</code> (Registro normal), <code>TS.03</code> (No enviado), <code>TS.24</code> (Incapacidad)</td>
+              <td><code>TIEM_INFORMES_DIARIOS</code> (<code>TS.11</code>)</td>
+              <td>Tramite, Empleado, Fecha, EstadoCumplimiento (A tiempo / Gracia 15m / Ampliación / Incapacidad / No enviado).</td>
+            </tr>
+            <tr>
+              <td><strong><code>FAM_DETALLE_ACTIVIDADES</code></strong></td>
+              <td><code>TS.07</code></td>
+              <td><code>TS.11</code>, <code>TS.13</code>, <code>TS.30</code> (Cierre mes)</td>
+              <td>RegistroPadre, Proyecto, HorasReales, <strong>EsParaCobro (Sí/No)</strong>. 0 archivos por empleado.</td>
+            </tr>
+            <tr>
+              <td><strong><code>FAM_HORAS_EXTRA</code></strong></td>
+              <td><code>TS.07</code> (tras aprobación <code>TP.03</code> y cruce permisos)</td>
+              <td><code>TS.11</code>, <code>TS.30</code>, Portal TH</td>
+              <td>HorasExtraReales, PermisosCruzados, HorasNetas, <strong>ValorRealCOP</strong> (solo perfil TH), Aprobador.</td>
+            </tr>
+            <tr>
+              <td><strong><code>FAM_NOVEDADES_EMP</code></strong></td>
+              <td><code>TS.24</code> (OCR / TH) y <code>TS.07</code> (descuenta saldo permisos cruzados)</td>
+              <td><code>EI.01</code> (silencia tareas si incapacitado), <code>TS.07</code> (cruce), <code>TS.11</code>, <code>TS.30</code></td>
+              <td>Empleado, TipoNovedad, FechaInicio, FechaFin, DiasHabiles, EsRemunerada, SaldoPermisoPorCruzar.</td>
+            </tr>
+            <tr>
+              <td><strong><code>FAM_SALDO_COMPENSACION</code></strong></td>
+              <td><code>TS.07</code></td>
+              <td>Portal Empleado (widget en vivo)</td>
+              <td>Empleado, SaldoAcumuladoHoras, UltimaActualizacion.</td>
+            </tr>
+            <tr>
+              <td><strong><code>FAM_PROYECTOS</code> &amp; <code>FAM_ASIGNACIONES</code></strong></td>
+              <td>Admin, REST Nocturno (<code>RF-T-02</code>), <code>TS.13/14/15</code> (Consumo)</td>
+              <td><code>TP.01</code> (selector limitado), <code>DO.11</code> (80 %/100 %), <code>TS.30</code></td>
+              <td>Codigo, Presupuesto, HorasConsumidas, Alerta80/100, Asignaciones Desde/Hasta.</td>
+            </tr>
+            <tr>
+              <td><strong><code>FAM_JORNADAS</code>, <code>FAM_TIPOS_NOVEDAD</code> &amp; <code>FAM_PARAMETROS</code></strong></td>
+              <td>Administrador del Sistema (<code>RT-15</code>)</td>
+              <td><code>TS.01</code>, <code>TP.01</code>, <code>DO.11</code>, <code>ET.31/32</code></td>
+              <td>Horarios (gracia 15m, alerta -30m), ExigeSoporte, Umbral 80 %, Plazos 5/10 días.</td>
+            </tr>
+            <tr>
+              <td><strong><code>FAM_CIERRE_PROYECTO_MES</code></strong></td>
+              <td><code>TS.30</code>, <code>TP.31</code> (Exclusiones), <code>TS.33</code> (Tácita)</td>
+              <td><code>TS.31</code> (1 PDF/Proy.), <code>CA.31+</code>, <code>TS.34</code> (Finanzas)</td>
+              <td>Periodo, Proyecto, HorasFacturables, HorasExcluidas, Motivo, EstadoFirma.</td>
+            </tr>
+            <tr>
+              <td><strong><code>FAM_CIERRE_NOMINA_MES</code></strong></td>
+              <td><code>TS.30</code>, <code>TS.35</code> (Recibo REST)</td>
+              <td><code>TS.35</code> (REST Lote), <code>TP.33</code> (TH), Portal Empleado (PDF bajo demanda)</td>
+              <td>Periodo, Empleado, ExtrasNetas, ValorRealCOP, ReciboREST. <strong>Evita 300+ PDFs masivos.</strong></td>
+            </tr>
+            <tr>
+              <td><strong><code>BIB_INFORMES_DIARIOS</code> &amp; <code>BIB_SOPORTES_NOVEDADES</code></strong></td>
+              <td><code>TS.12</code> (1 Excel/día) y <code>TS.23</code> (OCR PDF)</td>
+              <td>Gerencia Op., Talento Humano, Empleado</td>
+              <td>1 único Excel consolidado diario + soportes médicos indexados por Año/Mes/Tipo.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 style="color:var(--navy); font-size:15.5px; margin:0 0 8px;">2. Tipos de Formularios Usados y Por Qué</h3>
         <table class="guide-table">
           <thead>
             <tr>
@@ -1645,78 +2120,47 @@
           <tbody>
             <tr>
               <td><strong>Formulario de Tarea Dinámico y Adaptativo</strong></td>
-              <td><code>TP.01</code> Empleado<br>(<code>FORM_REGISTRO_DIARIO</code>)</td>
-              <td>El empleado interactúa todo el día con tablas variables (N actividades y N novedades), cálculos en tiempo real y validaciones condicionales según su cargo y tipo de novedad.</td>
-              <td>Usa Grupos de Campos + Término Limitado por Familia-Relación + Disparo de adjunto obligatorio + Botón Guardar Borrador sin finalizar tarea.</td>
+              <td><code>TP.01</code> Empleado (<code>FORM_REGISTRO_DIARIO</code>)</td>
+              <td>Tablas dinámicas con cálculos en vivo de duración, Horas Extra Reales, flag EsParaCobro, selector limitado por vigencia y soporte obligatorio.</td>
+              <td>Grupos de Campos + Limitado por Familia-Relación + Disparo soporte + Botón Guardar Borrador sin avanzar.</td>
             </tr>
             <tr>
               <td><strong>Formulario de Tarea Integrada con Contenedor</strong></td>
-              <td><code>TP.03</code> Líder Extras<br>(<code>FORM_APROBACION_EXTRAS</code>)</td>
-              <td>El Líder NO debe revisar las horas normales; solo las actividades fuera de horario. El Contenedor filtra esas filas para aprobar/rechazar una por una.</td>
-              <td>Usa una TS Traspasador previa hacia un Contenedor afiliado y muestra solo esa vista al Líder asignado dinámicamente.</td>
+              <td><code>TP.03</code> Líder Extras (<code>FORM_APROBACION_EXTRAS</code>)</td>
+              <td>Muestra al Líder únicamente las filas fuera de horario para validar aprobación, cobro y horas reales sin ver toda la jornada normal.</td>
+              <td>Usa TS Traspasador previo hacia Contenedor_Extras + Asignación dinámica al Líder Directo.</td>
             </tr>
             <tr>
               <td><strong>Formulario de Tarea Corto / Móvil</strong></td>
-              <td><code>TP.02</code> Ampliación<br><code>TP.33/34</code> Nómina TH</td>
-              <td>Son decisiones puntuales de 2 a 4 campos (motivo, hora límite o confirmación) diseñadas en 1 sola columna para responderse rápido desde la App móvil (RT-10).</td>
-              <td>Evita tablas pesadas; usa diseño vertical limpio y botones de decisión claros (Autorizar / Denegar).</td>
+              <td><code>TP.02</code> Ampliación, <code>TP.33/34</code> Lote Nómina</td>
+              <td>Decisiones rápidas en 1 columna (muestra disponibilidad de calendario ocupado/libre en ampliación) usables desde el celular (RT-10).</td>
+              <td>Diseño vertical simple, botones claros y tablas paginadas para lotes grandes (RT-17).</td>
             </tr>
             <tr>
               <td><strong>Formulario Externo con Firma Digital</strong></td>
-              <td><code>TP.32</code> Contacto Cliente<br>(<code>FORM_CLIENTE_FIRMA</code>)</td>
-              <td>El cliente no tiene licencia interna de AuraQuantic; ingresa como Contacto de Cuenta por el Portal Externo y debe firmar digitalmente el PDF o devolver observaciones.</td>
-              <td>Activa 'Formulario Externo', vincula Certificado de Pruebas para firma digital y filtra vistas por <code>Cuenta_Cliente == Cliente_Sesión</code> (RT-14).</td>
+              <td><code>TP.32</code> Contacto Cliente (<code>FORM_CLIENTE_FIRMA</code>)</td>
+              <td>El cliente externo sin licencia interna revisa y firma digitalmente el PDF único de su proyecto desde Portal Clientes aislado por NIT.</td>
+              <td>Activa 'Formulario Externo' + Certificado Pruebas + filtro <code>Cuenta_Cliente == Cliente_Sesión</code>.</td>
             </tr>
             <tr>
-              <td><strong>Formulario de Familia (Maestros / Admin)</strong></td>
-              <td><code>FAM_PROYECTOS</code>, <code>FAM_ASIGNACIONES</code>, <code>FAM_JORNADAS</code>, <code>FAM_PARAMETROS</code></td>
-              <td>Permiten al Administrador parametrizar proyectos, vigencias, jornadas y umbrales (80 %, 5d, 10d) sin tocar nunca el diagrama de procesos (RT-15).</td>
-              <td>Crea vistas de edición limpias en Estructura > Familias Propias y controla permisos solo para perfil Administrador.</td>
-            </tr>
-            <tr>
-              <td><strong>Documento Base (Plantilla Word → PDF)</strong></td>
-              <td><code>TS.31</code> Reporte Cliente<br><code>TS.35</code> Certificado Nómina</td>
-              <td>Cuando se exige un PDF formal con logo corporativo, NIT, tablas detalladas y sello de firma digital, no se usa un formulario web sino una plantilla Documento Base.</td>
-              <td>Diseña el <code>.docx</code> con los tokens de AuraQuantic, súbelo como Documento Base y genera la salida en PDF no editable antes de enviar.</td>
+              <td><strong>Documento Base (Word → PDF / Excel)</strong></td>
+              <td><code>TS.12</code> Excel Único, <code>TS.31</code> PDF Proyecto, Certificado Bajo Demanda</td>
+              <td>Genera 1 solo Excel diario por empresa, 1 PDF por proyecto facturable, y certificados de empleados solo bajo demanda desde el portal.</td>
+              <td>Diseña plantillas con tokens y evita bucles de generación masiva por empleado.</td>
             </tr>
           </tbody>
         </table>
 
-        <h3 style="color:var(--navy); font-size:15.5px; margin:0 0 8px;">2. Chuleta Rápida de Compuertas Oficiales (Para No Confundirse en el Examen)</h3>
+        <h3 style="color:var(--navy); font-size:15.5px; margin:0 0 8px;">3. Compuertas Oficiales (DX / DO / DA+ / CA+)</h3>
         <table class="guide-table">
           <thead>
-            <tr>
-              <th style="width:120px;">Código</th>
-              <th style="width:180px;">Nombre Oficial</th>
-              <th>Cómo Funciona</th>
-              <th>Ejemplo Real en Caso 1</th>
-            </tr>
+            <tr><th style="width:100px;">Código</th><th style="width:190px;">Nombre</th><th>Regla de Funcionamiento</th><th>Uso en Caso 1</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td><strong>DX</strong></td>
-              <td>Divergente Exclusiva (XOR)</td>
-              <td>Evalúa condiciones y toma <strong>EXCLUSIVAMENTE 1 camino</strong>. Exige configurar condiciones en sus salidas.</td>
-              <td><code>DX.01</code>: ¿Envió antes de las 5:30 p. m.? (O fue enviado a tiempo, O venció a ampliación).</td>
-            </tr>
-            <tr>
-              <td><strong>DO</strong></td>
-              <td>Divergente Inclusiva (OR)</td>
-              <td>Evalúa condiciones y puede abrir <strong>1 o VARIOS caminos</strong> a la vez según cuáles se cumplan.</td>
-              <td><code>DO.01</code>: Si un proyecto salta del 79 % al 101 %, dispara la alerta 80 % Y la de 100 % a la vez.</td>
-            </tr>
-            <tr>
-              <td><strong>DA +</strong></td>
-              <td>Divergente Paralela (AND)</td>
-              <td>Abre <strong>TODAS sus salidas simultáneamente</strong> sin evaluar ninguna condición.</td>
-              <td><code>DA.31 +</code>: En paralelo envía resumen a Finanzas Y transmite novedades a Nómina REST.</td>
-            </tr>
-            <tr>
-              <td><strong>CA +</strong></td>
-              <td>Convergente (Join AND)</td>
-              <td><strong>Espera</strong> a que lleguen todas las ramas paralelas anteriores antes de dejar pasar el flujo.</td>
-              <td><code>CA.31 +</code>: Confluencia que espera al 100 % de los proyectos del cierre mensual.</td>
-            </tr>
+            <tr><td><strong>DX</strong></td><td>Divergente Exclusiva (XOR)</td><td>Toma <strong>1 solo camino</strong> según condiciones explícitas.</td><td><code>DX.01</code> (¿Envió ≤5:45 gracia?), <code>DX.23</code> (¿OCR ≥90 %?).</td></tr>
+            <tr><td><strong>DO</strong></td><td>Divergente Inclusiva (OR)</td><td>Abre <strong>1 o varios caminos</strong> a la vez si cumplen condición.</td><td><code>DO.11</code> (Alertas 80 % y/o 100 % en proyectos).</td></tr>
+            <tr><td><strong>DA +</strong></td><td>Divergente Paralela (AND)</td><td>Abre <strong>todas sus salidas</strong> simultáneamente sin condiciones.</td><td><code>DA.11+</code> (Excel + Presupuesto), <code>DA.31+</code> (Finanzas + Nómina).</td></tr>
+            <tr><td><strong>CA +</strong></td><td>Convergente (AND)</td><td><strong>Espera</strong> a todas las ramas paralelas o instancias distribuidas.</td><td><code>CA.31+</code> (Confluencia 100 % proyectos).</td></tr>
           </tbody>
         </table>
       </div>
@@ -1730,7 +2174,7 @@
       return;
     }
 
-    const keys = activeTab === "all" ? ["m1", "m2", "m3"] : [activeTab];
+    const keys = activeTab === "all" ? ["m1", "m2", "m3", "m4"] : [activeTab];
     host.innerHTML = keys.map(k => {
       const m = MODELS[k];
       return `
@@ -1740,7 +2184,7 @@
               <h2>${esc(m.title)}</h2>
               <span>${esc(m.subtitle)}</span>
             </div>
-            <span class="badge">${m.nodes.length} elementos AuraQuantic</span>
+            <span class="badge">${m.nodes.length} elementos (incluye Familias FAM_)</span>
           </div>
           <div class="svg-scroll">
             <div class="svg-stage" style="transform: scale(${zoom});">
@@ -1773,6 +2217,7 @@
       tp: "TP · Tarea Personal (Usuario Interno)",
       tp_ext: "TP · Tarea Personal Externa (Portal Clientes)",
       ts: `TS · Tarea de Sistema (${n.subRole})`,
+      db: `FAM / BIB · Almacén de Datos AuraQuantic (${n.subRole})`,
       sp: "SP · Subproceso / Tratamiento Distribuido",
       dx: "DX · Compuerta Divergente Exclusiva (XOR)",
       do: "DO · Compuerta Divergente Inclusiva (OR)",
@@ -1828,7 +2273,8 @@
       activeTab = btn.dataset.tab;
       if (activeTab !== "guide") {
         const firstKey = activeTab === "all" ? "m1" : activeTab;
-        selectedId = MODELS[firstKey].nodes[2] ? MODELS[firstKey].nodes[2].id : MODELS[firstKey].nodes[0].id;
+        const firstInteractive = MODELS[firstKey].nodes.find(x => x.kind === "tp" || x.kind === "ts") || MODELS[firstKey].nodes[0];
+        selectedId = firstInteractive.id;
       }
       renderMain();
     });

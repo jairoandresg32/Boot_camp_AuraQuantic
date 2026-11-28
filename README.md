@@ -29,7 +29,7 @@ La arquitectura cubre de punta a punta el ciclo operativo, de aprobación y fact
 | **Presentación** | Diapositivas de Avance del Taller (Uso de IA, Retos, Arquitectura y Guion) | — | [Presentación PowerPoint (.pptx)](./Caso1_Avance_Bootcamp_AuraQuantic.pptx) |
 | **Presentación** | Mockup Interactivo de Recorrido End-to-End (8 Estaciones + Camino Alterno + Mapa Global) | [Mockup Recorrido del Proceso (HTML)](./Caso1_Recorrido_Proceso_Mockup.html) | — |
 | **Lógica & BPMN** | Diagrama de Lógica Clásico (Óvalos, Rectángulos, Rombos SÍ/NO, Exportación SVG/PDF) | [Diagrama de Lógica de Flujo (HTML)](./Caso1_Diagrama_Logica_Flujo.html) | — |
-| **Modelo AuraQuantic** | Modelador Senior Oficial AuraQuantic (`TP`, `TS`, `DX`, `DO`, `DA+`, `CA+`, `SP`, `FN`) con botón `[+]` de Especificación Junior y Guía de Formularios | [Modelador Senior AuraQuantic (HTML)](./Caso1_Modelo_AuraQuantic_Senior.html) | — |
+| **Modelo AuraQuantic** | Modelador Senior Oficial AuraQuantic v2.0 (4 procesos con `TIEM_INFORMES_DIARIOS`, cuadros `FAM_` de lectura/guardado, gracia 15m, calendario, OCR y botón `[+]` Junior) | [Modelador Senior AuraQuantic (HTML)](./Caso1_Modelo_AuraQuantic_Senior.html) | — |
 
 ---
 
