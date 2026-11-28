@@ -3,1293 +3,1040 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prototipo Navegable AuraQuantic — Caso 1: Tiempos, Novedades y Facturación</title>
+<title>Prototipo Navegable AuraQuantic v2.0 — Gestión de Tiempos, Horas Extra, Novedades y Cierre</title>
 <style>
   :root {
-    --navy: #00015a;
-    --navy-light: #1a1c78;
-    --mint: #3ff2cf;
-    --mint-dark: #0a7d6b;
-    --mint-soft: #e6fcf7;
-    --bg: #f4f6f8;
-    --surface: #ffffff;
-    --text: #14172b;
-    --muted: #5b6074;
-    --line: #dfe3ea;
-    --ok: #15803d;
-    --ok-bg: #dcfce7;
-    --warn: #b45309;
-    --warn-bg: #fef3c7;
-    --err: #b91c1c;
-    --err-bg: #fee2e2;
-    --shadow: 0 4px 18px rgba(0, 1, 90, 0.08);
-    --font: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+    --aq-navy: #00015A;
+    --aq-navy-dark: #00013B;
+    --aq-navy-soft: #1B237E;
+    --aq-mint: #3FF2CF;
+    --aq-mint-soft: #E6FDF8;
+    --aq-mint-border: #19B89A;
+    --bg: #F4F6F8;
+    --surface: #FFFFFF;
+    --border: #D9E0E8;
+    --text: #1E293B;
+    --muted: #5B6779;
+    --ok: #0E9F6E;
+    --ok-bg: #ECFDF5;
+    --warn: #D97706;
+    --warn-bg: #FFFBEB;
+    --err: #DC2626;
+    --err-bg: #FEF2F2;
+    --purple: #6D28D9;
+    --purple-bg: #F5F3FF;
+    --purple-border: #C4B5FD;
+    --shadow: 0 2px 10px rgba(0, 1, 90, 0.08);
+    --radius: 10px;
   }
-
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    font-family: var(--font);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: var(--bg);
     color: var(--text);
-    line-height: 1.5;
+    line-height: 1.45;
   }
-
-  /* Barra Superior Corporativa (RT-01) */
-  .topbar {
-    background: var(--navy);
+  header {
+    background: linear-gradient(135deg, var(--aq-navy) 0%, var(--aq-navy-soft) 100%);
     color: #fff;
-    border-bottom: 4px solid var(--mint);
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.18);
-  }
-  .topbar-inner {
-    max-width: 1220px;
-    margin: 0 auto;
-    padding: 12px 20px;
+    padding: 14px 24px;
     display: flex;
-    gap: 16px;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
-  }
-  .brand {
-    display: flex;
-    align-items: center;
     gap: 12px;
+    border-bottom: 4px solid var(--aq-mint);
   }
-  .brand-logo {
-    width: 38px;
-    height: 38px;
-    border-radius: 9px;
-    background: var(--mint);
-    color: var(--navy);
-    font-weight: 800;
-    display: grid;
-    place-items: center;
-    font-size: 16px;
-    letter-spacing: -0.5px;
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo-badge {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: var(--aq-mint); color: var(--aq-navy);
+    font-weight: 800; font-size: 17px;
+    display: flex; align-items: center; justify-content: center;
   }
-  .brand-title { font-size: 16px; font-weight: 700; margin: 0; }
-  .brand-sub { font-size: 12px; color: #cbd5e1; margin: 0; }
+  .brand h1 { margin: 0; font-size: 18px; font-weight: 700; }
+  .brand p { margin: 2px 0 0; font-size: 12px; color: #C7D2FE; }
+  .header-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 11px; border-radius: 999px; font-size: 12px; font-weight: 600;
+    background: rgba(255,255,255,0.14); color: #fff; border: 1px solid rgba(255,255,255,0.22);
+  }
+  .btn {
+    border: 1px solid var(--border); background: #fff; color: var(--aq-navy);
+    padding: 7px 13px; border-radius: 7px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .15s; font-family: inherit;
+  }
+  .btn:hover { background: #EEF2FF; }
+  .btn-primary { background: var(--aq-navy); color: #fff; border-color: var(--aq-navy); }
+  .btn-primary:hover { background: var(--aq-navy-soft); }
+  .btn-mint { background: var(--aq-mint); color: var(--aq-navy); border-color: var(--aq-mint-border); }
+  .btn-mint:hover { background: #2DE4C0; }
+  .btn-danger { background: var(--err-bg); color: var(--err); border-color: #FCA5A5; }
+  .btn-sm { padding: 4px 9px; font-size: 12px; }
 
-  .role-nav {
+  nav.tabs {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
     display: flex;
     gap: 6px;
-    flex-wrap: wrap;
-    align-items: center;
+    overflow-x: auto;
   }
-  .nav-btn {
-    border: 1px solid rgba(255,255,255,0.22);
-    background: rgba(255,255,255,0.08);
-    color: #fff;
-    padding: 7px 12px;
-    border-radius: 999px;
-    font: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
+  .tab-btn {
+    border: none; background: transparent; color: var(--muted);
+    padding: 12px 14px; font-size: 13px; font-weight: 600; cursor: pointer;
+    border-bottom: 3px solid transparent; white-space: nowrap; font-family: inherit;
   }
-  .nav-btn:hover { background: rgba(63,242,207,0.2); border-color: var(--mint); }
-  .nav-btn.active {
-    background: var(--mint);
-    color: var(--navy);
-    border-color: var(--mint);
-  }
-  .mobile-toggle {
-    border: 1px solid var(--mint);
-    background: transparent;
-    color: var(--mint);
-    padding: 6px 12px;
-    border-radius: 8px;
-    font: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .mobile-toggle.active { background: #fff; color: var(--navy); border-color: #fff; }
+  .tab-btn:hover { color: var(--aq-navy); background: #F8FAFC; }
+  .tab-btn.active { color: var(--aq-navy); border-bottom-color: var(--aq-mint); background: #F8FAFC; }
 
-  /* Contenedor Principal & Modo Movil */
-  .shell {
-    max-width: 1200px;
-    margin: 22px auto 60px;
-    padding: 0 18px;
-    transition: max-width 0.25s ease;
+  .workspace {
+    max-width: 1320px;
+    margin: 18px auto;
+    padding: 0 18px 40px;
+    transition: max-width .2s;
   }
-  .shell.mobile-mode {
-    max-width: 420px;
-    background: #0f172a;
-    padding: 16px 12px;
-    border-radius: 28px;
-    box-shadow: 0 14px 40px rgba(0,0,0,0.3);
-    border: 6px solid #1e293b;
+  body.mobile-mode .workspace {
+    max-width: 410px;
+    border: 10px solid #1E293B;
+    border-radius: 26px;
+    padding: 12px;
+    background: var(--bg);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.22);
   }
-  .shell.mobile-mode .mobile-frame-label { display: block; }
-  .mobile-frame-label {
-    display: none;
-    text-align: center;
-    color: var(--mint);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.6px;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-  }
-  .shell.mobile-mode .grid-3,
-  .shell.mobile-mode .grid-2,
-  .shell.mobile-mode .kpi-row {
-    grid-template-columns: 1fr;
-  }
+  body.mobile-mode .grid-2,
+  body.mobile-mode .grid-3,
+  body.mobile-mode .grid-4 { grid-template-columns: 1fr !important; }
+  body.mobile-mode table { font-size: 12px; }
 
-  /* Tarjetas y Paneles */
+  .view-panel { display: none; }
+  .view-panel.active { display: block; }
+
   .card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 18px 20px;
-    margin-bottom: 18px;
-    box-shadow: var(--shadow);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 16px 18px; margin-bottom: 16px;
   }
   .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    border-bottom: 2px solid var(--bg);
-    padding-bottom: 12px;
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+    gap: 10px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  }
+  .card-title { margin: 0; font-size: 16px; font-weight: 700; color: var(--aq-navy); }
+  .help-box {
+    background: var(--aq-mint-soft); border-left: 4px solid var(--aq-mint-border);
+    padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 14px;
+    color: #0F3D36;
+  }
+  .fam-box {
+    background: var(--purple-bg); border: 1px solid var(--purple-border);
+    border-radius: 8px; padding: 9px 13px; font-size: 12.5px; color: #3B0764;
     margin-bottom: 14px;
   }
-  .card-title {
-    margin: 0;
-    font-size: 18px;
-    color: var(--navy);
-    font-weight: 700;
-  }
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 700;
-  }
-  .badge-navy { background: var(--navy); color: #fff; }
-  .badge-mint { background: var(--mint-soft); color: var(--mint-dark); border: 1px solid var(--mint); }
-  .badge-ok { background: var(--ok-bg); color: var(--ok); }
-  .badge-warn { background: var(--warn-bg); color: var(--warn); }
-  .badge-err { background: var(--err-bg); color: var(--err); }
-
-  /* Ayuda en Pantalla (RT-07) */
-  .help-box {
-    background: #eef6ff;
-    border-left: 4px solid var(--navy);
-    padding: 10px 14px;
-    border-radius: 6px;
-    font-size: 13.5px;
-    color: #1e293b;
-    margin-bottom: 16px;
-  }
-
   .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
   .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-  .kpi-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+
   .kpi {
-    background: var(--bg);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 12px 14px;
+    background: #F8FAFC; border: 1px solid var(--border); border-radius: 8px; padding: 11px 13px;
   }
-  .kpi-label { font-size: 12px; color: var(--muted); font-weight: 600; }
-  .kpi-val { font-size: 21px; font-weight: 800; color: var(--navy); margin-top: 2px; }
+  .kpi .lbl { font-size: 11.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+  .kpi .val { font-size: 20px; font-weight: 800; color: var(--aq-navy); margin-top: 2px; }
+  .kpi .sub { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
 
-  label { display: block; font-size: 12.5px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
-  input[type="text"], input[type="time"], input[type="date"], input[type="number"], select, textarea {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #cbd5e1;
-    border-radius: 7px;
-    font: inherit;
-    font-size: 13.5px;
-    background: #fff;
-    color: var(--text);
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 700;
   }
-  input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: var(--navy);
-    box-shadow: 0 0 0 3px rgba(0, 1, 90, 0.12);
-  }
-  input[disabled], select[disabled] {
-    background: #f1f5f9;
-    color: #64748b;
-    cursor: not-allowed;
-  }
+  .b-ok { background: var(--ok-bg); color: var(--ok); border: 1px solid #A7F3D0; }
+  .b-warn { background: var(--warn-bg); color: var(--warn); border: 1px solid #FDE68A; }
+  .b-err { background: var(--err-bg); color: var(--err); border: 1px solid #FECACA; }
+  .b-navy { background: #E0E7FF; color: var(--aq-navy); border: 1px solid #C7D2FE; }
+  .b-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
 
-  /* Tablas / Grupos de Campos */
-  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
-  table { width: 100%; border-collapse: collapse; min-width: 680px; font-size: 13.5px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th {
-    background: var(--navy);
-    color: #fff;
-    text-align: left;
-    padding: 9px 10px;
-    font-weight: 600;
-    font-size: 12.5px;
+    background: var(--aq-navy); color: #fff; text-align: left;
+    padding: 8px 10px; font-size: 12px; font-weight: 600;
   }
-  td { padding: 8px 10px; border-top: 1px solid var(--line); vertical-align: middle; }
-  tr:nth-child(even) td { background: #fafbfc; }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:nth-child(even) td { background: #FAFBFD; }
+  .table-wrap { overflow-x: auto; }
 
-  /* Botones */
-  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-  .btn {
-    border: 1px solid transparent;
-    border-radius: 8px;
-    padding: 8px 14px;
-    font: inherit;
-    font-size: 13.5px;
-    font-weight: 700;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+  input, select, textarea {
+    font-family: inherit; font-size: 13px; padding: 6px 8px;
+    border: 1px solid #CBD5E1; border-radius: 6px; background: #fff; color: var(--text);
   }
-  .btn-primary { background: var(--navy); color: #fff; }
-  .btn-primary:hover { background: var(--navy-light); }
-  .btn-mint { background: var(--mint); color: var(--navy); }
-  .btn-mint:hover { filter: brightness(0.95); }
-  .btn-outline { background: #fff; color: var(--navy); border-color: var(--navy); }
-  .btn-outline:hover { background: var(--bg); }
-  .btn-danger { background: var(--err-bg); color: var(--err); border-color: #fecaca; }
-  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--aq-mint); border-color: var(--aq-navy); }
+  .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+  .field label { font-size: 12px; font-weight: 700; color: var(--aq-navy); }
 
-  .alert {
-    padding: 11px 14px;
-    border-radius: 8px;
-    font-size: 13.5px;
-    margin-top: 12px;
-    font-weight: 600;
+  .alert-banner {
+    padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
   }
-  .alert-ok { background: var(--ok-bg); color: var(--ok); border: 1px solid #86efac; }
-  .alert-err { background: var(--err-bg); color: var(--err); border: 1px solid #fca5a5; }
-  .alert-warn { background: var(--warn-bg); color: var(--warn); border: 1px solid #fcd34d; }
+  .alert-ok { background: var(--ok-bg); border: 1px solid #6EE7B7; color: #065F46; }
+  .alert-warn { background: var(--warn-bg); border: 1px solid #FCD34D; color: #92400E; }
+  .alert-err { background: var(--err-bg); border: 1px solid #FCA5A5; color: #991B1B; }
 
-  /* Visor PDF simulado del Cliente */
-  .pdf-preview {
-    border: 2px solid var(--navy);
-    border-radius: 8px;
-    padding: 20px;
-    background: #fff;
-    box-shadow: inset 0 0 0 4px #f8fafc;
+  .toast {
+    position: fixed; right: 20px; bottom: 20px; z-index: 999;
+    background: var(--aq-navy); color: #fff; padding: 12px 16px;
+    border-radius: 9px; border-left: 5px solid var(--aq-mint);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.25); font-size: 13px; max-width: 420px;
+    display: none;
   }
-  .pdf-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    border-bottom: 3px solid var(--mint);
-    padding-bottom: 12px;
-    margin-bottom: 14px;
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 900;
+    display: none; align-items: center; justify-content: center; padding: 16px;
   }
-  .sig-stamp {
-    margin-top: 14px;
-    border: 2px dashed var(--ok);
-    background: var(--ok-bg);
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 12.5px;
-    color: #14532d;
+  .modal {
+    background: #fff; border-radius: 12px; max-width: 640px; width: 100%;
+    padding: 20px; border-top: 5px solid var(--aq-navy); box-shadow: 0 20px 50px rgba(0,0,0,0.3);
   }
-  .hidden { display: none !important; }
-  .req-star { color: var(--err); font-weight: 800; }
-  .dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin-right: 5px;
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .chip-filter {
+    padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700;
+    border: 1px solid var(--border); background: #fff; color: var(--aq-navy); cursor: pointer;
   }
-  .dot-green { background: #16a34a; }
-  .dot-yellow { background: #d97706; }
-  .dot-red { background: #dc2626; }
+  .chip-filter.active { background: var(--aq-navy); color: #fff; border-color: var(--aq-navy); }
 </style>
 </head>
 <body>
 
-<header class="topbar">
-  <div class="topbar-inner">
-    <div class="brand">
-      <div class="brand-logo">AQ</div>
-      <div>
-        <p class="brand-title">AuraQuantic · Caso 1: Tiempos, Novedades y Facturación</p>
-        <p class="brand-sub">Prototipo Navegable Interactivo (Fase 3 Bootcamp · RT-01 a RT-16)</p>
-      </div>
+<header>
+  <div class="brand">
+    <div class="logo-badge">AQ</div>
+    <div>
+      <h1>Prototipo Navegable Enterprise v2.0 — Gestión de Tiempos</h1>
+      <p>4 Procesos Desacoplados • Persistencia en Familias (Cero Explosión Documental) • Comprobación 68 Requisitos</p>
     </div>
-
-    <nav class="role-nav" aria-label="Selector de rol y pantalla">
-      <button class="nav-btn active" data-view="empleado">1. Empleado (Diario)</button>
-      <button class="nav-btn" data-view="lider">2. Líder (Ampliación/Extras)</button>
-      <button class="nav-btn" data-view="director">3. Director Proyecto</button>
-      <button class="nav-btn" data-view="cliente">4. Portal Cliente (Firma)</button>
-      <button class="nav-btn" data-view="gerencia">5. Tablero y Parámetros</button>
-      <button class="mobile-toggle" id="btnMobileToggle" title="Simular App / Vista Móvil (RT-10)">📱 Vista Móvil</button>
-    </nav>
+  </div>
+  <div class="header-controls">
+    <span class="pill">🎨 #00015A / #3FF2CF</span>
+    <span class="pill">👥 Escala: 300+ Empleados</span>
+    <button class="btn btn-mint" id="btnToggleMobile" onclick="toggleMobile()">📱 Vista Móvil</button>
   </div>
 </header>
 
-<main class="shell" id="appShell">
-  <div class="mobile-frame-label">Vista Móvil AuraQuantic App (RT-10)</div>
+<nav class="tabs" id="mainTabs">
+  <button class="tab-btn active" data-tab="tab-emp" onclick="switchTab('tab-emp', this)">1. Empleado (TP.01)</button>
+  <button class="tab-btn" data-tab="tab-lider" onclick="switchTab('tab-lider', this)">2. Líder (TP.02 / TP.03)</button>
+  <button class="tab-btn" data-tab="tab-cierre" onclick="switchTab('tab-cierre', this)">3. Director / Cliente (TP.31 / TP.32)</button>
+  <button class="tab-btn" data-tab="tab-nov" onclick="switchTab('tab-nov', this)">4. Novedades OCR &amp; TH (TP.20)</button>
+  <button class="tab-btn" data-tab="tab-ger" onclick="switchTab('tab-ger', this)">5. Gerencia, Admin &amp; Portal</button>
+  <button class="tab-btn" data-tab="tab-qa" onclick="switchTab('tab-qa', this)">6. ✅ Comprobación Requisitos (68)</button>
+</nav>
 
-  <!-- =================================================================== -->
-  <!-- VISTA 1: EMPLEADO (FORM_REGISTRO_DIARIO + PORTAL EMPLEADO)          -->
-  <!-- =================================================================== -->
-  <section id="view-empleado" class="view-section">
+<main class="workspace">
+
+  <!-- TAB 1: EMPLEADO -->
+  <section id="tab-emp" class="view-panel active">
     <div class="card">
       <div class="card-header">
         <div>
-          <h2 class="card-title">Registro Diario de Actividades y Novedades</h2>
-          <small style="color: var(--muted);">Formulario: <code>FORM_REGISTRO_DIARIO</code> · Proceso: <code>TIEM_REG_DIARIO</code></small>
+          <h2 class="card-title">TP.01 — Registro Diario de Tiempos y Novedades (`TIEM_REG_DIARIO`)</h2>
+          <small style="color:var(--muted)">Trámite: <strong id="lblTramite">TIEM-2026-000128</strong> • Fecha hábil verificada en Calendario CO</small>
         </div>
-        <div class="btn-row">
-          <span class="badge badge-navy" id="empTramiteBadge">Trámite: TIEM-2026-000128</span>
-          <span class="badge badge-mint" id="empEstadoBadge">Estado: En Diligenciamiento</span>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <span class="badge b-ok" id="badgeGracia">🟢 Gracia 15 min activa (cierre efectivo 17:45)</span>
+          <span class="badge b-navy" id="badgeAlerta">⏰ Alerta -30m programada: 17:00</span>
         </div>
       </div>
 
       <div class="help-box">
-        <strong>ℹ️ Ayuda en pantalla (RT-07):</strong> Registre todas las actividades y novedades de su jornada laboral. Puede guardar su avance con <em>Guardar Borrador</em> sin enviar el trámite, o precargar su día hábil anterior. Al enviar antes de las 5:30 p. m., las horas fuera de horario pasarán a aprobación de su líder.
+        <strong>Ayuda en pantalla (RT-07):</strong> Registra tus actividades por proyecto asignado, marca si aplica para cobro al cliente (<code>EsParaCobro</code>) y reporta horas extra reales únicamente si tu cargo genera extras. Máximo 16 h diarias sin traslapes; el cruce contra permisos pendientes lo realiza el motor <code>TS.07</code> sin revelar tarifas salariales.
       </div>
 
-      <div class="grid-3" style="margin-bottom: 14px;">
-        <div>
-          <label for="selEmpleado">Simular Empleado en Sesión (RF-T-20 / RF-T-07)</label>
-          <select id="selEmpleado"></select>
-        </div>
-        <div>
-          <label for="selDiaSemana">Día de la Jornada (RF-T-05)</label>
-          <select id="selDiaSemana">
-            <option value="Lunes">Lunes (08:00 – 17:30 · 9.5 h)</option>
-            <option value="Martes">Martes (08:00 – 17:30 · 9.5 h)</option>
-            <option value="Miércoles" selected>Miércoles (07:00 – 17:30 · 10.5 h)</option>
-            <option value="Jueves">Jueves (07:00 – 17:30 · 10.5 h)</option>
-            <option value="Viernes">Viernes (07:00 – 17:30 · 10.5 h)</option>
+      <div class="fam-box">
+        <strong>🗄️ Persistencia AuraQuantic (Lee / Guarda):</strong> Lee <code>FAM_ASIGNACIONES</code> (vigencia &amp; activos), <code>FAM_JORNADAS</code>, <code>FAM_PARAMETROS</code> (gracia=<span id="lblGraciaParam">15</span>m, alerta=-<span id="lblAlertaParam">30</span>m) y agenda calendario (<code>TS.02C</code>). Guarda líneas en <code>FAM_DETALLE_ACTIVIDADES</code>, novedades en <code>FAM_NOVEDADES_EMP</code> y cabecera en <code>FAM_REGISTROS_DIARIOS</code> (0 archivos por empleado).
+      </div>
+
+      <div class="grid-3" style="margin-bottom:14px;">
+        <div class="field">
+          <label>Simular Empleado Activo (RF-T-20)</label>
+          <select id="selEmpleado" onchange="cambiarEmpleado()">
+            <option value="juan">Juan Pérez — Consultor Senior (GeneraHorasExtra = Sí | Jornada 08:00-17:30)</option>
+            <option value="andres">Andrés Silva — Director Proyecto (GeneraHorasExtra = No | Cargo exento)</option>
           </select>
         </div>
-        <div>
-          <label>Líder Directo / Política Horas Extra</label>
-          <input type="text" id="empInfoCargo" disabled>
+        <div class="field">
+          <label>Simular Hora Envío (V2-02 Gracia 15m)</label>
+          <select id="selHoraEnvio" onchange="actualizarSimuladoresEmp()">
+            <option value="17:25">17:25 — A tiempo (dentro de jornada)</option>
+            <option value="17:40" selected>17:40 — Ventana de Gracia (+10 min ≤ 15 min)</option>
+            <option value="17:52">17:52 — Vencido (supera 17:45 → dispara TP.02 + ET.03)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Conector Calendario TS.02C a las 17:00 (V2-01)</label>
+          <select id="selAgenda" onchange="actualizarSimuladoresEmp()">
+            <option value="ocupado">Ocupado en reunión cliente (17:00-17:45)</option>
+            <option value="libre">Libre en agenda corporativa</option>
+          </select>
         </div>
       </div>
 
-      <!-- Portal Empleado: KPIs en tiempo real -->
-      <div class="kpi-row">
-        <div class="kpi">
-          <div class="kpi-label">Total Actividades</div>
-          <div class="kpi-val" id="kpiActHoras">0.00 h</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label">Total Novedades</div>
-          <div class="kpi-val" id="kpiNovHoras">0.00 h</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label">Diferencia vs Jornada (RF-T-08)</div>
-          <div class="kpi-val" id="kpiDiffJornada">0.00 h</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label">Saldo Compensación Portal (RF-T-23)</div>
-          <div class="kpi-val" id="kpiSaldoPortal">+2.50 h</div>
-        </div>
+      <div id="bannerSimulacionEmp" class="alert-banner alert-ok"></div>
+
+      <div class="grid-4" style="margin-bottom:14px;">
+        <div class="kpi"><div class="lbl">Total Actividades</div><div class="val" id="kpiTotalAct">0.0 h</div><div class="sub">Máx permitido día: 16.0 h</div></div>
+        <div class="kpi"><div class="lbl">Horas Extra Reales</div><div class="val" id="kpiExtrasReales">0.0 h</div><div class="sub">Calculadas sobre jornada</div></div>
+        <div class="kpi"><div class="lbl">Novedades / Permisos</div><div class="val" id="kpiNovHoras">0.0 h</div><div class="sub">Disponibles para cruce TS.07</div></div>
+        <div class="kpi"><div class="lbl">Estado Validación</div><div class="val" id="kpiEstadoVal" style="font-size:15px;">OK</div><div class="sub" id="kpiEstadoSub">Sin traslapes ni errores</div></div>
       </div>
 
-      <div class="btn-row" style="justify-content: space-between; margin-bottom: 12px;">
-        <div class="btn-row">
-          <button class="btn btn-outline btn-sm" id="btnPrecargar">📋 Precargar día hábil anterior (RF-T-10)</button>
-          <button class="btn btn-outline btn-sm" id="btnAgregarAct">+ Agregar Actividad</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+        <h3 style="margin:0; font-size:14px; color:var(--aq-navy);">GC_ACTIVIDADES (Guarda en <code>FAM_DETALLE_ACTIVIDADES</code>)</h3>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-sm" onclick="precargarAyer()">📋 Precargar Día Anterior (RF-T-10)</button>
+          <button class="btn btn-sm btn-primary" onclick="agregarActividad()">+ Agregar Actividad</button>
         </div>
-        <button class="btn btn-mint btn-sm" id="btnGuardarBorrador">💾 Guardar Borrador (RF-T-09)</button>
       </div>
-
-      <h3 style="margin: 10px 0 8px; font-size: 15px; color: var(--navy);">1. Grupo de Campos: Actividades del Día (<code>GC_ACTIVIDADES</code>)</h3>
-      <div class="table-wrap">
+      <div class="table-wrap" style="margin-bottom:16px;">
         <table>
           <thead>
             <tr>
-              <th style="width:110px;">Inicio</th>
-              <th style="width:110px;">Fin</th>
-              <th style="width:230px;">Proyecto Asignado Vigente (RF-T-03)</th>
-              <th>Descripción de la Actividad</th>
-              <th style="width:120px;">¿Fuera Horario?</th>
-              <th style="width:90px;">Duración</th>
-              <th style="width:70px;">Acción</th>
+              <th>Inicio</th>
+              <th>Fin</th>
+              <th>Proyecto Asignado (<code>FAM_ASIGNACIONES</code>)</th>
+              <th>¿Para Cobro? (V2-04)</th>
+              <th>¿Fuera Horario?</th>
+              <th>Extras Reales (h)</th>
+              <th>Acción</th>
             </tr>
           </thead>
           <tbody id="tbodyActividades"></tbody>
         </table>
       </div>
 
-      <div style="display:flex; justify-content:space-between; align-items:center; margin: 18px 0 8px; flex-wrap:wrap; gap:8px;">
-        <h3 style="margin: 0; font-size: 15px; color: var(--navy);">2. Grupo de Campos: Novedades del Día (<code>GC_NOVEDADES</code>)</h3>
-        <button class="btn btn-outline btn-sm" id="btnAgregarNov">+ Agregar Novedad</button>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th style="width:210px;">Tipo de Novedad</th>
-              <th style="width:100px;">Duración (h)</th>
-              <th>Observaciones</th>
-              <th style="width:220px;">Soporte Adjunto (RF-T-13)</th>
-              <th style="width:70px;">Acción</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyNovedades"></tbody>
-        </table>
+      <div class="grid-2">
+        <div class="card" style="margin-bottom:0; background:#FAFBFD;">
+          <h3 style="margin:0 0 8px; font-size:14px; color:var(--aq-navy);">GC_NOVEDADES (Permisos, Incapacidades, Llegadas Tarde)</h3>
+          <div class="grid-2">
+            <div class="field">
+              <label>Tipo de Novedad (<code>FAM_TIPOS_NOVEDAD</code>)</label>
+              <select id="selTipoNov" onchange="toggleSoporteNov()">
+                <option value="permiso">Permiso Remunerado (Cruza con Extras — Soporte: No)</option>
+                <option value="incapacidad">Incapacidad EPS (Soporte Obligatorio PDF)</option>
+                <option value="tarde">Llegada Tarde (Cruza con Extras — Soporte: No)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Duración (h)</label>
+              <input type="number" id="inpHorasNov" value="1.0" min="0.5" max="8" step="0.5" onchange="recalcularEmp()">
+            </div>
+          </div>
+          <div class="field" id="grpSoporteNov" style="display:none;">
+            <label>Soporte Obligatorio (<code>BIB_SOPORTES_NOVEDADES</code>)</label>
+            <input type="text" id="inpSoporteNov" placeholder="Ej: Incapacidad_EPS_9821.pdf">
+          </div>
+          <small style="color:var(--muted);">* Al incluir un permiso pendiente, <code>TS.07</code> lo cruzará contra las horas extra aprobadas antes de persistir en <code>FAM_HORAS_EXTRA</code>.</small>
+        </div>
+
+        <div class="card" style="margin-bottom:0; background:var(--purple-bg); border-color:var(--purple-border);">
+          <h3 style="margin:0 0 8px; font-size:14px; color:var(--purple);">Simulador Motor TS.07 — Cruce Permisos vs Horas Extra (V2-06)</h3>
+          <div id="boxCrucePreview" style="font-size:13px;"></div>
+        </div>
       </div>
 
-      <div class="btn-row" style="justify-content: flex-end; margin-top: 16px;">
-        <button class="btn btn-outline" id="btnLimpiarDia">🧹 Limpiar Formulario</button>
-        <button class="btn btn-primary" id="btnEnviarRegistro">🚀 Enviar Registro Diario</button>
+      <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-top:16px;">
+        <button class="btn" onclick="guardarBorrador()">💾 Guardar Borrador (RF-T-09)</button>
+        <button class="btn btn-mint" onclick="enviarTP01()">🚀 Enviar Registro Diario</button>
       </div>
-      <div id="empFeedback"></div>
     </div>
   </section>
 
-  <!-- =================================================================== -->
-  <!-- VISTA 2: LÍDER DE ÁREA (AMPLIACIÓN Y APROBACIÓN HORAS EXTRA)        -->
-  <!-- =================================================================== -->
-  <section id="view-lider" class="view-section hidden">
+  <!-- TAB 2: LÍDER -->
+  <section id="tab-lider" class="view-panel">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">TP.02 — Autorizar Ampliación de Plazo</h2>
+            <small style="color:var(--muted)">Trámite: TIEM-2026-000131 • Empleado: Juan Pérez</small>
+          </div>
+          <span class="badge b-warn">Plazo vencido (&gt;17:45)</span>
+        </div>
+        <div class="help-box">
+          <strong>Ayuda en pantalla:</strong> Verifica el estado de agenda reportado por <code>TS.02C</code> antes de autorizar. Al aprobar, se activa el temporizador <code>ET.03</code> para garantizar que el empleado sí vuelva a diligenciar <code>TP.01</code> dentro de la nueva hora límite.
+        </div>
+        <div class="alert-banner alert-warn" id="bannerAgendaLider">
+          📅 <strong>Agenda Calendario TS.02C:</strong> Ocupado en reunión cliente (17:00–17:45). Motivo coherente con el retraso.
+        </div>
+        <div class="field">
+          <label>Nueva Hora Límite Hoy (ET.03 vigilará este cierre)</label>
+          <input type="time" id="inpNuevaHoraLider" value="20:00">
+        </div>
+        <div class="field">
+          <label>Motivo de Autorización (Obligatorio — RF-T-17)</label>
+          <textarea id="txtMotivoLider" rows="2" placeholder="Ej: Consultor atendió comité urgente de despliegue con Banco Andino hasta las 17:45."></textarea>
+        </div>
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+          <button class="btn btn-danger" onclick="decidirAmpliacion(false)">✖ Rechazar (Cierre TS.03)</button>
+          <button class="btn btn-primary" onclick="decidirAmpliacion(true)">✔ Autorizar + Iniciar ET.03</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">TP.03 — Aprobar Horas Extra, Cobro y Reales</h2>
+            <small style="color:var(--muted)">Contenedor_Extras (TS.05) → FAM_HORAS_EXTRA</small>
+          </div>
+          <span class="badge b-navy">1 devolución máx (DX.04)</span>
+        </div>
+        <div class="help-box">
+          <strong>Ayuda en pantalla:</strong> Aprueba o rechaza línea por línea validando el flag <code>¿Para Cobro?</code> y las <code>Horas Extra Reales</code>. Lo rechazado retorna 1 sola vez al empleado (<code>TP.04</code>); lo aprobado pasa a cruce en <code>TS.07</code>.
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Proyecto</th>
+                <th>¿Para Cobro?</th>
+                <th>Extras Reales</th>
+                <th>Decisión Líder</th>
+                <th>Comentario</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyAprobacion"></tbody>
+          </table>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; flex-wrap:wrap; gap:8px;">
+          <span class="badge b-purple" id="lblResumenTP03">Resumen: pendiente de confirmar</span>
+          <button class="btn btn-mint" onclick="confirmarTP03()">✔ Confirmar y Ejecutar Cruce TS.07</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 3: DIRECTOR Y CLIENTE -->
+  <section id="tab-cierre" class="view-panel">
     <div class="card">
       <div class="card-header">
         <div>
-          <h2 class="card-title">Bandeja del Líder de Área — Ampliación y Horas Extra</h2>
-          <small style="color: var(--muted);">Formularios: <code>FORM_AMPLIACION_HORARIO</code> y <code>FORM_APROBACION_EXTRAS</code> · Líder: Carlos Mendoza</small>
+          <h2 class="card-title">TIEM_CIERRE_MENSUAL — TP.31 (Director) y TP.32 (Portal Cliente NIT)</h2>
+          <small style="color:var(--muted)">Consolidado desde <code>FAM_CIERRE_PROYECTO_MES</code> • Sin PDFs por empleado</small>
         </div>
-        <span class="badge badge-warn">⏰ 2 Tareas Pendientes Hoy (RT-04)</span>
+        <span class="badge b-ok">RN-T-08: Excluir aquí NO resta en Nómina</span>
       </div>
-
-      <div class="help-box">
-        <strong>ℹ️ Ayuda en pantalla (RT-07):</strong> Autorice ampliaciones excepcionales después de las 5:30 p. m. registrando el motivo obligatorio, y revise actividad por actividad las horas fuera de horario de su equipo. Las rechazadas volverán al empleado una sola vez para corrección.
+      <div class="fam-box">
+        <strong>🗄️ Flujo en Familias:</strong> <code>TS.30</code> agrupa el mes completo en <code>FAM_CIERRE_PROYECTO_MES</code> (Facturación) y <code>FAM_CIERRE_NOMINA_MES</code> (Nómina). El subproceso distribuido <code>SP.31</code> genera <strong>1 solo PDF por proyecto facturable</strong> (<code>BIB_REPORTES_PROYECTO</code>). Cuando todos aprueban, <code>CA.31+</code> dispara 1 resumen a Finanzas y <code>TS.35</code> envía el lote JSON REST a Nómina.
       </div>
-
       <div class="grid-2">
-        <!-- Bloque Ampliación -->
-        <div class="card" style="box-shadow:none; margin-bottom:0;">
-          <h3 style="margin:0 0 10px; font-size:15.5px; color:var(--navy);">Solicitud de Ampliación de Horario (RF-T-16 / RF-T-17)</h3>
-          <p style="font-size:13px; color:var(--muted); margin:0 0 10px;">Empleado: <strong>Ana Gómez</strong> · Trámite: <code>TIEM-2026-000129</code> · Cierre vencido: 17:30</p>
-          <div style="margin-bottom:10px;">
-            <label for="motivoAmp">Motivo de la Ampliación <span class="req-star">*</span></label>
-            <textarea id="motivoAmp" rows="2" placeholder="Ej. Despliegue en ventana nocturna con cliente Banco Nacional..."></textarea>
-          </div>
-          <div style="margin-bottom:12px;">
-            <label for="horaAmp">Nueva Hora Límite (máx. 22:00)</label>
-            <input type="time" id="horaAmp" value="20:00">
-          </div>
-          <div class="btn-row">
-            <button class="btn btn-primary btn-sm" id="btnAutorizarAmp">✔️ Autorizar Ampliación</button>
-            <button class="btn btn-danger btn-sm" id="btnRechazarAmp">❌ Denegar / Cerrar Día</button>
-          </div>
-          <div id="ampFeedback"></div>
-        </div>
-
-        <!-- Resumen de cumplimiento del equipo -->
-        <div class="card" style="box-shadow:none; margin-bottom:0;">
-          <h3 style="margin:0 0 10px; font-size:15.5px; color:var(--navy);">Bandeja de Cumplimiento del Equipo (RT-03 / RT-04)</h3>
+        <div>
+          <h3 style="margin:0 0 8px; font-size:14px; color:var(--aq-navy);">TP.31 — Revisión Director de Proyecto (`PRY-001 Banco Andino`)</h3>
           <div class="table-wrap">
-            <table style="min-width:100%;">
+            <table>
               <thead>
-                <tr>
-                  <th>Trámite</th>
-                  <th>Empleado</th>
-                  <th>Semáforo</th>
-                  <th>Estado</th>
-                </tr>
+                <tr><th>Consultor</th><th>Horas Mes</th><th>¿Facturable?</th><th>Justificación si Excluye</th></tr>
               </thead>
-              <tbody id="tbodyBandejaLider">
-                <tr>
-                  <td>TIEM-2026-000128</td>
-                  <td>Juan Pérez</td>
-                  <td><span class="dot dot-green"></span>En plazo</td>
-                  <td>Por aprobar extra</td>
-                </tr>
-                <tr>
-                  <td>TIEM-2026-000129</td>
-                  <td>Ana Gómez</td>
-                  <td><span class="dot dot-yellow"></span>Vencido 17:30</td>
-                  <td id="estadoAnaBandeja">Esperando ampliación</td>
-                </tr>
-                <tr>
-                  <td>TIEM-2026-000130</td>
-                  <td>Diego Castro</td>
-                  <td><span class="dot dot-green"></span>A tiempo</td>
-                  <td>Cerrado (9.5 h)</td>
-                </tr>
-              </tbody>
+              <tbody id="tbodyCierreDir"></tbody>
             </table>
           </div>
+          <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <strong id="lblTotalFactDir" style="color:var(--aq-navy);">Total Facturable: 340.0 h | Total Nómina: 340.0 h</strong>
+            <button class="btn btn-primary" onclick="emitirPDFProyecto()">📄 Validar y Emitir 1 PDF Proyecto (TS.31)</button>
+          </div>
+        </div>
+        <div style="background:#FAFBFD; border:1px solid var(--border); border-radius:10px; padding:14px;">
+          <h3 style="margin:0 0 8px; font-size:14px; color:var(--aq-navy);">TP.32 — Vista Portal Cliente (Filtro estricto NIT 860.002.964-4)</h3>
+          <p style="font-size:12.5px; color:var(--muted); margin:0 0 10px;">Temporizadores activos: <code>ET.31</code> recordatorio día 5 hábil • <code>ET.32</code> aprobación tácita día 10 hábil.</p>
+          <div class="kpi" style="margin-bottom:10px;">
+            <div class="lbl">Documento Consolidado del Proyecto</div>
+            <div class="val" style="font-size:16px;" id="lblEstadoCliente">Reporte_PRY001_202610.pdf — Listo para Firma</div>
+            <div class="sub" id="lblHorasPDFCliente">Horas facturables certificadas: 340.0 h (0 archivos sueltos)</div>
+          </div>
+          <div class="field">
+            <label>Observación del Cliente (si solicita ajuste)</label>
+            <input type="text" id="inpObsCliente" placeholder="Ej: Verificar soporte de 4h de capacitación del día 18.">
+          </div>
+          <div style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+            <button class="btn btn-danger" onclick="accionCliente(false)">↩ Observar (Vuelve a Director)</button>
+            <button class="btn btn-mint" onclick="accionCliente(true)">✍ Firmar Digitalmente (CA.31+)</button>
+          </div>
         </div>
       </div>
     </div>
+  </section>
 
+  <!-- TAB 4: NOVEDADES OCR -->
+  <section id="tab-nov" class="view-panel">
     <div class="card">
-      <h3 style="margin:0 0 10px; font-size:16px; color:var(--navy);">Aprobación de Horas Extra Actividad por Actividad (RF-T-18 / RF-T-19)</h3>
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">TIEM_NOV_CORREO — Automatización OCR/IA de Incapacidades y TP.20 (TH)</h2>
+          <small style="color:var(--muted)">Zero-Touch automático si Confianza OCR ≥ <span id="lblUmbralOCR">90</span> % • Bloqueo inmediato en <code>FAM_REGISTROS_DIARIOS</code></small>
+        </div>
+        <span class="badge b-purple">Guarda: BIB_SOPORTES + FAM_NOVEDADES_EMP</span>
+      </div>
+      <div class="help-box">
+        <strong>Ayuda en pantalla:</strong> El buzón IMAP recibe el correo del empleado, <code>TS.23</code> extrae fechas y código CIE-10 vía OCR/IA y archiva el documento en <code>BIB_SOPORTES_NOVEDADES</code>. Si la confianza es ≥ 90 %, radica sin intervención humana y pre-bloquea los días en <code>FAM_REGISTROS_DIARIOS</code> para que <code>EI.01</code> no le cree tareas diarias al trabajador incapacitado.
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+        <button class="btn btn-mint" onclick="simularCorreoOCR('auto')">📧 Simular PDF EPS Legible (OCR 96 % → Zero-Touch)</button>
+        <button class="btn btn-primary" onclick="simularCorreoOCR('manual')">📷 Simular Foto Borrosa (OCR 65 % → Escala a TP.20 TH)</button>
+        <button class="btn btn-danger" onclick="simularCorreoOCR('rechazo')">🚫 Simular Remitente Externo Gmail (Rechazo Automático)</button>
+      </div>
+      <div id="boxResultadoOCR" class="alert-banner alert-ok">
+        Selecciona una simulación arriba para ver cómo opera el enrutador OCR <code>DX.23</code> y qué registros escribe en <code>FAM_NOVEDADES_EMP</code> y <code>FAM_REGISTROS_DIARIOS</code>.
+      </div>
+      <div id="panelTP20Manual" style="display:none; border:1px solid var(--border); border-radius:8px; padding:12px; background:#FAFBFD; margin-top:10px;">
+        <h4 style="margin:0 0 8px; color:var(--aq-navy);">TP.20 — Verificación Manual Talento Humano (Confianza &lt; 90 %)</h4>
+        <div class="grid-3">
+          <div class="field"><label>Empleado Identificado</label><input type="text" value="Laura Gómez (CC 1020334455)"></div>
+          <div class="field"><label>Fecha Inicio / Fin Corregida</label><input type="text" value="2026-10-28 al 2026-10-30 (3 días)"></div>
+          <div class="field"><label>Código CIE-10 Validado</label><input type="text" value="J06.9 — Infección respiratoria"></div>
+        </div>
+        <button class="btn btn-primary" onclick="confirmarTP20TH()">✔ Confirmar en FAM_NOVEDADES_EMP y Bloquear 3 Días</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 5: GERENCIA, ADMIN Y PORTAL -->
+  <section id="tab-ger" class="view-panel">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">FAM_PARAMETROS — Reglas en Vivo (Sin Editar Diagramas)</h2>
+          <span class="badge b-navy">RF-T-04 / RN-T-09 / RT-15</span>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label>Minutos Gracia Cierre (V2-02)</label><input type="number" id="parGracia" value="15" min="0" max="60" onchange="aplicarParametros()"></div>
+          <div class="field"><label>Alerta Previa Diario (min)</label><input type="number" id="parAlerta" value="30" min="5" max="90" onchange="aplicarParametros()"></div>
+          <div class="field"><label>Umbral OCR Zero-Touch (%)</label><input type="number" id="parOCR" value="90" min="50" max="99" onchange="aplicarParametros()"></div>
+          <div class="field"><label>Alerta Presupuesto Proyecto (%)</label><input type="number" id="parPresup" value="80" min="50" max="95" onchange="aplicarParametros()"></div>
+        </div>
+        <div class="alert-banner alert-ok" id="lblEstadoParam" style="margin-bottom:0;">
+          Parámetros activos sincronizados con TP.01, DX.01, DX.23 y DO.11 sin re-publicar procesos.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Procesos Batch &amp; Portal Empleado Bajo Demanda</h2>
+          <span class="badge b-ok">Escala 300+ Empleados</span>
+        </div>
+        <div class="kpi" style="margin-bottom:10px;">
+          <div class="lbl">TIEM_INFORMES_DIARIOS (18:15 L-V)</div>
+          <div class="val" style="font-size:15px;">1 Único Excel Diario → BIB_INFORMES_DIARIOS</div>
+          <div class="sub">Lee 312 filas en lote desde Familias • Cero archivos individuales por empleado (V2-05)</div>
+        </div>
+        <div class="kpi" style="margin-bottom:10px;">
+          <div class="lbl">Saldo Compensación (FAM_SALDO_COMPENSACION)</div>
+          <div class="val" style="font-size:17px;" id="lblSaldoPortal">Juan Pérez: 5.5 h acumuladas a favor</div>
+          <div class="sub">Certificados mensuales no saturan disco: se generan al vuelo desde FAM_CIERRE_NOMINA_MES</div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="simularRestNomina()">📡 Simular Lote REST Nómina (TS.35 + DX.33 3x)</button>
+          <button class="btn btn-mint" onclick="abrirCertificado()">🧾 Simular Descarga Certificado Bajo Demanda (V2-10)</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 6: COMPROBACIÓN DE REQUISITOS (68) -->
+  <section id="tab-qa" class="view-panel">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Matriz Interactiva de Comprobación de Requisitos (68 Ítems Totales)</h2>
+          <small style="color:var(--muted)">32 RF-T + 9 RN-T + 17 RT + 10 Mejoras Enterprise v2.0 • Vinculada a Familias y Casos de Prueba CP-01..CP-32</small>
+        </div>
+        <span class="badge b-ok" id="lblContadorQA">68 / 68 Verificados</span>
+      </div>
+      <div class="filter-bar">
+        <button class="chip-filter active" onclick="filtrarQA('ALL', this)">Todos (68)</button>
+        <button class="chip-filter" onclick="filtrarQA('RF-T', this)">RF-T (32)</button>
+        <button class="chip-filter" onclick="filtrarQA('RN-T', this)">RN-T (9)</button>
+        <button class="chip-filter" onclick="filtrarQA('RT', this)">RT (17)</button>
+        <button class="chip-filter" onclick="filtrarQA('V2', this)">Mejoras v2.0 (10)</button>
+        <input type="text" id="inpBuscarQA" placeholder="🔍 Buscar requisito, Familia (FAM_...) o CP-XX..." style="flex:1; min-width:220px;" oninput="renderQA()">
+      </div>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Empleado</th>
-              <th>Proyecto</th>
-              <th>Horario</th>
-              <th>Duración</th>
+              <th>ID</th>
+              <th>Tipo</th>
               <th>Descripción</th>
-              <th style="width:150px;">Decisión</th>
-              <th style="width:220px;">Comentario del Líder</th>
+              <th>Familia / Tabla (Lee / Guarda)</th>
+              <th>Caso &amp; Criterio de Comprobación</th>
+              <th>Estado QA</th>
             </tr>
           </thead>
-          <tbody id="tbodyExtrasLider"></tbody>
+          <tbody id="tbodyQA"></tbody>
         </table>
       </div>
-      <div class="btn-row" style="justify-content:space-between; margin-top:14px;">
-        <div id="resumenExtrasLider" style="font-size:13.5px; font-weight:700; color:var(--navy);"></div>
-        <button class="btn btn-primary" id="btnGuardarExtras">💾 Confirmar Decisiones de Horas Extra</button>
-      </div>
-      <div id="extrasFeedback"></div>
     </div>
   </section>
 
-  <!-- =================================================================== -->
-  <!-- VISTA 3: DIRECTOR DE PROYECTO (CIERRE MENSUAL)                      -->
-  <!-- =================================================================== -->
-  <section id="view-director" class="view-section hidden">
-    <div class="card">
-      <div class="card-header">
-        <div>
-          <h2 class="card-title">Cierre Mensual de Horas por Proyecto</h2>
-          <small style="color: var(--muted);">Formulario: <code>FORM_CIERRE_PROYECTO</code> · Proceso: <code>TIEM_CIERRE_MENSUAL</code> (Tratamiento Distribuido)</small>
-        </div>
-        <span class="badge badge-navy">Período: Octubre 2026</span>
-      </div>
-
-      <div class="help-box">
-        <strong>ℹ️ Ayuda en pantalla (RT-07):</strong> Revise las horas imputadas a su proyecto. Si excluye una actividad no facturable (ej. capacitación interna), ingrese la justificación obligatoria: la hora no se cobrará al cliente pero <strong>seguirá contando para la nómina del empleado (RN-T-08)</strong>.
-      </div>
-
-      <div class="grid-2" style="margin-bottom:14px;">
-        <div>
-          <label for="selProyectoDirector">Proyecto Facturable en Revisión (RF-T-25)</label>
-          <select id="selProyectoDirector">
-            <option value="PRY-001">PRY-001 · Modernización Core BPM (Banco Nacional S.A.)</option>
-            <option value="PRY-002">PRY-002 · Automatización Mesa Ayuda (Telco Andina S.A.S.)</option>
-          </select>
-        </div>
-        <div class="kpi-row" style="grid-template-columns: repeat(3, 1fr); margin-bottom:0;">
-          <div class="kpi"><div class="kpi-label">Registradas</div><div class="kpi-val" id="dirTotalReg">0 h</div></div>
-          <div class="kpi"><div class="kpi-label">Excluidas</div><div class="kpi-val" id="dirTotalExc">0 h</div></div>
-          <div class="kpi"><div class="kpi-label">Facturable Cliente</div><div class="kpi-val" id="dirTotalFac">0 h</div></div>
-        </div>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Empleado</th>
-              <th>Actividad</th>
-              <th style="width:90px;">Horas</th>
-              <th style="width:120px;">¿Facturar?</th>
-              <th style="width:260px;">Justificación Exclusión (RF-T-26)</th>
-              <th style="width:110px;">Nómina (RN-T-08)</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyCierreDirector"></tbody>
-        </table>
-      </div>
-
-      <div class="btn-row" style="justify-content:flex-end; margin-top:14px;">
-        <button class="btn btn-primary" id="btnValidarCierre">📄 Validar y Publicar Reporte PDF al Cliente (RF-T-27)</button>
-      </div>
-      <div id="directorFeedback"></div>
-    </div>
-  </section>
-
-  <!-- =================================================================== -->
-  <!-- VISTA 4: PORTAL EXTERNO CLIENTE (VISOR PDF Y FIRMA DIGITAL)         -->
-  <!-- =================================================================== -->
-  <section id="view-cliente" class="view-section hidden">
-    <div class="card">
-      <div class="card-header">
-        <div>
-          <h2 class="card-title">Portal de Clientes Externos — Aprobación y Firma Digital</h2>
-          <small style="color: var(--muted);">Cliente Autenticado: <strong>Banco Nacional S.A. (NIT 890.123.456-1)</strong> · Contacto: Roberto Méndez</small>
-        </div>
-        <span class="badge badge-mint">🔒 Aislamiento por NIT (RT-14)</span>
-      </div>
-
-      <div class="help-box">
-        <strong>ℹ️ Ayuda en pantalla (RT-07):</strong> Visualiza únicamente los reportes mensuales de sus proyectos contratados. Firme digitalmente para aprobar la facturación o registre observaciones para devolver al Director. Plazo de aprobación tácita: <strong>recordatorio día 5 / aprobación automática día 10 hábil (RF-T-28)</strong>.
-      </div>
-
-      <div class="grid-2" style="margin-bottom:14px;">
-        <div class="kpi"><div class="kpi-label">Estado Aprobación Cliente</div><div class="kpi-val" id="cliEstadoFirma" style="font-size:17px;">Pendiente de Firma</div></div>
-        <div class="kpi"><div class="kpi-label">Control Tácito (RF-T-28 / RN-T-09)</div><div class="kpi-val" style="font-size:16px;">Día 3 de 10 hábiles (Recordatorio en día 5)</div></div>
-      </div>
-
-      <!-- Visor PDF Simulado (RF-T-27) -->
-      <div class="pdf-preview">
-        <div class="pdf-head">
-          <div>
-            <strong style="color:var(--navy); font-size:16px;">REPORTE MENSUAL DE HORAS DE PROYECTO</strong><br>
-            <span style="font-size:13px; color:var(--muted);">Documento Base Generado Automáticamente · Periodo: Octubre 2026</span>
-          </div>
-          <div style="text-align:right; font-size:12.5px;">
-            <strong>Cliente:</strong> Banco Nacional S.A.<br>
-            <strong>NIT:</strong> 890.123.456-1<br>
-            <strong>Proyecto:</strong> PRY-001 · Modernización Core BPM
-          </div>
-        </div>
-        <div id="pdfDetalleTabla"></div>
-        <div id="cliSelloFirma" class="sig-stamp hidden"></div>
-      </div>
-
-      <div style="margin-top:14px;">
-        <label for="cliObs">Observaciones del Cliente (obligatorio si devuelve el reporte)</label>
-        <textarea id="cliObs" rows="2" placeholder="Ingrese aquí sus observaciones únicamente si solicita corrección al Director..."></textarea>
-      </div>
-      <div class="btn-row" style="justify-content:flex-end; margin-top:12px;">
-        <button class="btn btn-danger" id="btnCliObservar">⚠️ Devolver con Observaciones</button>
-        <button class="btn btn-mint" id="btnCliFirmar">✍️ Firmar Digitalmente (Certificado Pruebas)</button>
-      </div>
-      <div id="clienteFeedback"></div>
-    </div>
-  </section>
-
-  <!-- =================================================================== -->
-  <!-- VISTA 5: GERENCIA Y PARAMETRIZACION (SEMAFORO 80%/100% + RT-15)      -->
-  <!-- =================================================================== -->
-  <section id="view-gerencia" class="view-section hidden">
-    <div class="card">
-      <div class="card-header">
-        <div>
-          <h2 class="card-title">Tablero de Control, Semáforo Presupuestal y Parametrización</h2>
-          <small style="color: var(--muted);">Cuadro de Mandos + Universal Watcher (RF-T-24 / RT-13 / RT-15)</small>
-        </div>
-        <button class="btn btn-mint btn-sm" id="btnSimularAprobacion">⚡ Simular +15h aprobadas en PRY-001 (Probar Alerta 80%)</button>
-      </div>
-
-      <div class="kpi-row">
-        <div class="kpi"><div class="kpi-label">Registros a Tiempo (3.6)</div><div class="kpi-val">84 %</div></div>
-        <div class="kpi"><div class="kpi-label">Registros con Ampliación</div><div class="kpi-val">12 %</div></div>
-        <div class="kpi"><div class="kpi-label">No Enviados</div><div class="kpi-val">4 %</div></div>
-        <div class="kpi"><div class="kpi-label">Tiempo Prom. Aprob. Cliente</div><div class="kpi-val">3.2 días</div></div>
-      </div>
-
-      <h3 style="margin: 12px 0 8px; font-size:15.5px; color:var(--navy);">Semáforo de Presupuesto de Proyectos (RF-T-24)</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Proyecto</th>
-              <th>Director</th>
-              <th>Presupuesto</th>
-              <th>Consumidas</th>
-              <th>% Consumo</th>
-              <th>Semáforo / Estado</th>
-            </tr>
-          </thead>
-          <tbody id="tbodySemaforo"></tbody>
-        </table>
-      </div>
-      <div id="gerenciaAlertas"></div>
-    </div>
-
-    <div class="card">
-      <h3 style="margin:0 0 10px; font-size:16px; color:var(--navy);">Pantalla de Parametrización Global sin Modificar Proceso (RT-15 / RN-T-09)</h3>
-      <div class="grid-3">
-        <div>
-          <label for="paramAlerta80">% Alerta Temprana Presupuesto</label>
-          <input type="number" id="paramAlerta80" value="80" min="50" max="99">
-        </div>
-        <div>
-          <label for="paramDiasRec">Días Hábiles Recordatorio Cliente</label>
-          <input type="number" id="paramDiasRec" value="5" min="1" max="15">
-        </div>
-        <div>
-          <label for="paramDiasTacita">Días Hábiles Aprobación Tácita</label>
-          <input type="number" id="paramDiasTacita" value="10" min="2" max="30">
-        </div>
-      </div>
-      <div class="btn-row" style="justify-content:flex-end; margin-top:12px;">
-        <button class="btn btn-primary btn-sm" id="btnGuardarParams">💾 Aplicar Parámetros</button>
-      </div>
-      <div id="paramFeedback"></div>
-    </div>
-  </section>
 </main>
 
+<div id="toast" class="toast"></div>
+
+<div id="modalCert" class="modal-backdrop">
+  <div class="modal">
+    <h3 style="margin:0 0 8px; color:var(--aq-navy);">🧾 Certificado Mensual Generado Bajo Demanda (V2-10)</h3>
+    <p style="font-size:13px; color:var(--muted); margin:0 0 12px;">Generado al instante leyendo exclusivamente la fila del empleado en <code>FAM_CIERRE_NOMINA_MES</code> (sin almacenar 300 PDFs en disco).</p>
+    <div style="background:#F8FAFC; border:1px solid var(--border); border-radius:8px; padding:12px; font-size:13px; margin-bottom:14px;">
+      <strong>Empleado:</strong> Juan Pérez (CC 1018456789)<br>
+      <strong>Período:</strong> Octubre 2026 • <strong>Días Hábiles Registrados:</strong> 21<br>
+      <strong>Horas Ordinarias:</strong> 178.5 h • <strong>Horas Extra Reales Netas (post-cruce TS.07):</strong> 4.5 h<br>
+      <strong>Permisos Cruzados:</strong> 1.5 h • <strong>Integración Nómina (TS.35):</strong> Recibo HTTP 200 #NOM-202610-OK
+    </div>
+    <div style="text-align:right;">
+      <button class="btn btn-primary" onclick="cerrarModal()">Cerrar Vista Previa</button>
+    </div>
+  </div>
+</div>
+
 <script>
-(function() {
-  const STORAGE_KEY = "aq_caso1_prototipo_v1";
+const PROJECTS = [
+  { id: 'PRY-001', name: 'PRY-001 — Banco Andino Core', active: true },
+  { id: 'PRY-002', name: 'PRY-002 — Seguros Bolívar Cloud', active: true },
+  { id: 'PRY-004', name: 'PRY-004 — Interno Operaciones', active: true }
+];
 
-  const EMPLOYEES = [
-    { id: "EMP-001", name: "Juan Pérez", cargo: "Consultor Senior", leader: "Carlos Mendoza", generaExtras: true, saldo: 2.5 },
-    { id: "EMP-002", name: "Ana Gómez", cargo: "Consultor Junior", leader: "Carlos Mendoza", generaExtras: true, saldo: 0.0 },
-    { id: "EMP-008", name: "Andrés Silva", cargo: "Director de Proyecto", leader: "Laura Díaz", generaExtras: false, saldo: 0.0 }
+let actividades = [
+  { ini: '08:00', fin: '12:00', proy: 'PRY-001', cobro: 'Sí', fuera: false, decision: 'Aprobada', comentario: '' },
+  { ini: '13:00', fin: '17:30', proy: 'PRY-002', cobro: 'Sí', fuera: false, decision: 'Aprobada', comentario: '' },
+  { ini: '17:30', fin: '19:30', proy: 'PRY-001', cobro: 'Sí', fuera: true, decision: 'Aprobada', comentario: 'Soporte ventana nocturna' }
+];
+
+let cierreDirRows = [
+  { emp: 'Juan Pérez', horas: 176, fact: 'Sí', motivo: '' },
+  { emp: 'María Camila Rojas', horas: 164, fact: 'Sí', motivo: '' }
+];
+
+const QA_DATA = [
+  // 32 RF-T
+  ['RF-T-01','RF-T','Admin crea, edita e inactiva project keys y asigna visibilidad por empleado.','Guarda: FAM_PROYECTOS, FAM_ASIGNACIONES','CP-01: Inactivar PRY-008 -> desaparece de TP.01'],
+  ['RF-T-02','RF-T','Sincronización nocturna REST de proyectos; pendientes si falta director.','Guarda: FAM_PROYECTOS','CP-02: JSON sin director -> estado Pendiente Director'],
+  ['RF-T-03','RF-T','Asignación con fecha hasta vencida oculta el proyecto automáticamente.','Lee: FAM_ASIGNACIONES','CP-01: PRY-003 vencido -> no visible en TP.01'],
+  ['RF-T-04','RF-T','Admin mantiene novedades, jornadas y parámetros desde UI sin tocar flujos.','Guarda: FAM_TIPOS_NOVEDAD, FAM_JORNADAS, FAM_PARAMETROS','CP-03: Cambiar MinutosGracia 15->20 aplica en vivo'],
+  ['RF-T-05','RF-T','Crea tarea diaria por empleado activo y evalúa jornada + gracia 15 min.','Lee: Empleados, FAM_JORNADAS, FAM_PARAMETROS','CP-04: Enviar 17:40 entra en gracia sin TP.02'],
+  ['RF-T-06','RF-T','Excluye fines de semana, festivos CO (Nager.Date) e incapacitados activos.','Lee: Calendario CO, FAM_NOVEDADES_EMP','CP-05: 0 instancias en festivo o incapacidad'],
+  ['RF-T-07','RF-T','Registra fecha, inicio, fin, proyecto, ¿Para Cobro? y ¿Fuera Horario?.','Guarda: FAM_DETALLE_ACTIVIDADES','CP-06: Guarda líneas con EsParaCobro=Sí/No'],
+  ['RF-T-08','RF-T','Calcula duración, total día, horas extra reales y diferencia vs jornada en vivo.','Lee: FAM_JORNADAS','CP-06: 11.0h trabajadas muestra +0.5h extra'],
+  ['RF-T-09','RF-T','Permite guardar borrador durante el día sin avanzar trámite.','Guarda temporal TP.01','CP-07: Guardar Borrador conserva filas'],
+  ['RF-T-10','RF-T','Permite precargar actividades del día hábil anterior editables.','Lee: FAM_DETALLE_ACTIVIDADES','CP-07: Precargar Día Anterior clona líneas previas'],
+  ['RF-T-11','RF-T','Actividad marcada Fuera de Horario habilita horas extra hacia TP.03.','Guarda: FAM_HORAS_EXTRA (post-aprobación)','CP-08: 17:30-19:30 FueraHorario enruta a TP.03'],
+  ['RF-T-12','RF-T','Registra novedades (permiso, incapacidad, ausencia, tarde) y horas.','Lee: FAM_TIPOS_NOVEDAD | Guarda: FAM_NOVEDADES_EMP','CP-09: Permiso 2.0h crea saldo de cruce'],
+  ['RF-T-13','RF-T','Bloquea envío si falta soporte obligatorio en incapacidad y lo archiva.','Guarda: BIB_SOPORTES_NOVEDADES','CP-09: Incapacidad sin PDF bloquea botón Enviar'],
+  ['RF-T-14','RF-T','Alerta -30 min (5:00 p. m.) vía correo/App consultando calendario (TS.02C).','Lee: Agenda Calendario','CP-10: Alerta incluye enlace e indicador Ocupado/Libre'],
+  ['RF-T-15','RF-T','Incapacidad por correo usa OCR (≥90% auto) y rechaza remitentes externos.','Guarda: BIB_SOPORTES_NOVEDADES, FAM_NOVEDADES_EMP','CP-11: PDF legible radica auto; Gmail recibe rechazo'],
+  ['RF-T-16','RF-T','Líder/Gerente amplía plazo tras 5:45 p. m. con motivo y timer ET.03.','Guarda: FAM_REGISTROS_DIARIOS','CP-12: Aprueba hasta 20:00 y ET.03 vigila re-envío'],
+  ['RF-T-17','RF-T','Motivo de ampliación obligatorio + indicador A tiempo / Gracia / Ampliado.','Guarda: FAM_REGISTROS_DIARIOS','CP-12: Bloquea TP.02 sin motivo'],
+  ['RF-T-18','RF-T','Líder aprueba o rechaza extras, cobro y horas reales por actividad en TP.03.','Contenedor_Extras -> FAM_HORAS_EXTRA','CP-13: Aprueba 2 líneas y rechaza 1 con comentario'],
+  ['RF-T-19','RF-T','Actividades rechazadas vuelven al empleado 1 sola vez (DX.04 / TP.04).','Actualiza: GC_ACTIVIDADES','CP-13: Reenvío marca Intentos_Correccion=1'],
+  ['RF-T-20','RF-T','Cargos sin derecho a horas extra tienen bloqueado Fuera de Horario.','Lee: Empleado.GeneraHorasExtra','CP-14: Director ve checkbox deshabilitado'],
+  ['RF-T-21','RF-T','Proceso separado (6:15 p. m.) genera 1 único Excel diario para Gerencia.','Lee: FAM_* | Guarda: BIB_INFORMES_DIARIOS','CP-15: Emite exactamente 1 Excel diario consolidado'],
+  ['RF-T-22','RF-T','Motor TS.07 calcula valor real y cruza permisos pendientes vs extras.','Lee: FAM_NOVEDADES_EMP | Guarda: FAM_HORAS_EXTRA','CP-16: 2h extras - 1h permiso = 1h neta guardada'],
+  ['RF-T-23','RF-T','Saldo de compensación acumulado visible en Portal Empleado.','Lee: FAM_SALDO_COMPENSACION','CP-16: Portal refleja nuevo saldo al instante'],
+  ['RF-T-24','RF-T','Actualiza consumo de proyectos y alerta única al 80% y 100% (sobreconsumo).','Lee/Guarda: FAM_PROYECTOS','CP-17: Cruza umbral 80% y marca >100% sin spam'],
+  ['RF-T-25','RF-T','Cierre mensual abre 1 trámite independiente SP.31 por proyecto facturable.','Lee: FAM_DETALLE_ACTIVIDADES | Guarda: FAM_CIERRE_PROYECTO_MES','CP-18: 3 proyectos -> 3 instancias SP.31'],
+  ['RF-T-26','RF-T','Director excluye horas no facturables exigiendo justificación obligatoria.','Lee/Guarda: FAM_CIERRE_PROYECTO_MES','CP-19: Exige motivo y recalcula total del PDF'],
+  ['RF-T-27','RF-T','Genera 1 Reporte PDF por proyecto facturable (logo, NIT) en Portal Cliente.','Guarda: BIB_REPORTES_PROYECTO','CP-19: 1 PDF consolidado en bandeja Cliente'],
+  ['RF-T-28','RF-T','Cliente firma digitalmente o observa; recordatorio día 5 y tácita día 10.','Guarda: FAM_CIERRE_PROYECTO_MES, BIB_REPORTES_PROYECTO','CP-20: Firma, observación y tácita al día 10 OK'],
+  ['RF-T-29','RF-T','Confluencia CA.31+ envía 1 único resumen consolidado a Finanzas al aprobar todo.','Lee: FAM_CIERRE_PROYECTO_MES','CP-21: Correo a Finanzas sale solo al aprobar 3/3'],
+  ['RF-T-30','RF-T','Lote JSON REST a Nómina + descarga bajo demanda de certificados empleado.','Lee/Guarda: FAM_CIERRE_NOMINA_MES','CP-22: Lote 200 OK + certificado al vuelo'],
+  ['RF-T-31','RF-T','Ante fallo Nómina reintenta 3 veces (DX.33) y crea tarea TP.34 para TH.','Lee/Guarda: FAM_CIERRE_NOMINA_MES','CP-23: HTTP 503 x3 abre TP.34 con detalle error'],
+  ['RF-T-32','RF-T','Centro de ayuda buscable en Gestión de Contenidos con fichas de novedad.','Lee: FAM_TIPOS_NOVEDAD','CP-24: Buscar Incapacidad muestra regla soporte'],
+  // 9 RN-T
+  ['RN-T-01','RN-T','Toda actividad requiere project key activo y asignado en la fecha.','Lee: FAM_ASIGNACIONES, FAM_PROYECTOS','CP-01: Proyecto inactivo/vencido nunca listable'],
+  ['RN-T-02','RN-T','Hora de fin debe ser estrictamente posterior a hora de inicio.','Validación TP.01','CP-25: 14:00->12:00 bloquea envío'],
+  ['RN-T-03','RN-T','Horas fuera de jornada exigen marca explícita Fuera de Horario.','Lee: FAM_JORNADAS','CP-25: 18:00-19:00 sin check bloquea envío'],
+  ['RN-T-04','RN-T','Solo Líder directo o Gerente de Operaciones autorizan ampliaciones.','Lee: Empleado.LiderDirecto','CP-12: Empleado común no ve TP.02'],
+  ['RN-T-05','RN-T','Cero traslapes horarios entre actividades del mismo empleado.','Validación TP.01','CP-25: 08-12 y 11-14 dispara alerta traslape'],
+  ['RN-T-06','RN-T','Suma diaria actividades + novedades no puede superar 16 horas.','Validación TP.01','CP-25: >16h bloquea botón Enviar'],
+  ['RN-T-07','RN-T','Extras solo suman si cargo genera extras y Líder aprueba en TP.03.','Guarda: FAM_HORAS_EXTRA','CP-14/CP-13: Exentos y rechazadas suman 0'],
+  ['RN-T-08','RN-T','Actividad excluida en TP.31 sale del PDF cliente pero permanece en Nómina.','FAM_CIERRE_PROYECTO_MES vs FAM_CIERRE_NOMINA_MES','CP-19: Excluir 4h mantiene 100% en Nómina'],
+  ['RN-T-09','RN-T','Porcentajes alerta (80%) y plazos cliente (5 y 10 días) parametrizables.','Lee: FAM_PARAMETROS','CP-03: Editar FAM_PARAMETROS cambia umbral sin despliegue'],
+  // 17 RT
+  ['RT-01','RT','Identidad visual Navy #00015A, Mint #3FF2CF y Segoe UI uniforme.','Estilos globales','CP-26: Inspección visual formularios, PDF y portales'],
+  ['RT-02','RT','Contador único TIEM-@YYYY@-@######@ legible en todos los trámites.','Guarda: FAM_REGISTROS_DIARIOS','CP-04: Consecutivo TIEM-2026-000128 generado'],
+  ['RT-03','RT','Temas de bandeja muestran asunto, empleado, estado y total sin abrir trámite.','Vista Mis Tareas','CP-04: Columnas clave visibles en bandeja'],
+  ['RT-04','RT','Bandejas con prioridad, vencimiento, semáforo y filtros por estado.','Mis Tareas + VET','CP-12: Filtrar vencidos ordena por urgencia'],
+  ['RT-05','RT','Cómputo exclusivo de días/horas hábiles según calendario Colombia.','Lee: Calendario CO','CP-05: 5 días hábiles saltan festivos/finde'],
+  ['RT-06','RT','Suplencias configuradas registrando en auditoría quién atendió realmente.','Grupos de Suplencia','CP-27: Aprobación por suplente queda auditada'],
+  ['RT-07','RT','Ayuda breve de 2-3 líneas integrada en cabecera de cada formulario.','UI Formularios','CP-26: TP.01, TP.02, TP.03, TP.31 y TP.32 OK'],
+  ['RT-08','RT','Trazabilidad completa y descarga de Documento Descriptivo del proceso.','Historial BPMN','CP-27: Descarga PDF auditoría paso a paso'],
+  ['RT-09','RT','3 Bibliotecas Documentales clasificadas por Año/Mes/Tipo.','BIB_INFORMES / SOPORTES / REPORTES','CP-11/15/19: Metadatos ordenados y consultables'],
+  ['RT-10','RT','Diseño adaptativo móvil en aprobaciones y consultas rápidas.','UI Responsive','CP-28: Vista Móvil a 390px sin desborde horizontal'],
+  ['RT-11','RT','Notificaciones accionables con número de trámite, enlace directo y App.','Plantillas TS Notificador','CP-10: Correo 17:00 incluye link directo y estado'],
+  ['RT-12','RT','Portales dedicados por rol (Empleado, Líder, Cliente).','Portales AuraQuantic','CP-29: Cada rol accede únicamente a sus widgets'],
+  ['RT-13','RT','Cuadro de mandos gerencial filtrable por área, estado y cumplimiento.','Cuadro de Mandos','CP-15/17: Distingue A tiempo, Gracia y Ampliado'],
+  ['RT-14','RT','Confidencialidad por rol: ValorHora oculto a empleados; NIT aísla clientes.','Perfiles Seguridad + NIT','CP-30: Empleado sin ValorHora; Cliente A no ve B'],
+  ['RT-15','RT','Parametrización de tiempos, umbrales y tipos sin editar código/flujos.','Lee: FAM_PARAMETROS','CP-03: Cambios en admin surten efecto inmediato'],
+  ['RT-16','RT','Versionado BPMN sin interrumpir instancias abiertas en versión anterior.','Versionado AuraQuantic','CP-31: Publicar v2 mantiene vivos trámites v1'],
+  ['RT-17','RT','Rendimiento (<3s) para cientos de empleados con persistencia en Familias.','Todas las FAM_* + Paginación','CP-32: 300 registros simulados, 0 archivos por empleado'],
+  // 10 V2
+  ['V2-01','V2','Alerta 30 min antes (5:00 p. m.) consultando disponibilidad en Calendario.','Lee: Agenda Calendario (TS.02C)','CP-10: Reunión 17:00-17:45 reporta Ocupado'],
+  ['V2-02','V2','Tiempo de gracia configurable de 15 min (cierre efectivo 5:45 p. m.).','Lee: FAM_PARAMETROS.MinutosGracia','CP-04: Envío a las 17:40 aceptado sin TP.02'],
+  ['V2-03','V2','Temporizador ET.03 vigila que el empleado vuelva a diligenciar tras ampliar.','Lee: Nueva_Hora_Limite','CP-12: Vencer ET.03 notifica y cierra por TS.03'],
+  ['V2-04','V2','Validación ¿Es para cobro? y Horas Extra Reales en TP.01 y TP.03.','Guarda: FAM_DETALLE_ACTIVIDADES, FAM_HORAS_EXTRA','CP-06/13: EsParaCobro y extras reales persistidos'],
+  ['V2-05','V2','Proceso separado TIEM_INFORMES_DIARIOS (6:15 p. m.) emite 1 solo Excel.','Lee: FAM_* | Guarda: BIB_INFORMES_DIARIOS','CP-15: 300 empleados consolidados en 1 único archivo'],
+  ['V2-06','V2','Cruce automático Permisos vs Horas Extra en TS.07 -> FAM_HORAS_EXTRA.','Lee: FAM_NOVEDADES_EMP | Guarda: FAM_HORAS_EXTRA','CP-16: Resta permiso y guarda neto + ValorRealCOP'],
+  ['V2-07','V2','OCR/IA automatiza incapacidades desde correo (≥90% Zero-Touch).','Guarda: BIB_SOPORTES_NOVEDADES, FAM_NOVEDADES_EMP','CP-11: ≥90% automático; <90% pasa a TP.20'],
+  ['V2-08','V2','Pre-bloqueo automático de días de incapacidad para no abrir tarea diaria.','Guarda/Lee: FAM_REGISTROS_DIARIOS','CP-05/11: EI.01 omite empleados incapacitados'],
+  ['V2-09','V2','Cierre mensual consolidado en Familias sin generar PDFs masivos por persona.','Guarda: FAM_CIERRE_PROYECTO_MES, FAM_CIERRE_NOMINA_MES','CP-22: 1 PDF por proyecto + 1 JSON Nómina'],
+  ['V2-10','V2','Certificados mensuales de empleados generados bajo demanda en Portal.','Lee: FAM_CIERRE_NOMINA_MES','CP-22: Botón Descargar Certificado genera PDF al vuelo']
+];
+
+let qaFilter = 'ALL';
+let qaVerified = new Set(QA_DATA.map(r => r[0]));
+
+function toMin(hhmm) {
+  const [h, m] = (hhmm || '00:00').split(':').map(Number);
+  return (isNaN(h) ? 0 : h) * 60 + (isNaN(m) ? 0 : m);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3800);
+}
+
+function toggleMobile() {
+  document.body.classList.toggle('mobile-mode');
+  const btn = document.getElementById('btnToggleMobile');
+  btn.textContent = document.body.classList.contains('mobile-mode') ? '🖥 Vista Desktop' : '📱 Vista Móvil';
+}
+
+function switchTab(id, el) {
+  document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+function cambiarEmpleado() {
+  const esDir = document.getElementById('selEmpleado').value === 'andres';
+  if (esDir) {
+    actividades.forEach(a => { a.fuera = false; });
+    showToast('RF-T-20: Andrés Silva (Director) no genera horas extra. Casilla Fuera de Horario bloqueada.');
+  }
+  renderActividades();
+  recalcularEmp();
+}
+
+function actualizarSimuladoresEmp() {
+  const hora = document.getElementById('selHoraEnvio').value;
+  const agenda = document.getElementById('selAgenda').value;
+  const gracia = Number(document.getElementById('parGracia').value || 15);
+  const b = document.getElementById('bannerSimulacionEmp');
+  const minEnv = toMin(hora);
+  const minFin = toMin('17:30') + gracia;
+  const estadoAgenda = agenda === 'ocupado' ? '📅 Agenda TS.02C (17:00): Ocupado en reunión cliente' : '📅 Agenda TS.02C (17:00): Libre';
+
+  if (minEnv <= toMin('17:30')) {
+    b.className = 'alert-banner alert-ok';
+    b.innerHTML = `<span>✅ <strong>Cumplimiento: A tiempo (${hora})</strong> — Sin necesidad de ampliación.</span><span>${estadoAgenda}</span>`;
+  } else if (minEnv <= minFin) {
+    b.className = 'alert-banner alert-ok';
+    b.innerHTML = `<span>🟢 <strong>Ventana de Gracia (${hora} ≤ cierre efectivo ${Math.floor(minFin/60)}:${String(minFin%60).padStart(2,'0')})</strong> — Aceptado automáticamente por DX.01.</span><span>${estadoAgenda}</span>`;
+  } else {
+    b.className = 'alert-banner alert-warn';
+    b.innerHTML = `<span>⚠️ <strong>Vencido (${hora} &gt; gracia)</strong> — Se enruta a TP.02 (Líder ve "${agenda}") y al aprobar inicia temporizador ET.03.</span><span>${estadoAgenda}</span>`;
+  }
+  document.getElementById('bannerAgendaLider').innerHTML = agenda === 'ocupado'
+    ? '📅 <strong>Agenda Calendario TS.02C:</strong> Ocupado en reunión cliente (17:00–17:45). Motivo respaldado por calendario.'
+    : '📅 <strong>Agenda Calendario TS.02C:</strong> Empleado figuraba Libre a las 17:00. Solicite justificación detallada.';
+}
+
+function renderActividades() {
+  const esDir = document.getElementById('selEmpleado').value === 'andres';
+  const tb = document.getElementById('tbodyActividades');
+  tb.innerHTML = actividades.map((a, idx) => {
+    const dur = Math.max(0, (toMin(a.fin) - toMin(a.ini)) / 60);
+    const exReal = (!esDir && a.fuera) ? dur.toFixed(1) : '0.0';
+    return `<tr>
+      <td><input type="time" value="${a.ini}" onchange="actividades[${idx}].ini=this.value; renderActividades(); recalcularEmp();"></td>
+      <td><input type="time" value="${a.fin}" onchange="actividades[${idx}].fin=this.value; renderActividades(); recalcularEmp();"></td>
+      <td><select onchange="actividades[${idx}].proy=this.value; renderAprobacion();">
+        ${PROJECTS.map(p => `<option value="${p.id}" ${p.id===a.proy?'selected':''}>${p.name}</option>`).join('')}
+      </select></td>
+      <td><select onchange="actividades[${idx}].cobro=this.value; renderAprobacion();">
+        <option value="Sí" ${a.cobro==='Sí'?'selected':''}>Sí (Facturable)</option>
+        <option value="No" ${a.cobro==='No'?'selected':''}>No (Interna)</option>
+      </select></td>
+      <td style="text-align:center;"><input type="checkbox" ${a.fuera?'checked':''} ${esDir?'disabled':''} onchange="actividades[${idx}].fuera=this.checked; renderActividades(); recalcularEmp();"></td>
+      <td><strong>${exReal} h</strong></td>
+      <td><button class="btn btn-sm btn-danger" onclick="eliminarAct(${idx})">🗑</button></td>
+    </tr>`;
+  }).join('');
+  renderAprobacion();
+}
+
+function agregarActividad() {
+  actividades.push({ ini: '19:30', fin: '20:30', proy: 'PRY-002', cobro: 'No', fuera: false, decision: 'Aprobada', comentario: '' });
+  renderActividades();
+  recalcularEmp();
+}
+
+function eliminarAct(idx) {
+  if (actividades.length <= 1) { showToast('Debe existir al menos 1 actividad.'); return; }
+  actividades.splice(idx, 1);
+  renderActividades();
+  recalcularEmp();
+}
+
+function precargarAyer() {
+  actividades = [
+    { ini: '08:00', fin: '12:00', proy: 'PRY-001', cobro: 'Sí', fuera: false, decision: 'Aprobada', comentario: '' },
+    { ini: '13:00', fin: '17:30', proy: 'PRY-001', cobro: 'Sí', fuera: false, decision: 'Aprobada', comentario: '' }
   ];
+  renderActividades();
+  recalcularEmp();
+  showToast('RF-T-10: Actividades del día hábil anterior clonadas desde FAM_DETALLE_ACTIVIDADES.');
+}
 
-  const ASSIGNMENTS = [
-    { emp: "EMP-001", code: "PRY-001", name: "PRY-001 · Modernización Core BPM", active: true, expired: false },
-    { emp: "EMP-001", code: "PRY-002", name: "PRY-002 · Automatización Mesa Ayuda", active: true, expired: false },
-    { emp: "EMP-001", code: "PRY-003", name: "PRY-003 · Portal Proveedores (VENCIDA)", active: true, expired: true },
-    { emp: "EMP-002", code: "PRY-001", name: "PRY-001 · Modernización Core BPM", active: true, expired: false },
-    { emp: "EMP-002", code: "PRY-010", name: "PRY-010 · Capacitación Interna I+D", active: true, expired: false },
-    { emp: "EMP-008", code: "PRY-001", name: "PRY-001 · Modernización Core BPM", active: true, expired: false }
-  ];
+function toggleSoporteNov() {
+  const val = document.getElementById('selTipoNov').value;
+  document.getElementById('grpSoporteNov').style.display = val === 'incapacidad' ? 'flex' : 'none';
+  recalcularEmp();
+}
 
-  const NOVELTY_TYPES = [
-    { id: "NOV-01", name: "Permiso Remunerado", remunerada: true, exigeSoporte: true },
-    { id: "NOV-02", name: "Incapacidad Médica", remunerada: true, exigeSoporte: true },
-    { id: "NOV-03", name: "Ausencia No Justificada", remunerada: false, exigeSoporte: false },
-    { id: "NOV-04", name: "Llegada Tarde", remunerada: false, exigeSoporte: false },
-    { id: "NOV-05", name: "Vacaciones", remunerada: true, exigeSoporte: false }
-  ];
+function recalcularEmp() {
+  const esDir = document.getElementById('selEmpleado').value === 'andres';
+  let totalAct = 0, totalExt = 0;
+  let errorMsg = '';
+  const intervals = [];
 
-  const JORNADAS = {
-    "Lunes": { open: "08:00", close: "17:30", hours: 9.5 },
-    "Martes": { open: "08:00", close: "17:30", hours: 9.5 },
-    "Miércoles": { open: "07:00", close: "17:30", hours: 10.5 },
-    "Jueves": { open: "07:00", close: "17:30", hours: 10.5 },
-    "Viernes": { open: "07:00", close: "17:30", hours: 10.5 }
-  };
-
-  let state = {
-    selectedEmp: "EMP-001",
-    day: "Miércoles",
-    activities: [
-      { start: "07:00", end: "12:00", project: "PRY-001", desc: "Levantamiento de requerimientos y reglas", extra: false },
-      { start: "13:00", end: "17:30", project: "PRY-002", desc: "Modelado de proceso BPMN y pruebas REST", extra: false }
-    ],
-    novelties: [],
-    leaderExtras: [
-      { id: 1, emp: "Juan Pérez", project: "PRY-001", range: "17:30 - 19:30", hours: 2.0, desc: "Despliegue conector REST", status: "Aprobar", comment: "Autorizado por ventana de paso" },
-      { id: 2, emp: "Juan Pérez", project: "PRY-002", range: "19:30 - 20:30", hours: 1.0, desc: "Documentación adicional", status: "Aprobar", comment: "" },
-      { id: 3, emp: "Ana Gómez", project: "PRY-001", range: "17:30 - 18:30", hours: 1.0, desc: "Reunión sin acta", status: "Rechazar", comment: "Reclasificar dentro de horario" }
-    ],
-    directorRows: [
-      { id: 1, date: "2026-10-05", emp: "Juan Pérez", desc: "Diseño de arquitectura AuraQuantic", hours: 8.0, bill: true, reason: "" },
-      { id: 2, date: "2026-10-12", emp: "Ana Gómez", desc: "Capacitación interna de herramientas", hours: 4.0, bill: false, reason: "Actividad interna no cobrable al cliente" },
-      { id: 3, date: "2026-10-20", emp: "Juan Pérez", desc: "Pruebas integrales y firma digital", hours: 6.0, bill: true, reason: "" }
-    ],
-    projectsBudget: [
-      { code: "PRY-001", name: "Modernización Core BPM", director: "Andrés Silva", budget: 500, used: 390, alert80Sent: false, alert100Sent: false },
-      { code: "PRY-002", name: "Automatización Mesa Ayuda", director: "Andrés Silva", budget: 200, used: 196, alert80Sent: true, alert100Sent: false },
-      { code: "PRY-003", name: "Portal Proveedores Energía", director: "Carlos Mendoza", budget: 350, used: 140, alert80Sent: false, alert100Sent: false },
-      { code: "PRY-004", name: "Flujo Siniestros Auto", director: "María Rojas", budget: 400, used: 412, alert80Sent: true, alert100Sent: true }
-    ],
-    params: { alert80: 80, recDays: 5, tacitDays: 10 },
-    clientSigned: false
-  };
-
-  function toMin(hhmm) {
-    if (!hhmm || !hhmm.includes(":")) return null;
-    const parts = hhmm.split(":").map(Number);
-    return parts[0] * 60 + parts[1];
-  }
-
-  function calcDuration(start, end) {
-    const s = toMin(start);
-    const e = toMin(end);
-    if (s === null || e === null || e <= s) return 0;
-    return (e - s) / 60;
-  }
-
-  function getCurrentEmp() {
-    return EMPLOYEES.find(e => e.id === state.selectedEmp) || EMPLOYEES[0];
-  }
-
-  function getValidProjects(empId) {
-    return ASSIGNMENTS.filter(a => a.emp === empId && a.active && !a.expired);
-  }
-
-  function loadDraft() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && Array.isArray(parsed.activities)) {
-          state.activities = parsed.activities;
-          state.novelties = parsed.novelties || [];
-          state.selectedEmp = parsed.selectedEmp || state.selectedEmp;
-          state.day = parsed.day || state.day;
-        }
-      }
-    } catch (e) { /* sin acceso a localStorage */ }
-  }
-
-  function renderEmpleadoSelector() {
-    const sel = document.getElementById("selEmpleado");
-    sel.innerHTML = EMPLOYEES.map(e =>
-      `<option value="${e.id}" ${e.id === state.selectedEmp ? "selected" : ""}>${e.name} — ${e.cargo} (Extras: ${e.generaExtras ? "SÍ" : "NO"})</option>`
-    ).join("");
-    document.getElementById("selDiaSemana").value = state.day;
-    const emp = getCurrentEmp();
-    document.getElementById("empInfoCargo").value = `Líder: ${emp.leader} | Genera Extras: ${emp.generaExtras ? "SÍ" : "NO (RF-T-20)"}`;
-    document.getElementById("kpiSaldoPortal").textContent = `${emp.saldo >= 0 ? "+" : ""}${emp.saldo.toFixed(2)} h`;
-  }
-
-  function updateKPIs() {
-    const actH = state.activities.reduce((acc, a) => acc + calcDuration(a.start, a.end), 0);
-    const novH = state.novelties.reduce((acc, n) => acc + (parseFloat(n.hours) || 0), 0);
-    const jorH = JORNADAS[state.day].hours;
-    const diff = (actH + novH) - jorH;
-    document.getElementById("kpiActHoras").textContent = `${actH.toFixed(2)} h`;
-    document.getElementById("kpiNovHoras").textContent = `${novH.toFixed(2)} h`;
-    const diffEl = document.getElementById("kpiDiffJornada");
-    diffEl.textContent = `${diff >= 0 ? "+" : ""}${diff.toFixed(2)} h`;
-    diffEl.style.color = diff < 0 ? "var(--err)" : (diff > 0 ? "var(--mint-dark)" : "var(--navy)");
-  }
-
-  function renderActivities() {
-    const emp = getCurrentEmp();
-    const projs = getValidProjects(emp.id);
-    const tbody = document.getElementById("tbodyActividades");
-    tbody.innerHTML = state.activities.map((a, idx) => {
-      const dur = calcDuration(a.start, a.end);
-      const projOptions = projs.map(p =>
-        `<option value="${p.code}" ${p.code === a.project ? "selected" : ""}>${p.name}</option>`
-      ).join("");
-      const extraDisabled = emp.generaExtras ? "" : "disabled title='Cargo no genera horas extra (RF-T-20)'";
-      const extraChecked = emp.generaExtras && a.extra ? "checked" : "";
-      return `
-        <tr data-act-idx="${idx}">
-          <td><input type="time" class="act-start" value="${a.start}"></td>
-          <td><input type="time" class="act-end" value="${a.end}"></td>
-          <td><select class="act-proj">${projOptions}</select></td>
-          <td><input type="text" class="act-desc" value="${a.desc || ""}" placeholder="Descripción de tarea..."></td>
-          <td style="text-align:center;">
-            <input type="checkbox" class="act-extra" ${extraChecked} ${extraDisabled}>
-          </td>
-          <td><strong>${dur.toFixed(2)} h</strong></td>
-          <td><button class="btn btn-danger btn-sm act-del" type="button">✖</button></td>
-        </tr>
-      `;
-    }).join("");
-
-    tbody.querySelectorAll("tr").forEach(tr => {
-      const idx = Number(tr.dataset.actIdx);
-      tr.querySelector(".act-start").addEventListener("change", e => { state.activities[idx].start = e.target.value; renderActivities(); });
-      tr.querySelector(".act-end").addEventListener("change", e => { state.activities[idx].end = e.target.value; renderActivities(); });
-      tr.querySelector(".act-proj").addEventListener("change", e => { state.activities[idx].project = e.target.value; });
-      tr.querySelector(".act-desc").addEventListener("input", e => { state.activities[idx].desc = e.target.value; });
-      tr.querySelector(".act-extra").addEventListener("change", e => { state.activities[idx].extra = e.target.checked; });
-      tr.querySelector(".act-del").addEventListener("click", () => { state.activities.splice(idx, 1); renderActivities(); });
-    });
-    updateKPIs();
-  }
-
-  function renderNovelties() {
-    const tbody = document.getElementById("tbodyNovedades");
-    if (state.novelties.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--muted);">Sin novedades registradas hoy. Use "+ Agregar Novedad" si tuvo permiso, incapacidad o ausencia.</td></tr>`;
-      updateKPIs();
-      return;
+  for (const a of actividades) {
+    const s = toMin(a.ini), e = toMin(a.fin);
+    if (e <= s) errorMsg = 'RN-T-02: Fin <= Inicio';
+    const dur = Math.max(0, (e - s) / 60);
+    totalAct += dur;
+    if (!esDir && a.fuera) totalExt += dur;
+    if (!a.fuera && (s < toMin('07:00') || e > toMin('17:30'))) {
+      if (!errorMsg) errorMsg = 'RN-T-03: Exige marcar Fuera Horario';
     }
-    tbody.innerHTML = state.novelties.map((n, idx) => {
-      const typeObj = NOVELTY_TYPES.find(t => t.id === n.type) || NOVELTY_TYPES[0];
-      const opts = NOVELTY_TYPES.map(t => `<option value="${t.id}" ${t.id === n.type ? "selected" : ""}>${t.name}${t.exigeSoporte ? " (Exige Soporte)" : ""}</option>`).join("");
-      const reqBadge = typeObj.exigeSoporte ? `<span class="req-star">* Obligatorio</span>` : `<span style="color:var(--muted); font-size:12px;">Opcional</span>`;
-      return `
-        <tr data-nov-idx="${idx}">
-          <td><select class="nov-type">${opts}</select></td>
-          <td><input type="number" class="nov-hours" min="0.5" max="12" step="0.5" value="${n.hours}"></td>
-          <td><input type="text" class="nov-obs" value="${n.obs || ""}" placeholder="Detalle o número de incapacidad..."></td>
-          <td>
-            ${reqBadge}
-            <input type="file" class="nov-file" style="margin-top:3px; font-size:11.5px;">
-            ${n.fileName ? `<div style="font-size:11px; color:var(--ok);">📎 ${n.fileName}</div>` : ""}
-          </td>
-          <td><button class="btn btn-danger btn-sm nov-del" type="button">✖</button></td>
-        </tr>
-      `;
-    }).join("");
+    intervals.push([s, e]);
+  }
+  intervals.sort((x, y) => x[0] - y[0]);
+  for (let i = 1; i < intervals.length; i++) {
+    if (intervals[i][0] < intervals[i - 1][1]) errorMsg = 'RN-T-05: Traslape de horas';
+  }
+  const novH = Number(document.getElementById('inpHorasNov').value || 0);
+  if (totalAct + novH > 16) errorMsg = 'RN-T-06: Supera 16.0 h/día';
 
-    tbody.querySelectorAll("tr").forEach(tr => {
-      const idx = Number(tr.dataset.novIdx);
-      tr.querySelector(".nov-type").addEventListener("change", e => { state.novelties[idx].type = e.target.value; renderNovelties(); });
-      tr.querySelector(".nov-hours").addEventListener("input", e => { state.novelties[idx].hours = parseFloat(e.target.value) || 0; updateKPIs(); });
-      tr.querySelector(".nov-obs").addEventListener("input", e => { state.novelties[idx].obs = e.target.value; });
-      tr.querySelector(".nov-file").addEventListener("change", e => {
-        state.novelties[idx].fileName = e.target.files && e.target.files[0] ? e.target.files[0].name : "";
-        renderNovelties();
-      });
-      tr.querySelector(".nov-del").addEventListener("click", () => { state.novelties.splice(idx, 1); renderNovelties(); });
-    });
-    updateKPIs();
+  document.getElementById('kpiTotalAct').textContent = totalAct.toFixed(1) + ' h';
+  document.getElementById('kpiExtrasReales').textContent = totalExt.toFixed(1) + ' h';
+  document.getElementById('kpiNovHoras').textContent = novH.toFixed(1) + ' h';
+  const est = document.getElementById('kpiEstadoVal');
+  const sub = document.getElementById('kpiEstadoSub');
+  if (errorMsg) {
+    est.textContent = 'Bloqueado';
+    est.style.color = 'var(--err)';
+    sub.textContent = errorMsg;
+  } else {
+    est.textContent = 'Válido';
+    est.style.color = 'var(--ok)';
+    sub.textContent = 'Listo para guardar en Familias';
   }
 
-  function validateDailySubmission() {
-    const errors = [];
-    const emp = getCurrentEmp();
-    const jor = JORNADAS[state.day];
-    const jOpen = toMin(jor.open);
-    const jClose = toMin(jor.close);
+  const tipoNov = document.getElementById('selTipoNov').value;
+  const permisoCruzar = (tipoNov === 'permiso' || tipoNov === 'tarde') ? novH : 0;
+  const extraNeta = Math.max(0, totalExt - permisoCruzar);
+  const saldoFavor = Math.max(0, permisoCruzar - totalExt);
+  document.getElementById('boxCrucePreview').innerHTML = `
+    <strong>Extras reales aprobables:</strong> ${totalExt.toFixed(1)} h<br>
+    <strong>(-) Permiso / Llegada tarde pendiente:</strong> ${permisoCruzar.toFixed(1)} h<br>
+    <strong>(=) Neto guardado en <code>FAM_HORAS_EXTRA</code>:</strong> <strong>${extraNeta.toFixed(1)} h</strong> (Valor COP solo visible a TH)<br>
+    ${saldoFavor > 0 ? `<span style="color:var(--warn);">Quedan ${saldoFavor.toFixed(1)} h pendientes en <code>FAM_SALDO_COMPENSACION</code>.</span>` : '<span style="color:var(--ok);">Cruce cubierto al 100 % sin deuda pendiente.</span>'}
+  `;
+}
 
-    if (state.activities.length === 0 && state.novelties.length === 0) {
-      errors.push("Debe registrar al menos una actividad o novedad antes de enviar.");
-    }
+function guardarBorrador() {
+  showToast('💾 Borrador guardado en TP.01 sin avanzar token (RF-T-09).');
+}
 
-    const intervals = [];
-    state.activities.forEach((a, i) => {
-      const s = toMin(a.start);
-      const e = toMin(a.end);
-      if (s === null || e === null || e <= s) {
-        errors.push(`RN-T-02 (Actividad #${i + 1}): La hora de fin debe ser posterior a la hora de inicio.`);
-        return;
-      }
-      if ((s < jOpen || e > jClose) && !(emp.generaExtras && a.extra)) {
-        errors.push(`RN-T-03 / RF-T-20 (Actividad #${i + 1}): Registra horas fuera de jornada (${jor.open}–${jor.close}) sin marca "Fuera de Horario" habilitada.`);
-      }
-      if (!a.desc || !a.desc.trim()) {
-        errors.push(`RF-T-07 (Actividad #${i + 1}): Falta ingresar la descripción.`);
-      }
-      intervals.push({ idx: i + 1, s, e });
-    });
-
-    // RN-T-05: No traslape
-    for (let i = 0; i < intervals.length; i++) {
-      for (let j = i + 1; j < intervals.length; j++) {
-        if (intervals[i].s < intervals[j].e && intervals[j].s < intervals[i].e) {
-          errors.push(`RN-T-05: Las actividades #${intervals[i].idx} y #${intervals[j].idx} se traslapan en el tiempo.`);
-        }
-      }
-    }
-
-    // RN-T-06: Maximo 16 horas
-    const totalAct = state.activities.reduce((acc, a) => acc + calcDuration(a.start, a.end), 0);
-    const totalNov = state.novelties.reduce((acc, n) => acc + (parseFloat(n.hours) || 0), 0);
-    if (totalAct + totalNov > 16) {
-      errors.push(`RN-T-06: El total registrado (${(totalAct + totalNov).toFixed(2)} h) supera el límite máximo permitido de 16 horas diarias.`);
-    }
-
-    // RF-T-13: Soporte obligatorio
-    state.novelties.forEach((n, i) => {
-      const t = NOVELTY_TYPES.find(x => x.id === n.type);
-      if (t && t.exigeSoporte && !n.fileName) {
-        errors.push(`RF-T-13 (Novedad #${i + 1} - ${t.name}): Exige adjuntar soporte obligatorio para poder enviar.`);
-      }
-    });
-
-    return errors;
+function enviarTP01() {
+  if (document.getElementById('kpiEstadoVal').textContent === 'Bloqueado') {
+    showToast('❌ ' + document.getElementById('kpiEstadoSub').textContent);
+    return;
   }
-
-  function renderLiderExtras() {
-    const tbody = document.getElementById("tbodyExtrasLider");
-    tbody.innerHTML = state.leaderExtras.map((item, idx) => `
-      <tr data-ext-idx="${idx}">
-        <td>${item.emp}</td>
-        <td><strong>${item.project}</strong></td>
-        <td>${item.range}</td>
-        <td>${item.hours.toFixed(1)} h</td>
-        <td>${item.desc}</td>
-        <td>
-          <select class="ext-dec">
-            <option value="Aprobar" ${item.status === "Aprobar" ? "selected" : ""}>✔️ Aprobar</option>
-            <option value="Rechazar" ${item.status === "Rechazar" ? "selected" : ""}>↩️ Rechazar</option>
-          </select>
-        </td>
-        <td><input type="text" class="ext-comm" value="${item.comment}" placeholder="Comentario (obligatorio al rechazar)"></td>
-      </tr>
-    `).join("");
-
-    tbody.querySelectorAll("tr").forEach(tr => {
-      const idx = Number(tr.dataset.extIdx);
-      tr.querySelector(".ext-dec").addEventListener("change", e => { state.leaderExtras[idx].status = e.target.value; updateLiderSummary(); });
-      tr.querySelector(".ext-comm").addEventListener("input", e => { state.leaderExtras[idx].comment = e.target.value; });
-    });
-    updateLiderSummary();
+  const tipo = document.getElementById('selTipoNov').value;
+  if (tipo === 'incapacidad' && !document.getElementById('inpSoporteNov').value.trim()) {
+    showToast('❌ RF-T-13: La incapacidad exige adjuntar soporte en BIB_SOPORTES_NOVEDADES.');
+    return;
   }
+  showToast('✅ Enviado a FAM_DETALLE_ACTIVIDADES + FAM_REGISTROS_DIARIOS. Sin archivos sueltos generados.');
+}
 
-  function updateLiderSummary() {
-    const apr = state.leaderExtras.filter(x => x.status === "Aprobar").reduce((a, b) => a + b.hours, 0);
-    const rej = state.leaderExtras.filter(x => x.status === "Rechazar").reduce((a, b) => a + b.hours, 0);
-    document.getElementById("resumenExtrasLider").textContent = `Resumen: ${apr.toFixed(1)} h aprobadas para horas extra | ${rej.toFixed(1)} h devueltas al empleado (RF-T-19)`;
+function renderAprobacion() {
+  const extRows = actividades.map((a, idx) => ({ a, idx })).filter(x => x.a.fuera);
+  const tb = document.getElementById('tbodyAprobacion');
+  if (!extRows.length) {
+    tb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);">No hay actividades fuera de horario en este registro.</td></tr>';
+    document.getElementById('lblResumenTP03').textContent = '0 extras para revisar';
+    return;
   }
+  tb.innerHTML = extRows.map(({ a, idx }) => {
+    const dur = Math.max(0, (toMin(a.fin) - toMin(a.ini)) / 60).toFixed(1);
+    return `<tr>
+      <td><strong>${a.proy}</strong> (${a.ini}-${a.fin})</td>
+      <td>${a.cobro}</td>
+      <td><strong>${dur} h</strong></td>
+      <td><select onchange="actividades[${idx}].decision=this.value; actualizarResumenTP03();">
+        <option value="Aprobada" ${a.decision==='Aprobada'?'selected':''}>✔ Aprobada</option>
+        <option value="Rechazada" ${a.decision==='Rechazada'?'selected':''}>↩ Rechazada</option>
+      </select></td>
+      <td><input type="text" value="${a.comentario}" placeholder="Comentario obligatorio si rechaza" onchange="actividades[${idx}].comentario=this.value;"></td>
+    </tr>`;
+  }).join('');
+  actualizarResumenTP03();
+}
 
-  function renderDirectorCierre() {
-    const tbody = document.getElementById("tbodyCierreDirector");
-    tbody.innerHTML = state.directorRows.map((row, idx) => `
-      <tr data-dir-idx="${idx}">
-        <td>${row.date}</td>
-        <td>${row.emp}</td>
-        <td>${row.desc}</td>
-        <td><strong>${row.hours.toFixed(1)} h</strong></td>
-        <td>
-          <select class="dir-bill">
-            <option value="SI" ${row.bill ? "selected" : ""}>✔️ Facturar</option>
-            <option value="NO" ${!row.bill ? "selected" : ""}>🚫 Excluir</option>
-          </select>
-        </td>
-        <td><input type="text" class="dir-reason" value="${row.reason}" ${row.bill ? "disabled placeholder='No requiere'" : "placeholder='Justificación obligatoria *'"}></td>
-        <td><span class="badge badge-ok">Cuenta 100%</span></td>
-      </tr>
-    `).join("");
+function actualizarResumenTP03() {
+  const extRows = actividades.filter(a => a.fuera);
+  const apr = extRows.filter(a => a.decision === 'Aprobada').length;
+  const rec = extRows.length - apr;
+  document.getElementById('lblResumenTP03').textContent = `Aprobadas: ${apr} (van a TS.07) | Rechazadas: ${rec} (DX.04 -> TP.04 1 vez)`;
+}
 
-    tbody.querySelectorAll("tr").forEach(tr => {
-      const idx = Number(tr.dataset.dirIdx);
-      tr.querySelector(".dir-bill").addEventListener("change", e => {
-        state.directorRows[idx].bill = e.target.value === "SI";
-        renderDirectorCierre();
-      });
-      tr.querySelector(".dir-reason").addEventListener("input", e => { state.directorRows[idx].reason = e.target.value; });
-    });
+function decidirAmpliacion(ok) {
+  const mot = document.getElementById('txtMotivoLider').value.trim();
+  if (ok && !mot) { showToast('❌ RF-T-17: El motivo de ampliación es obligatorio.'); return; }
+  const lim = document.getElementById('inpNuevaHoraLider').value;
+  showToast(ok ? `✔ Ampliado hasta ${lim}. Inicia temporizador ET.03 de control sobre TP.01.` : '✖ Ampliación rechazada. Cierre TS.03 aplicado.');
+}
 
-    const totalReg = state.directorRows.reduce((a, b) => a + b.hours, 0);
-    const totalFac = state.directorRows.filter(r => r.bill).reduce((a, b) => a + b.hours, 0);
-    const totalExc = totalReg - totalFac;
-    document.getElementById("dirTotalReg").textContent = `${totalReg.toFixed(1)} h`;
-    document.getElementById("dirTotalExc").textContent = `${totalExc.toFixed(1)} h`;
-    document.getElementById("dirTotalFac").textContent = `${totalFac.toFixed(1)} h`;
-    renderClientePdf();
+function confirmarTP03() {
+  const invalid = actividades.some(a => a.fuera && a.decision === 'Rechazada' && !a.comentario.trim());
+  if (invalid) { showToast('❌ RF-T-18: Indica comentario en actividades rechazadas.'); return; }
+  showToast('✅ TP.03 confirmado. Motor TS.07 ejecutó cruce y actualizó FAM_HORAS_EXTRA y FAM_SALDO_COMPENSACION.');
+}
+
+function renderCierreDir() {
+  const tb = document.getElementById('tbodyCierreDir');
+  tb.innerHTML = cierreDirRows.map((r, i) => `<tr>
+    <td><strong>${r.emp}</strong></td>
+    <td>${r.horas}.0 h</td>
+    <td><select onchange="cierreDirRows[${i}].fact=this.value; recalcCierreDir();">
+      <option value="Sí" ${r.fact==='Sí'?'selected':''}>Sí</option>
+      <option value="No" ${r.fact==='No'?'selected':''}>No (Excluir)</option>
+    </select></td>
+    <td><input type="text" value="${r.motivo}" placeholder="${r.fact==='No'?'Justificación obligatoria':'Opcional'}" onchange="cierreDirRows[${i}].motivo=this.value;"></td>
+  </tr>`).join('');
+  recalcCierreDir();
+}
+
+function recalcCierreDir() {
+  const nom = cierreDirRows.reduce((s, r) => s + r.horas, 0);
+  const fac = cierreDirRows.filter(r => r.fact === 'Sí').reduce((s, r) => s + r.horas, 0);
+  document.getElementById('lblTotalFactDir').textContent = `Total Facturable: ${fac.toFixed(1)} h | Total Nómina (RN-T-08): ${nom.toFixed(1)} h`;
+  document.getElementById('lblHorasPDFCliente').textContent = `Horas facturables certificadas: ${fac.toFixed(1)} h (1 PDF único del proyecto)`;
+}
+
+function emitirPDFProyecto() {
+  const bad = cierreDirRows.some(r => r.fact === 'No' && !r.motivo.trim());
+  if (bad) { showToast('❌ RF-T-26: Debes justificar cualquier exclusión antes de emitir el PDF.'); return; }
+  document.getElementById('lblEstadoCliente').textContent = 'Reporte_PRY001_202610.pdf — Enviado a Portal Cliente (NIT)';
+  showToast('📄 1 Reporte PDF del proyecto guardado en BIB_REPORTES_PROYECTO y enviado a TP.32.');
+}
+
+function accionCliente(ok) {
+  if (!ok && !document.getElementById('inpObsCliente').value.trim()) {
+    showToast('❌ Ingresa la observación antes de devolver al Director.');
+    return;
   }
+  document.getElementById('lblEstadoCliente').textContent = ok
+    ? 'Reporte_PRY001_202610.pdf — ✔ FIRMADO DIGITALMENTE (Confluencia CA.31+)'
+    : 'Reporte_PRY001_202610.pdf — ↩ OBSERVADO (Regresó a TP.31)';
+  showToast(ok ? '✍ Firma sellada. Al cerrar todos los proyectos, CA.31+ envía 1 resumen a Finanzas.' : '↩ Devuelto a TP.31 para ajuste.');
+}
 
-  function renderClientePdf() {
-    const billable = state.directorRows.filter(r => r.bill);
-    const total = billable.reduce((a, b) => a + b.hours, 0);
-    const rowsHtml = billable.map(r => `
-      <tr>
-        <td>${r.date}</td>
-        <td>${r.emp}</td>
-        <td>${r.desc}</td>
-        <td style="text-align:right;"><strong>${r.hours.toFixed(1)} h</strong></td>
-      </tr>
-    `).join("");
-    document.getElementById("pdfDetalleTabla").innerHTML = `
-      <div class="table-wrap">
-        <table style="min-width:100%;">
-          <thead><tr><th>Fecha</th><th>Consultor</th><th>Actividad Validada</th><th style="text-align:right;">Horas Facturables</th></tr></thead>
-          <tbody>${rowsHtml}</tbody>
-          <tfoot>
-            <tr><td colspan="3" style="text-align:right; font-weight:700;">TOTAL HORAS CERTIFICADAS PARA FACTURACIÓN:</td><td style="text-align:right; font-weight:800; color:var(--navy);">${total.toFixed(1)} h</td></tr>
-          </tfoot>
-        </table>
-      </div>
-    `;
+function simularCorreoOCR(tipo) {
+  const box = document.getElementById('boxResultadoOCR');
+  const man = document.getElementById('panelTP20Manual');
+  const umbral = Number(document.getElementById('parOCR').value || 90);
+  if (tipo === 'auto') {
+    man.style.display = 'none';
+    box.className = 'alert-banner alert-ok';
+    box.innerHTML = `<span>🤖 <strong>Zero-Touch Automático (OCR 96 % ≥ ${umbral} %):</strong> CIE-10 J03.9 y fechas 2026-10-28..30 archivadas en <code>BIB_SOPORTES_NOVEDADES</code>, guardadas en <code>FAM_NOVEDADES_EMP</code> y 3 días pre-bloqueados en <code>FAM_REGISTROS_DIARIOS</code>.</span>`;
+  } else if (tipo === 'manual') {
+    man.style.display = 'block';
+    box.className = 'alert-banner alert-warn';
+    box.innerHTML = `<span>⚠️ <strong>Confianza 65 % (&lt; ${umbral} %):</strong> DX.23 deriva soporte archivado a bandeja manual <code>TP.20 Talento Humano</code> para confirmación.</span>`;
+  } else {
+    man.style.display = 'none';
+    box.className = 'alert-banner alert-err';
+    box.innerHTML = `<span>🚫 <strong>Remitente no corporativo:</strong> Correo externo rechazado automáticamente (RF-T-15) sin crear registro en Familias.</span>`;
   }
+}
 
-  function renderSemaforo() {
-    const threshold = state.params.alert80;
-    const tbody = document.getElementById("tbodySemaforo");
-    tbody.innerHTML = state.projectsBudget.map(p => {
-      const pct = (p.used / p.budget) * 100;
-      let badge = `<span class="badge badge-ok"><span class="dot dot-green"></span>Verde (&lt;${threshold}%)</span>`;
-      if (pct > 100) {
-        badge = `<span class="badge badge-err"><span class="dot dot-red"></span>Rojo · En Sobreconsumo</span>`;
-      } else if (pct >= threshold) {
-        badge = `<span class="badge badge-warn"><span class="dot dot-yellow"></span>Amarillo (${threshold}–100%)</span>`;
-      }
-      return `
-        <tr>
-          <td><strong>${p.code}</strong></td>
-          <td>${p.name}</td>
-          <td>${p.director}</td>
-          <td>${p.budget} h</td>
-          <td>${p.used} h</td>
-          <td><strong>${pct.toFixed(1)} %</strong></td>
-          <td>${badge}</td>
-        </tr>
-      `;
-    }).join("");
-  }
+function confirmarTP20TH() {
+  document.getElementById('panelTP20Manual').style.display = 'none';
+  showToast('✅ TP.20 confirmado: FAM_NOVEDADES_EMP actualizada y 3 días bloqueados en FAM_REGISTROS_DIARIOS.');
+}
 
-  // Navegación entre roles y modo móvil
-  document.querySelectorAll(".nav-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      const target = btn.dataset.view;
-      document.querySelectorAll(".view-section").forEach(sec => sec.classList.add("hidden"));
-      document.getElementById(`view-${target}`).classList.remove("hidden");
-    });
+function aplicarParametros() {
+  const g = document.getElementById('parGracia').value;
+  const a = document.getElementById('parAlerta').value;
+  const o = document.getElementById('parOCR').value;
+  document.getElementById('lblGraciaParam').textContent = g;
+  document.getElementById('lblAlertaParam').textContent = a;
+  document.getElementById('badgeGracia').textContent = `🟢 Gracia ${g} min activa`;
+  document.getElementById('badgeAlerta').textContent = `⏰ Alerta -${a}m programada`;
+  document.getElementById('lblUmbralOCR').textContent = o;
+  actualizarSimuladoresEmp();
+  showToast('⚙ FAM_PARAMETROS actualizada en vivo (RT-15 / RF-T-04).');
+}
+
+function simularRestNomina() {
+  showToast('📡 TS.35: Lote JSON (312 empleados) desde FAM_CIERRE_NOMINA_MES recibido HTTP 200 OK. Sin PDFs masivos.');
+}
+
+function abrirCertificado() { document.getElementById('modalCert').style.display = 'flex'; }
+function cerrarModal() { document.getElementById('modalCert').style.display = 'none'; }
+
+function filtrarQA(cat, btn) {
+  qaFilter = cat;
+  document.querySelectorAll('.chip-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderQA();
+}
+
+function toggleQAItem(id) {
+  if (qaVerified.has(id)) qaVerified.delete(id);
+  else qaVerified.add(id);
+  renderQA();
+}
+
+function renderQA() {
+  const q = (document.getElementById('inpBuscarQA').value || '').toLowerCase().trim();
+  const list = QA_DATA.filter(r => {
+    const okCat = qaFilter === 'ALL' || r[1] === qaFilter;
+    const okTxt = !q || r.join(' ').toLowerCase().includes(q);
+    return okCat && okTxt;
   });
+  document.getElementById('tbodyQA').innerHTML = list.map(r => {
+    const isOk = qaVerified.has(r[0]);
+    const badgeCls = r[1]==='V2' ? 'b-purple' : (r[1]==='RN-T' ? 'b-warn' : (r[1]==='RT' ? 'b-navy' : 'b-ok'));
+    return `<tr>
+      <td><strong>${r[0]}</strong></td>
+      <td><span class="badge ${badgeCls}">${r[1]}</span></td>
+      <td>${r[2]}</td>
+      <td><code>${r[3]}</code></td>
+      <td>${r[4]}</td>
+      <td><button class="btn btn-sm ${isOk?'btn-mint':'btn-danger'}" onclick="toggleQAItem('${r[0]}')">${isOk?'✔ Verificado':'⏳ Pendiente'}</button></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('lblContadorQA').textContent = `${qaVerified.size} / ${QA_DATA.length} Verificados`;
+}
 
-  document.getElementById("btnMobileToggle").addEventListener("click", function() {
-    this.classList.toggle("active");
-    document.getElementById("appShell").classList.toggle("mobile-mode");
-  });
-
-  // Eventos Vista Empleado
-  document.getElementById("selEmpleado").addEventListener("change", e => {
-    state.selectedEmp = e.target.value;
-    const valid = getValidProjects(state.selectedEmp);
-    state.activities.forEach(a => {
-      if (!valid.some(v => v.code === a.project)) a.project = valid[0] ? valid[0].code : "";
-      if (!getCurrentEmp().generaExtras) a.extra = false;
-    });
-    renderEmpleadoSelector();
-    renderActivities();
-  });
-
-  document.getElementById("selDiaSemana").addEventListener("change", e => {
-    state.day = e.target.value;
-    updateKPIs();
-  });
-
-  document.getElementById("btnAgregarAct").addEventListener("click", () => {
-    const valid = getValidProjects(state.selectedEmp);
-    state.activities.push({ start: "17:30", end: "18:30", project: valid[0] ? valid[0].code : "", desc: "", extra: getCurrentEmp().generaExtras });
-    renderActivities();
-  });
-
-  document.getElementById("btnAgregarNov").addEventListener("click", () => {
-    state.novelties.push({ type: "NOV-02", hours: 2.0, obs: "", fileName: "" });
-    renderNovelties();
-  });
-
-  document.getElementById("btnPrecargar").addEventListener("click", () => {
-    const valid = getValidProjects(state.selectedEmp);
-    const p1 = valid[0] ? valid[0].code : "PRY-001";
-    state.activities = [
-      { start: "07:00", end: "12:30", project: p1, desc: "[Precargado] Continuidad desarrollo fase 4", extra: false },
-      { start: "13:30", end: "17:30", project: p1, desc: "[Precargado] Atención soporte y pruebas", extra: false }
-    ];
-    renderActivities();
-    document.getElementById("empFeedback").innerHTML = `<div class="alert alert-ok">📋 Actividades del día hábil anterior precargadas (RF-T-10). Ajuste horarios o descripciones antes de enviar.</div>`;
-  });
-
-  document.getElementById("btnGuardarBorrador").addEventListener("click", () => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
-    document.getElementById("empEstadoBadge").textContent = "Estado: Borrador Guardado";
-    document.getElementById("empFeedback").innerHTML = `<div class="alert alert-ok">💾 Avance guardado como borrador sin cerrar el trámite (RF-T-09).</div>`;
-  });
-
-  document.getElementById("btnLimpiarDia").addEventListener("click", () => {
-    state.activities = [];
-    state.novelties = [];
-    renderActivities();
-    renderNovelties();
-    document.getElementById("empFeedback").innerHTML = "";
-  });
-
-  document.getElementById("btnEnviarRegistro").addEventListener("click", () => {
-    const errs = validateDailySubmission();
-    const fb = document.getElementById("empFeedback");
-    if (errs.length > 0) {
-      fb.innerHTML = `<div class="alert alert-err"><strong>No se puede enviar (Reglas de Negocio):</strong><ul>${errs.map(e => `<li>${e}</li>`).join("")}</ul></div>`;
-      return;
-    }
-    const hasExtras = state.activities.some(a => a.extra);
-    document.getElementById("empEstadoBadge").textContent = hasExtras ? "Estado: En Aprobación Horas Extra" : "Estado: Cerrado A Tiempo";
-    fb.innerHTML = `<div class="alert alert-ok">✅ Registro enviado correctamente. ${hasExtras ? "Se enviaron las actividades fuera de horario a aprobación de " + getCurrentEmp().leader + " (RF-T-18)." : "Trámite cerrado y sumado al consolidado diario (RF-T-21)."}</div>`;
-  });
-
-  // Eventos Vista Líder
-  document.getElementById("btnAutorizarAmp").addEventListener("click", () => {
-    const motivo = document.getElementById("motivoAmp").value.trim();
-    const hora = document.getElementById("horaAmp").value;
-    const fb = document.getElementById("ampFeedback");
-    if (!motivo) {
-      fb.innerHTML = `<div class="alert alert-err">RF-T-17: Debe ingresar un motivo obligatorio para autorizar la ampliación.</div>`;
-      return;
-    }
-    if (!hora || toMin(hora) > toMin("22:00")) {
-      fb.innerHTML = `<div class="alert alert-err">La nueva hora límite no puede superar las 22:00.</div>`;
-      return;
-    }
-    document.getElementById("estadoAnaBandeja").textContent = `Ampliado hasta ${hora}`;
-    fb.innerHTML = `<div class="alert alert-ok">✔️ Ampliación autorizada hasta las ${hora}. Notificación enviada a Ana Gómez y trazabilidad registrada (RF-T-16 / RF-T-17).</div>`;
-  });
-
-  document.getElementById("btnRechazarAmp").addEventListener("click", () => {
-    document.getElementById("estadoAnaBandeja").textContent = "Cerrado sin envío";
-    document.getElementById("ampFeedback").innerHTML = `<div class="alert alert-warn">Solicitud denegada. El registro queda marcado como "No enviado" en el indicador de cumplimiento.</div>`;
-  });
-
-  document.getElementById("btnGuardarExtras").addEventListener("click", () => {
-    const missingComment = state.leaderExtras.some(x => x.status === "Rechazar" && !x.comment.trim());
-    const fb = document.getElementById("extrasFeedback");
-    if (missingComment) {
-      fb.innerHTML = `<div class="alert alert-err">RF-T-18: Toda actividad rechazada requiere un comentario obligatorio para el empleado.</div>`;
-      return;
-    }
-    fb.innerHTML = `<div class="alert alert-ok">✅ Decisiones procesadas: actividades aprobadas sumadas al cálculo de horas extra y saldo compensatorio; rechazadas devueltas al empleado (RF-T-19).</div>`;
-  });
-
-  // Eventos Vista Director
-  document.getElementById("btnValidarCierre").addEventListener("click", () => {
-    const invalid = state.directorRows.some(r => !r.bill && !r.reason.trim());
-    const fb = document.getElementById("directorFeedback");
-    if (invalid) {
-      fb.innerHTML = `<div class="alert alert-err">RF-T-26: Debe ingresar justificación para cada actividad excluida de facturación.</div>`;
-      return;
-    }
-    renderClientePdf();
-    fb.innerHTML = `<div class="alert alert-ok">📄 Cierre validado. Reporte PDF generado con Documento Base y publicado en el Portal del Cliente Banco Nacional S.A. (RF-T-27).</div>`;
-  });
-
-  // Eventos Vista Cliente
-  document.getElementById("btnCliFirmar").addEventListener("click", () => {
-    state.clientSigned = true;
-    const now = new Date().toLocaleString("es-CO");
-    document.getElementById("cliEstadoFirma").textContent = "Firmado Digitalmente ✔️";
-    document.getElementById("cliEstadoFirma").style.color = "var(--ok)";
-    const sello = document.getElementById("cliSelloFirma");
-    sello.classList.remove("hidden");
-    sello.innerHTML = `<strong>✍️ FIRMADO DIGITALMENTE (RF-T-28)</strong><br>Firmante: Roberto Méndez (Banco Nacional S.A. - NIT 890.123.456-1) | Certificado: <code>Certificado_Pruebas_Bootcamp_2026</code> | Fecha: ${now} | Hash SHA-256: <code>9f84b2c1...7a3e</code>`;
-    document.getElementById("clienteFeedback").innerHTML = `<div class="alert alert-ok">✅ Reporte firmado digitalmente. Si todos los proyectos del mes concluyeron, AuraQuantic dispara el resumen consolidado a Finanzas (RF-T-29).</div>`;
-  });
-
-  document.getElementById("btnCliObservar").addEventListener("click", () => {
-    const obs = document.getElementById("cliObs").value.trim();
-    const fb = document.getElementById("clienteFeedback");
-    if (!obs) {
-      fb.innerHTML = `<div class="alert alert-err">Debe ingresar sus observaciones para devolver el reporte al Director del Proyecto.</div>`;
-      return;
-    }
-    document.getElementById("cliEstadoFirma").textContent = "Devuelto con Observaciones ⚠️";
-    document.getElementById("cliEstadoFirma").style.color = "var(--warn)";
-    document.getElementById("cliSelloFirma").classList.add("hidden");
-    fb.innerHTML = `<div class="alert alert-warn">⚠️ Reporte devuelto al Director de Proyecto con la observación registrada (RF-T-28).</div>`;
-  });
-
-  // Eventos Vista Gerencia
-  document.getElementById("btnSimularAprobacion").addEventListener("click", () => {
-    const p = state.projectsBudget[0];
-    p.used += 15;
-    const pct = (p.used / p.budget) * 100;
-    const alerts = [];
-    if (pct >= state.params.alert80 && !p.alert80Sent) {
-      p.alert80Sent = true;
-      alerts.push(`🔔 <strong>Alerta Única ${state.params.alert80}% (RF-T-24):</strong> ${p.code} alcanzó ${pct.toFixed(1)}% (${p.used}/${p.budget} h). Notificado al Director ${p.director}.`);
-    }
-    if (pct >= 100 && !p.alert100Sent) {
-      p.alert100Sent = true;
-      alerts.push(`🚨 <strong>Alerta 100% SOBRECONSUMO (RF-T-24):</strong> ${p.code} superó presupuesto (${pct.toFixed(1)}%). Notificado a Director y Gerente de Operaciones.`);
-    }
-    renderSemaforo();
-    document.getElementById("gerenciaAlertas").innerHTML = alerts.length
-      ? `<div class="alert alert-warn">${alerts.join("<br>")}</div>`
-      : `<div class="alert alert-ok">Se sumaron +15h a ${p.code} (${pct.toFixed(1)}%). La alerta previa ya había sido enviada una única vez.</div>`;
-  });
-
-  document.getElementById("btnGuardarParams").addEventListener("click", () => {
-    state.params.alert80 = Number(document.getElementById("paramAlerta80").value) || 80;
-    state.params.recDays = Number(document.getElementById("paramDiasRec").value) || 5;
-    state.params.tacitDays = Number(document.getElementById("paramDiasTacita").value) || 10;
-    renderSemaforo();
-    document.getElementById("paramFeedback").innerHTML = `<div class="alert alert-ok">⚙️ Parámetros actualizados en tiempo real sin modificar el proceso (RT-15 / RN-T-09): Alerta al ${state.params.alert80}%, Recordatorio ${state.params.recDays} días, Tácita ${state.params.tacitDays} días.</div>`;
-  });
-
-  // Inicialización
-  loadDraft();
-  renderEmpleadoSelector();
-  renderActivities();
-  renderNovelties();
-  renderLiderExtras();
-  renderDirectorCierre();
-  renderSemaforo();
-})();
+renderActividades();
+actualizarSimuladoresEmp();
+recalcularEmp();
+renderCierreDir();
+renderQA();
 </script>
 </body>
 </html>

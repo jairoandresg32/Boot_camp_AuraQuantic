@@ -1,4 +1,4 @@
-# Fase 3: Prompt Maestro y Guía de Validación de Prototipos — Caso 1
+# Fase 3: Prompt Maestro y Guía de Validación de Prototipos — Caso 1 (v2.0)
 
 **Caso:** Caso 1 — Registro de Tiempos, Novedades y Facturación de Horas  
 **Fase Bootcamp:** Fase 3 · Prototipos (`/lowcode-prototype-requirements`)  
@@ -6,69 +6,56 @@
 
 ---
 
-## 1. Prompt Maestro para Generación del Prototipo Navegable
-
-El siguiente **Prompt Maestro** documenta los requisitos exactos de interfaz, datos simulados y reglas de negocio empleados para producir y validar el prototipo navegable antes de construir los formularios definitivos en AuraQuantic:
+## 1. Prompt Maestro para Generación del Prototipo Navegable (v2.0 Enterprise)
 
 ```text
-Actúa como Arquitecto UX/UI y Consultor Senior de AuraQuantic. Construye un prototipo web navegable autocontenido (HTML5 + CSS3 + JavaScript puro, sin dependencias externas ni CDNs) para validar las pantallas y flujos del "Caso 1 — Registro de Tiempos, Novedades y Facturación de Horas" antes de implementarlos en la plataforma AuraQuantic.
+Actúa como Arquitecto UX/UI y Consultor Senior de AuraQuantic. Construye un prototipo web navegable autocontenido (HTML5 + CSS3 + JavaScript puro, sin dependencias externas ni CDNs) para validar todas las pantallas, arquitectura escalable en Familias y la comprobación de los 68 requerimientos del "Caso 1 — Registro de Tiempos, Novedades y Facturación de Horas" (v2.0 Enterprise).
 
-1. IDENTIDAD CORPORATIVA Y LINEAMIENTOS TRANSVERSALES (RT-01, RT-02, RT-07, RT-10, RT-14):
-- Paleta visual: Navy #00015A (encabezados y botones primarios), Mint #3FF2CF (acentos y acciones clave), fondo #F4F6F8, tipografía Segoe UI.
-- Barra superior fija con selector de rol/pantalla y botón "Vista Móvil" que adapte la interfaz a ancho de teléfono (420 px) para validar RT-10 (Uso móvil).
-- Cada formulario debe mostrar número de trámite legible (TIEM-2026-000128) y un recuadro de "Ayuda en pantalla" de 2 a 3 líneas (RT-07).
+1. IDENTIDAD CORPORATIVA Y LINEAMIENTOS TRANSVERSALES (RT-01 a RT-17):
+- Paleta: Navy #00015A, Mint #3FF2CF, fondo #F4F6F8, Segoe UI.
+- Barra superior fija con selector de 6 pestañas (5 roles + pestaña de Comprobación de 68 Requisitos) y botón "Vista Móvil" (420 px) para validar RT-10.
 
-2. PANTALLAS Y REGLAS INTERACTIVAS OBLIGATORIAS POR ROL:
+2. PANTALLAS Y REGLAS INTERACTIVAS OBLIGATORIAS:
+A) EMPLEADO (`FORM_REGISTRO_DIARIO`):
+- Selector de empleado (Consultor que SÍ genera extras vs Director que NO genera extras — RF-T-20) y selector de día (Lun–Mar 9.5 h; Mié–Vie 10.5 h).
+- Indicadores de tiempo de gracia 15 min (cierre 5:30 + gracia hasta 5:45 p. m.) y alerta previa 30 min antes (5:00 p. m.) con simulador de Calendario (Ocupado en reunión / Libre).
+- Botones "Precargar día hábil anterior" (RF-T-10) y "Guardar Borrador" (RF-T-09).
+- Grupo de Campos `GC_ACTIVIDADES`: Inicio, Fin, Proyecto limitado por asignación vigente (oculta vencidos RF-T-03), Descripción, selector `¿Para Cobro?` (`EsParaCobro`), checkbox `¿Fuera Horario?`, `Horas Extra Reales` y Duración calculada en vivo.
+- Validaciones al enviar: Fin > Inicio (RN-T-02), horas fuera de jornada exigen marca (RN-T-03), bloqueo de traslapes (RN-T-05), tope <= 16 h (RN-T-06) y soporte obligatorio en incapacidades/permisos (RF-T-13).
+- Simulador de Cruce en vivo al enviar: descuenta horas de permiso pendientes (`FAM_NOVEDADES_EMP`) contra las horas extra aprobadas y muestra el registro persistido en `FAM_HORAS_EXTRA` + `FAM_SALDO_COMPENSACION` (0 archivos por empleado).
 
-A) ROL 1 — EMPLEADO (`FORM_REGISTRO_DIARIO` + Portal Empleado):
-- Selector para alternar entre empleados de prueba (ej. Consultor que SÍ genera horas extra vs Director cuyo cargo NO genera horas extra — RF-T-20).
-- Selector de día de la jornada (Lun–Mar 08:00–17:30 = 9.5 h; Mié–Vie 07:00–17:30 = 10.5 h — RF-T-05).
-- Botón "Precargar día hábil anterior" (RF-T-10) y botón "Guardar Borrador" con persistencia local sin cerrar trámite (RF-T-09).
-- KPIs en vivo (RF-T-08, RF-T-23): Total Actividades, Total Novedades, Diferencia frente a jornada y Saldo de Compensación acumulado.
-- Grupo de Campos `GC_ACTIVIDADES`:
-  * Columnas: Hora Inicio, Hora Fin, Proyecto (dropdown limitado exclusivamente a asignaciones vigentes del empleado en sesión — oculta asignaciones vencidas RF-T-03), Descripción, Checkbox "¿Fuera de horario?" (deshabilitado si el cargo no genera extras), Duración calculada en vivo.
-  * Validaciones al enviar:
-    - RN-T-02: Hora Fin > Hora Inicio.
-    - RN-T-03 / RF-T-11: Horas fuera de la jornada estándar exigen marca "Fuera de horario".
-    - RN-T-05: Detección y bloqueo de traslapes horarios entre actividades del mismo día.
-    - RN-T-06: El total registrado (actividades + novedades) no puede superar 16 horas/día.
-- Grupo de Campos `GC_NOVEDADES`:
-  * Columnas: Tipo de Novedad (Permiso, Incapacidad, Ausencia, Llegada tarde, Vacaciones), Duración, Observaciones, Soporte Adjunto.
-  * Disparo condicional (RF-T-13): Si el tipo seleccionado exige soporte (Permiso Remunerado o Incapacidad), marcar el adjunto como obligatorio y bloquear el envío si no se ha cargado archivo.
+B) LÍDER DE ÁREA (`FORM_AMPLIACION_HORARIO` y `FORM_APROBACION_EXTRAS`):
+- Panel Ampliación: muestra el estado de calendario del empleado, exige motivo obligatorio (RF-T-17), nueva hora límite (<= 22:00) y activa aviso del Temporizador de control `ET.03` de re-diligenciamiento.
+- Panel Aprobación Extras: revisión actividad por actividad validando `¿Para Cobro?`, `Horas Extra Reales`, Aprobar/Rechazar con comentario obligatorio al rechazar (RF-T-18/19).
 
-B) ROL 2 — LÍDER DE ÁREA (`FORM_AMPLIACION` y `FORM_APROBACION_EXTRAS`):
-- Bandeja de pendientes con semáforo de plazo (RT-03, RT-04).
-- Panel de Ampliación de Horario (RF-T-16, RF-T-17): Motivo obligatorio y Nueva Hora Límite (máx. 22:00).
-- Panel de Aprobación de Horas Extra (RF-T-18, RF-T-19): Revisión fila por fila (Aprobar / Rechazar) con comentario obligatorio al rechazar y resumen dinámico de horas aprobadas vs devueltas al empleado.
+C) DIRECTOR DE PROYECTO (`FORM_CIERRE_PROYECTO`):
+- Revisión desde `FAM_CIERRE_PROYECTO_MES`: exclusión de actividades no facturables con justificación obligatoria (RF-T-26) demostrando que permanecen al 100 % en `FAM_CIERRE_NOMINA_MES` (RN-T-08).
 
-C) ROL 3 — DIRECTOR DE PROYECTO (`FORM_CIERRE_PROYECTO`):
-- Revisión mensual de horas del proyecto (RF-T-26): tabla por fecha, empleado, actividad, horas y selector Facturar / Excluir.
-- Si excluye una actividad, exigir justificación obligatoria y mostrar visualmente que las horas excluidas no se facturan al cliente pero sí cuentan al 100 % para nómina (RN-T-08).
+D) PORTAL CLIENTE EXTERNO (`FORM_CLIENTE_FIRMA`):
+- Aislamiento por NIT (RT-14), visor del único PDF generado por proyecto facturable (RF-T-27), control de recordatorio día 5 / aprobación tácita día 10 (RF-T-28) y firma digital / observaciones.
 
-D) ROL 4 — CONTACTO CLIENTE EXTERNO (`FORM_CLIENTE_FIRMA`):
-- Vista aislada únicamente a los proyectos del cliente autenticado (NIT Banco Nacional S.A. — RT-14).
-- Vista previa del Reporte Mensual de Horas PDF (RF-T-27) alimentada en vivo desde las horas aprobadas por el Director.
-- Indicador de regla de aprobación tácita (recordatorio día 5 hábil, aprobación tácita día 10 hábil — RF-T-28).
-- Botón "Firmar Digitalmente" (genera sello con certificado de pruebas, fecha y hash) y botón "Devolver con Observaciones" (exige comentario).
+E) GERENCIA, PARAMETRIZACIÓN Y BAJO DEMANDA:
+- Tablero de cumplimiento, semáforo presupuestal con simulación "+15h aprobadas" (alerta única 80 % y 100 % sobreconsumo — RF-T-24).
+- Parametrización editable en vivo (RT-15, RN-T-09): % alerta 80, días 5/10, gracia 15 min, alerta -30 min y umbral OCR 90 %.
+- Botón "Descargar Certificado PDF del Mes (Bajo Demanda)" leyendo `FAM_CIERRE_NOMINA_MES` para evitar cientos de PDFs mensuales.
 
-E) ROL 5 — GERENCIA / ADMINISTRADOR (Tablero Semáforo y Parametrización):
-- KPIs de cumplimiento (a tiempo vs con ampliación vs no enviados — 3.6) y tabla de proyectos con semáforo presupuestal (Verde <80 %, Amarillo 80–100 %, Rojo >100 % sobreconsumo — RF-T-24).
-- Botón de simulación "+15h aprobadas" para demostrar el disparo único de alerta al cruzar el 80 % y al llegar al 100 %.
-- Panel de parametrización editable para % alerta presupuesto y plazos 5/10 días del cliente (RT-15, RN-T-09).
+F) PESTAÑA DE COMPROBACIÓN DE REQUISITOS (68 ítems):
+- Listado interactivo con filtro por tipo (`RF-T`, `RN-T`, `RT`, `V2`) y buscador, mostrando por cada requerimiento su Familia/Objeto y el procedimiento exacto de comprobación.
 ```
 
 ---
 
-## 2. Protocolo de Validación Antes de Construir (Checklist Fase 3)
+## 2. Protocolo de Validación Antes de Construir (10 Pruebas Clave)
 
-Ejecuta estas 7 pruebas rápidas sobre `Caso1_Prototipo_Navegable_AuraQuantic.html` con el usuario o instructor para dar por validada la Fase 3:
-
-| # | Prueba de Validación en el Prototipo | Resultado Esperado | Requerimiento |
+| # | Prueba en el Prototipo | Resultado Esperado | Requerimiento |
 | :---: | :--- | :--- | :--- |
-| **1** | Abrir vista **Empleado** con *Juan Pérez* y abrir desplegable de proyectos. | Solo aparecen `PRY-001` y `PRY-002`; `PRY-003` (vencido) no se muestra. | RF-T-03, RN-T-01 |
-| **2** | Cambiar empleado a *Andrés Silva (Director)* e intentar marcar `¿Fuera Horario?`. | El checkbox aparece bloqueado y deshabilitado. | RF-T-20 |
-| **3** | Ingresar dos actividades que se crucen (ej. `08:00–12:00` y `11:00–14:00`) y pulsar **Enviar**. | El sistema bloquea el envío e informa traslape horario. | RN-T-05 |
-| **4** | Agregar novedad *Incapacidad Médica* sin adjuntar archivo y pulsar **Enviar**. | El sistema exige el soporte obligatorio antes de enviar. | RF-T-13 |
-| **5** | En vista **Director**, excluir una actividad sin escribir justificación y validar. | Exige justificación; al ingresarla, descuenta horas del PDF del cliente pero mantiene `Cuenta 100%` en nómina. | RF-T-26, RN-T-08 |
-| **6** | En vista **Portal Cliente**, pulsar **Firmar Digitalmente**. | Estampa el sello digital con certificado de pruebas y fecha/hora. | RF-T-28 |
-| **7** | Activar botón **📱 Vista Móvil** y simular `+15h aprobadas` en vista **Gerencia**. | Las tarjetas colapsan a 1 columna y `PRY-001` cambia a Amarillo disparando alerta única 80 %. | RT-10, RF-T-24 |
+| **1** | Abrir vista **Empleado** con *Juan Pérez* y revisar desplegable de proyectos. | Solo aparecen `PRY-001` y `PRY-002`; `PRY-003` (vencido) queda oculto. | RF-T-03, RN-T-01 |
+| **2** | Cambiar empleado a *Andrés Silva (Director)* e intentar marcar `¿Fuera Horario?`. | Checkbox bloqueado y deshabilitado. | RF-T-20 |
+| **3** | Ingresar actividades que se crucen u horas >16 h y pulsar **Enviar**. | Bloquea el envío detallando la regla violada. | RN-T-05, RN-T-06 |
+| **4** | Agregar *Incapacidad Médica* sin adjunto y enviar. | Exige soporte obligatorio. | RF-T-13 |
+| **5** | Simular **Calendario Ocupado** + **Cruce con 1.0 h de permiso pendiente** y enviar con 2.0 h extra. | Calcula 1.0 h extra neta tras cruce y muestra guardado en `FAM_HORAS_EXTRA` sin generar archivos. | V2-01, V2-03, RF-T-22 |
+| **6** | En vista **Líder**, autorizar ampliación viendo agenda y aprobar/rechazar extras. | Exige motivo, muestra activación de `ET.03` y comentario al rechazar. | RF-T-16..19, V2-02 |
+| **7** | En vista **Director**, excluir una actividad con motivo. | Descuenta del PDF del cliente pero mantiene `100 %` en nómina. | RF-T-26, RN-T-08 |
+| **8** | En vista **Portal Cliente**, pulsar **Firmar Digitalmente**. | Estampa sello criptográfico simulado con certificado de pruebas. | RF-T-28 |
+| **9** | En **Gerencia**, simular `+15h`, editar gracia/OCR y descargar certificado bajo demanda. | `PRY-001` dispara alerta única 80 % y genera certificado leyendo `FAM_CIERRE_NOMINA_MES`. | RF-T-24, RT-15, RT-17 |
+| **10** | Abrir pestaña **6. ✅ Comprobación Requisitos (68)** y filtrar por `V2` o `RN-T`. | Muestra los 68 ítems con familia asociada y método de comprobación. | Auditoría QA |
